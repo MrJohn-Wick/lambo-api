@@ -21,6 +21,9 @@ model User {
   last_name       String?
   date_of_birth   String
   roles           UsersRoles[]
+  streams         Stream[]
+  calls_out       Call[]  @relation("CallOut")
+  calls_in        Call[]  @relation("CallIn")
 }
 
 model Role {
@@ -36,4 +39,27 @@ model UsersRoles {
   role_id   String
 
   @@id([user_id, role_id])
+}
+
+model Stream {
+  id            String    @id @default(uuid())
+  name          String
+  user          User      @relation(fields: [user_id], references: [id])
+  user_id       String
+  category      Category  @relation(fields: [category_id], references: [id])
+  category_id   String
+}
+
+model Category {
+  id        String    @id @default(uuid())
+  name      String
+  streams   Stream[]
+}
+
+model Call {
+  id            String    @id @default(uuid())
+  user_src      User      @relation("CallOut", fields: [user_src_id], references: [id])
+  user_src_id   String
+  user_dst      User      @relation("CallIn", fields: [user_dst_id], references: [id])
+  user_dst_id   String
 }
