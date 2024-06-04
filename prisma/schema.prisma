@@ -19,7 +19,7 @@ model User {
   phone           String?
   first_name      String?
   last_name       String?
-  date_of_birth   String
+  date_of_birth   DateTime?
   roles           UsersRoles[]
   streams         Stream[]
   calls_out       Call[]  @relation("CallOut")
