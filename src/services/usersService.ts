@@ -2,16 +2,11 @@ import { Prisma, PrismaClient, User } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
+type UserCreateParameters = Omit<User, "id">;
+
 export default {
-  create: async (email: string, phone: string | null, first_name: string | null, last_name: string | null, date_of_birth: Date) => {
-    let user: Prisma.UserCreateInput;
-    user = {
-      email,
-      phone,
-      first_name,
-      last_name,
-      date_of_birth,
-    }
+  create: async (params: UserCreateParameters) => {
+    const user: Prisma.UserCreateInput = params;
     const createdUser = await prisma.user.create({ data: user });
     return createdUser;
   }

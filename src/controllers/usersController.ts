@@ -22,13 +22,8 @@ const userController = {
       res.status(400).json({ status: "error", errors: result.array() });  
     }
     const { body } = req;
-    const email = body.email;
-    const phone = body.phone || null;
-    const first_name = body.first_name || null;
-    const last_name = body.last_name || null;
-    const birthday = body.date_of_birth || null;
     try {
-      const createdUser = await usersService.create(email, phone, first_name, last_name, birthday);
+      const createdUser = await usersService.create(body);
       res.json({
         status: 'Ok',
         date: createdUser,

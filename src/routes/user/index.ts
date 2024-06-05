@@ -5,7 +5,28 @@ import { schemaUserCreate } from "../../validators/usersSchemas";
 
 const router = express.Router();
 
-// Get all users
+/**
+ * @openapi
+ * /user:
+ *   get:
+ *     tags:
+ *       - Users
+ *     responses:
+ *       200:
+ *         description: OK
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: OK
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ */
 router.get('/', userController.getAll);
 
 // Get one user
