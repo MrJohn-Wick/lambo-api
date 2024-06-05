@@ -1,7 +1,7 @@
 import { User } from "@prisma/client";
 import { Request, Response } from "express";
 import { validationResult, ValidationError, Result } from 'express-validator';
-import usersService from "../services/users";
+import usersService from "@lambo/services/users";
 
 const userController = {
   getAll: (req: Request, res: Response) => {

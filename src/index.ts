@@ -1,8 +1,8 @@
 import express, { Express, Request, Response } from 'express';
 import dotenv from 'dotenv';
-import userRouter from './routes/users';
 import bodyParser from 'body-parser';
-import { swaggerDocs } from './routes/swagger';
+import userRouter from '@lambo/routes/users';
+import { swaggerDocs } from '@lambo/routes/swagger';
 
 
 dotenv.config();

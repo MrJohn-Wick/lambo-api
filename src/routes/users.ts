@@ -1,7 +1,7 @@
-import express, { Request, Response } from "express";
-import userController from "../controllers/users";
+import express from "express";
 import { checkSchema } from 'express-validator';
-import { schemaUserCreate } from "../validators/usersSchemas";
+import userController from "@lambo/controllers/users";
+import { schemaUserCreate } from "@lambo/validators/usersSchemas";
 
 const router = express.Router();
 
