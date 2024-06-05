@@ -1,7 +1,6 @@
 import 'module-alias/register';
 import express, { Express, Request, Response } from 'express';
 import dotenv from 'dotenv';
-import bodyParser from 'body-parser';
 import userRouter from '@lambo/routes/users';
 import { swaggerDocs } from '@lambo/routes/swagger';
 
@@ -11,8 +10,6 @@ dotenv.config({ path: `.env.local`, override: true });
 
 const app: Express = express();
 const port = Number(process.env.PORT) || 3000;
-
-app.use(bodyParser.json());
 
 app.get('/', (req: Request, res:Response) => {
   res.send("<h1>It's work!!!</h1>");

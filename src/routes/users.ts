@@ -1,9 +1,11 @@
 import express from "express";
 import { checkSchema } from 'express-validator';
+import bodyParser from 'body-parser';
 import userController from "@lambo/controllers/users";
 import { schemaUserCreate } from "@lambo/validators/usersSchemas";
 
 const router = express.Router();
+const jsonParser = bodyParser.json();
 
 /**
  * @openapi
@@ -31,8 +33,10 @@ router.get('/', userController.getAll);
 
 /**
  * @openapi
- * /user/{id}
+ * /user/{id}:
  *   get:
+ *     tags:
+ *       - Users
  *     parameters:
  *       - name: id
  *         in: path
@@ -66,13 +70,14 @@ router.get('/', userController.getAll);
  *                     last_name:
  *                       type: string
  *                     date_of_birth:
- *                       type: date
+ *                       type: string
 */
 router.get('/:id', userController.getOne);
 
 // create new user
 router.post(
   '',
+  jsonParser,
   checkSchema(schemaUserCreate),
   userController.create
 );

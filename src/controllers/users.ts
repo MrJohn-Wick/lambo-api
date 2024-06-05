@@ -4,8 +4,8 @@ import { validationResult, ValidationError, Result } from 'express-validator';
 import usersService from "@lambo/services/users";
 
 const userController = {
-  getAll: (req: Request, res: Response) => {
-    const users: User[] = [];
+  getAll: async (req: Request, res: Response) => {
+    const users = await usersService.getAll();
     res.json({
       status: 'ok',
       data: users,
@@ -17,6 +17,9 @@ const userController = {
   },
 
   create: async (req: Request, res: Response) => {
+    const {email, phone} = req.body;
+    console.log(req.body);
+    console.log(email, phone);
     const result: Result<ValidationError> = validationResult(req);
     if(result.array().length) {
       res.status(400).json({ status: "error", errors: result.array() });  

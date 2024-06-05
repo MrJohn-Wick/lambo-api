@@ -11,8 +11,8 @@ const options = {
     },
   },
   apis: [
-    './src/routes/user/index.ts',
-    './src/services/userService.ts',
+    './src/routes/users.ts',
+    './src/services/users.ts',
   ]
 }
 

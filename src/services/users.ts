@@ -9,5 +9,10 @@ export default {
     const user: Prisma.UserCreateInput = params;
     const createdUser = await prisma.user.create({ data: user });
     return createdUser;
+  },
+
+  getAll: async (): Promise<User[]> => {
+    const users = prisma.user.findMany()
+    return users;
   }
 };
