@@ -29,7 +29,45 @@ const router = express.Router();
  */
 router.get('/', userController.getAll);
 
-// Get one user
+/**
+ * @openapi
+ * /user/{id}
+ *   get:
+ *     parameters:
+ *       - name: id
+ *         in: path
+ *         required: true
+ *         description: "ID of the user"
+ *         schema:
+ *           type: integer
+ *     responses:
+ *       200:
+ *         description: OK
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: OK
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     id:
+ *                       type: string
+ *                       description: "UUID of the user"
+ *                     email:
+ *                       type: string
+ *                     phone:
+ *                       type: string
+ *                     first_name:
+ *                       type: string
+ *                     last_name:
+ *                       type: string
+ *                     date_of_birth:
+ *                       type: date
+*/
 router.get('/:id', userController.getOne);
 
 // create new user
