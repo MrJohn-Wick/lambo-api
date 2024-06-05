@@ -1,6 +1,6 @@
 import express, { Express, Request, Response } from 'express';
 import dotenv from 'dotenv';
-import userRouter from './routes/user';
+import userRouter from './routes/users';
 import bodyParser from 'body-parser';
 import { swaggerDocs } from './routes/swagger';
 

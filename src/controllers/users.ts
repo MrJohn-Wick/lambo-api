@@ -1,7 +1,7 @@
 import { User } from "@prisma/client";
 import { Request, Response } from "express";
 import { validationResult, ValidationError, Result } from 'express-validator';
-import usersService from "../services/usersService";
+import usersService from "../services/users";
 
 const userController = {
   getAll: (req: Request, res: Response) => {
@@ -21,9 +21,8 @@ const userController = {
     if(result.array().length) {
       res.status(400).json({ status: "error", errors: result.array() });  
     }
-    const { body } = req;
     try {
-      const createdUser = await usersService.create(body);
+      const createdUser = await usersService.create(req.body);
       res.json({
         status: 'Ok',
         date: createdUser,
