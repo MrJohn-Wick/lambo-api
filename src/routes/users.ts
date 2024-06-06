@@ -76,16 +76,23 @@ router.get('/:id', userController.getOne);
 
 // create new user
 router.post(
-  '',
+  '/',
   jsonParser,
   checkSchema(schemaUserCreate),
   userController.create
 );
 
 // update existing user 
-router.patch('/:id', userController.update);
+router.patch(
+  '/:id',
+  jsonParser,
+  userController.update
+);
 
 // delete existing user
-router.delete('/:id', userController.delete);
+router.delete(
+  '/:id',
+  userController.delete
+);
 
 export default router;
