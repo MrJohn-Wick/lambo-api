@@ -77,7 +77,6 @@ router.get('/:id', userController.getOne);
 // create new user
 router.post(
   '/',
-  jsonParser,
   checkSchema(schemaUserCreate),
   userController.create
 );
@@ -85,7 +84,6 @@ router.post(
 // update existing user 
 router.patch(
   '/:id',
-  jsonParser,
   userController.update
 );
 

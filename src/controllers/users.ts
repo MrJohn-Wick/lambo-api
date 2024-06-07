@@ -30,7 +30,8 @@ const userController = {
   create: async (req: Request, res: Response) => {
     const result: Result<ValidationError> = validationResult(req);
     if(result.array().length) {
-      res.status(400).json({ status: "error", errors: result.array() });  
+      res.status(400).json({ status: "error", errors: result.array() });
+      return;
     }
     try {
       const createdUser = await usersService.create(req.body);

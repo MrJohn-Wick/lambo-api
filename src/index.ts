@@ -11,6 +11,8 @@ dotenv.config({ path: `.env.local`, override: true });
 const app: Express = express();
 const port = Number(process.env.PORT) || 3000;
 
+app.use(express.json());
+
 app.get('/', (req: Request, res:Response) => {
   res.send("<h1>It's work!!!</h1>");
 });
