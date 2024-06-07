@@ -3,7 +3,6 @@ version: '3.3'
 services:
   db:
     image: mysql:5.7
-    restart: always
     environment:
       MYSQL_DATABASE: 'lambo'
       MYSQL_USER: 'lambouser'
@@ -17,7 +16,6 @@ services:
       - lambo-db:/var/lib/mysql
   phpmyadmin:
     image: phpmyadmin/phpmyadmin:latest
-    restart: always
     ports:
       - "8080:80"
     environment:
