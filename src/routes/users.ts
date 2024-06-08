@@ -1,11 +1,10 @@
 import express from "express";
 import { checkSchema } from 'express-validator';
-import bodyParser from 'body-parser';
 import userController from "@lambo/controllers/users";
 import { schemaUserCreate } from "@lambo/validators/usersSchemas";
+import { isAuthorized } from '@lambo/utils/auth';
 
 const router = express.Router();
-const jsonParser = bodyParser.json();
 
 /**
  * @openapi
@@ -29,7 +28,11 @@ const jsonParser = bodyParser.json();
  *                   items:
  *                     type: object
  */
-router.get('/', userController.getAll);
+router.get(
+  '/',
+  isAuthorized,
+  userController.getAll
+);
 
 /**
  * @openapi
@@ -72,11 +75,16 @@ router.get('/', userController.getAll);
  *                     date_of_birth:
  *                       type: string
 */
-router.get('/:id', userController.getOne);
+router.get(
+  '/:id',
+  isAuthorized,
+  userController.getOne
+);
 
 // create new user
 router.post(
   '/',
+  isAuthorized,
   checkSchema(schemaUserCreate),
   userController.create
 );
@@ -84,13 +92,27 @@ router.post(
 // update existing user 
 router.patch(
   '/:id',
+  isAuthorized,
   userController.update
 );
 
 // delete existing user
 router.delete(
   '/:id',
+  isAuthorized,
   userController.delete
+);
+
+// Register new user
+router.post(
+  '/singup',
+  checkSchema(schemaUserCreate),
+  userController.create,
+);
+
+router.post(
+  '/singin',
+  userController.singin
 );
 
 export default router;
