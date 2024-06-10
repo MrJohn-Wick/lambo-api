@@ -33,27 +33,17 @@ const userController = {
 
   create: async (req: Request, res: Response) => {
     console.info("Creating user");
-    const result: Result<ValidationError> = validationResult(req);
-    if(result.array().length) {
-      res.status(400).json({ status: "error", errors: result.array() });
-      return;
-    }
     try {
-      console.log('Start user service');
       const createdUser = await usersService.create(req.body);
       if (createdUser) {
         res.json({
           status: 'Ok',
           date: createdUser,
         });
-      } else {
-        res.status(401).json({
-          status: 'error',
-          error: ['User exists']
-        });
       }
     } catch (error) {
-      res.status(402).json({
+      console.log(error);
+      res.status(500).json({
         status: 'error',
         errors: [error]
       });
@@ -106,7 +96,7 @@ const userController = {
         token,
       })
     } else {
-      res.json({
+      res.status(400).json({
         status: 'error',
         error: ['Auth failed'],
       })

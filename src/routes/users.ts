@@ -1,8 +1,9 @@
 import express from "express";
 import { checkSchema } from 'express-validator';
 import userController from "@lambo/controllers/users";
-import { schemaUserCreate } from "@lambo/validators/usersSchemas";
 import { isAuthorized } from '@lambo/utils/auth';
+import { signupValidator } from '@lambo/validators/signup';
+import { resultValidation } from '@lambo/validators/chains';
 
 const router = express.Router();
 
@@ -85,7 +86,6 @@ router.get(
 router.post(
   '/',
   isAuthorized,
-  checkSchema(schemaUserCreate),
   userController.create
 );
 
@@ -105,13 +105,14 @@ router.delete(
 
 // Register new user
 router.post(
-  '/singup',
-  checkSchema(schemaUserCreate),
+  '/signup',
+  signupValidator,
+  resultValidation,
   userController.create,
 );
 
 router.post(
-  '/singin',
+  '/signin',
   userController.singin
 );
 

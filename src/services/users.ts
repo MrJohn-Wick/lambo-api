@@ -1,22 +1,18 @@
 import bcrypt from 'bcrypt';
 import { Prisma, PrismaClient, User } from "@prisma/client";
 
-const prisma = new PrismaClient();
+const prisma = new PrismaClient({log: ['query', 'info', 'warn', 'error']});
 
 const create = async (params: Prisma.UserCreateInput): Promise<User | null> => {
-  try {    
-    const salt = await bcrypt.genSalt(10);
-    const hash = await bcrypt.hash(params.password, salt);
-    const user: Prisma.UserCreateInput = {
-      ...params,
-      password: hash,
-    };
-    const createdUser = await prisma.user.create({ data: user });
-    return createdUser;
-  } catch (error) {
-    console.log(error);
-    return null;
-  }
+  const salt = await bcrypt.genSalt(10);
+  const hash = await bcrypt.hash(params.password as string, salt);
+  const user: Prisma.UserCreateInput = {
+    ...params,
+    password: hash,
+  };
+  console.log(user);
+  const createdUser = await prisma.user.create({ data: user });
+  return createdUser;
 };
 
 const getAll = async (): Promise<User[]> => {
