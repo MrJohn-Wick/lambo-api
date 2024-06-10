@@ -25,6 +25,7 @@ model User {
   streams         Stream[]
   calls_out       Call[]  @relation("CallOut")
   calls_in        Call[]  @relation("CallIn")
+  sessions        Session[]
 }
 
 model Role {
@@ -63,4 +64,12 @@ model Call {
   user_src_id   String
   user_dst      User      @relation("CallIn", fields: [user_dst_id], references: [id])
   user_dst_id   String
+}
+
+model Session {
+  id            String    @id @default(uuid())
+  token         String    @db.Text
+  user          User      @relation(fields: [user_id], references: [id])
+  user_id       String    
+  created_at    DateTime  @default(now())
 }

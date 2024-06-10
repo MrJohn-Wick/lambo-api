@@ -1,7 +1,7 @@
 import bcrypt from 'bcrypt';
 import { Prisma, PrismaClient, User } from "@prisma/client";
 
-const prisma = new PrismaClient({log: ['query', 'info', 'warn', 'error']});
+const prisma = new PrismaClient();
 
 const create = async (params: Prisma.UserCreateInput): Promise<User | null> => {
   const salt = await bcrypt.genSalt(10);

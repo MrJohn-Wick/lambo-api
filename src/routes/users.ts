@@ -1,9 +1,9 @@
 import express from "express";
-import { checkSchema } from 'express-validator';
 import userController from "@lambo/controllers/users";
 import { isAuthorized } from '@lambo/utils/auth';
 import { signupValidator } from '@lambo/validators/signup';
 import { resultValidation } from '@lambo/validators/chains';
+import { authController } from '@lambo/controllers/auth';
 
 const router = express.Router();
 
@@ -113,7 +113,7 @@ router.post(
 
 router.post(
   '/signin',
-  userController.singin
+  authController.singin
 );
 
 export default router;
