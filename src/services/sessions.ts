@@ -15,12 +15,20 @@ export const sessionsService = {
     return session;
   },
 
-  verifyToken:async (token: string) => {
+  verifyToken: async (token: string) => {
     const session = await prisma.session.findFirst({
       where: {
         token
       }
     })
     return session;
+  },
+
+  remove: async (token: string) => {
+    await prisma.session.deleteMany({
+      where: {
+        token,
+      }
+    });
   }
 };

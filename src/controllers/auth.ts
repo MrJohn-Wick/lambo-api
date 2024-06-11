@@ -3,6 +3,7 @@ import jwt from 'jsonwebtoken';
 import { Request, Response } from "express";
 import { sessionsService } from '@lambo/services/sessions';
 import { usersService } from '@lambo/services/users';
+import { getToken } from '@lambo/utils/auth';
 
 export const authController = {
   singin: async (req: Request, res: Response) => {
@@ -25,5 +26,16 @@ export const authController = {
         error: ['Auth failed'],
       })
     }
+  },
+
+  logout:async (req:Request, res: Response) => {
+    console.log('Logout');
+    const token = getToken(req);
+    if (token)
+      await sessionsService.remove(token);
+
+    res.json({
+      status: 'ok',
+    })
   }
 }

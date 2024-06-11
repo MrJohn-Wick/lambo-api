@@ -35,6 +35,25 @@ router.get(
   userController.getAll
 );
 
+// Register new user
+router.post(
+  '/signup',
+  signupValidator,
+  resultValidation,
+  userController.create,
+);
+
+router.post(
+  '/signin',
+  authController.singin
+);
+
+router.get(
+  '/logout',
+  isAuthorized,
+  authController.logout 
+);
+
 /**
  * @openapi
  * /user/{id}:
@@ -103,17 +122,5 @@ router.delete(
   userController.delete
 );
 
-// Register new user
-router.post(
-  '/signup',
-  signupValidator,
-  resultValidation,
-  userController.create,
-);
-
-router.post(
-  '/signin',
-  authController.singin
-);
 
 export default router;
