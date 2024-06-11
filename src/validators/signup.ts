@@ -1,5 +1,5 @@
+import { usersService } from '@lambo/services/users';
 import { body } from 'express-validator';
-import usersService from '@lambo/services/users';
 import { CustomValidation } from 'express-validator/lib/context-items';
 
 CustomValidation

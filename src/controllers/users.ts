@@ -1,9 +1,6 @@
-import bcrypt from 'bcrypt';
-import { Prisma, User } from "@prisma/client";
-import jwt from 'jsonwebtoken';
+import { usersService } from "@lambo/services/users";
+import { Prisma } from "@prisma/client";
 import { Request, Response } from "express";
-import { validationResult, ValidationError, Result } from 'express-validator';
-import usersService from "@lambo/services/users";
 
 const userController = {
   getAll: async (req: Request, res: Response) => {

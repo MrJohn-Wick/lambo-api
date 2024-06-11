@@ -1,7 +1,21 @@
-import jwt from 'jsonwebtoken';
+import jwt, { JwtPayload } from 'jsonwebtoken';
 import { NextFunction, Request, Response } from 'express';
+import { error } from 'console';
+import { usersService } from '@lambo/services/users';
+import { sessionsService } from '@lambo/services/sessions';
 
-export function isAuthorized(req: Request, res: Response, next: NextFunction): void {
+export async function verifyToken(token: string): Promise<JwtPayload | undefined> {
+  return new Promise((resolv, reject) => {
+    jwt.verify(token, process.env.JWT_SECRET as string, (err: any, payload: any) => {
+      if(err) {
+        reject(error);
+      }
+      resolv(payload);
+    });
+  })
+};
+
+export async function isAuthorized(req: Request, res: Response, next: NextFunction): Promise<void> {
   const authHeader = req.headers['authorization'];
   const token = authHeader && authHeader.split(' ')[1]
 
@@ -9,11 +23,18 @@ export function isAuthorized(req: Request, res: Response, next: NextFunction): v
     res.sendStatus(401);
     return;
   }
+
+  const payload = await verifyToken(token)
+  if (!payload) {
+    res.sendStatus(401);
+    return;
+  }
+
+  const session = await sessionsService.verifyToken(token);
+  if (!session) {
+    res.sendStatus(401);
+    return;
+  }
   
-  jwt.verify(token, process.env.JWT_SECRET as string, (err: any, user: any) => {
-    console.log(err);
-    if (err) 
-      return res.sendStatus(403);
-    next()
-  });
+  next();
 }

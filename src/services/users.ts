@@ -56,7 +56,7 @@ const delUser = async (id: string) => {
   });
 };
 
-export default {
+export const usersService = {
   create,
   getAll,
   get,
