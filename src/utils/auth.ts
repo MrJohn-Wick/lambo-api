@@ -1,27 +1,37 @@
-import jwt, { JwtPayload } from 'jsonwebtoken';
-import { NextFunction, Request, Response } from 'express';
-import { error } from 'console';
-import { usersService } from '@lambo/services/users';
-import { sessionsService } from '@lambo/services/sessions';
+import jwt, { JwtPayload } from "jsonwebtoken";
+import { NextFunction, Request, Response } from "express";
+import { error } from "console";
+import { usersService } from "@lambo/services/users";
+import { sessionsService } from "@lambo/services/sessions";
 
 export function getToken(req: Request): string | undefined {
-  const authHeader = req.headers['authorization'];
-  const token = authHeader && authHeader.split(' ')[1]
+  const authHeader = req.headers["authorization"];
+  const token = authHeader && authHeader.split(" ")[1];
   return token;
 }
 
-export async function verifyToken(token: string): Promise<JwtPayload | undefined> {
+export async function verifyToken(
+  token: string,
+): Promise<JwtPayload | undefined> {
   return new Promise((resolv, reject) => {
-    jwt.verify(token, process.env.JWT_SECRET as string, (err: any, payload: any) => {
-      if(err) {
-        reject(error);
-      }
-      resolv(payload);
-    });
-  })
-};
+    jwt.verify(
+      token,
+      process.env.JWT_SECRET as string,
+      (err: any, payload: any) => {
+        if (err) {
+          reject(error);
+        }
+        resolv(payload);
+      },
+    );
+  });
+}
 
-export async function isAuthorized(req: Request, res: Response, next: NextFunction): Promise<void> {
+export async function isAuthorized(
+  req: Request,
+  res: Response,
+  next: NextFunction,
+): Promise<void> {
   const token = getToken(req);
 
   if (!token) {
@@ -29,7 +39,7 @@ export async function isAuthorized(req: Request, res: Response, next: NextFuncti
     return;
   }
 
-  const payload = await verifyToken(token)
+  const payload = await verifyToken(token);
   if (!payload) {
     res.sendStatus(401);
     return;
@@ -40,6 +50,6 @@ export async function isAuthorized(req: Request, res: Response, next: NextFuncti
     res.sendStatus(401);
     return;
   }
-  
+
   next();
 }

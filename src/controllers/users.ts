@@ -7,7 +7,7 @@ const userController = {
     console.info("Geta all users");
     const users = await usersService.getAll();
     res.json({
-      status: 'ok',
+      status: "ok",
       data: users,
     });
   },
@@ -17,14 +17,14 @@ const userController = {
     const user = await usersService.get(req.params.id);
     if (user) {
       res.json({
-        status: 'ok',
-        data: user
-      })
+        status: "ok",
+        data: user,
+      });
     } else {
       res.status(404).json({
-        status: 'error',
-        error: 'User not found'
-      })
+        status: "error",
+        error: "User not found",
+      });
     }
   },
 
@@ -34,15 +34,15 @@ const userController = {
       const createdUser = await usersService.create(req.body);
       if (createdUser) {
         res.json({
-          status: 'Ok',
+          status: "Ok",
           date: createdUser,
         });
       }
     } catch (error) {
       console.log(error);
       res.status(500).json({
-        status: 'error',
-        errors: [error]
+        status: "error",
+        errors: [error],
       });
     }
   },
@@ -51,16 +51,16 @@ const userController = {
     console.info("Update user");
     const id = req.params.id;
     try {
-      const values: Prisma.UserCreateInput = {...req.body};
+      const values: Prisma.UserCreateInput = { ...req.body };
       const user = await usersService.update(id, values);
       res.json({
-        status: 'Ok',
+        status: "Ok",
         date: user,
       });
     } catch (error) {
       res.status(400).json({
-        status: 'error',
-        errors: [error]
+        status: "error",
+        errors: [error],
       });
     }
   },
@@ -71,15 +71,15 @@ const userController = {
     try {
       await usersService.delete(id);
       res.json({
-        status: 'Ok',
+        status: "Ok",
       });
     } catch (error) {
       res.status(400).json({
-        status: 'error',
-        errors: [error]
+        status: "error",
+        errors: [error],
       });
     }
   },
-}
+};
 
 export default userController;
