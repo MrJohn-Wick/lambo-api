@@ -1,3 +1,5 @@
+import { User } from "@prisma/client";
+
 declare global {
   namespace NodeJS {
     interface ProcessEnv {
@@ -8,5 +10,12 @@ declare global {
     }
   }
 }
+
+declare module "jsonwebtoken" {
+  export interface JwtPayload {
+      user: User;
+  }
+}
+
 
 export {}
