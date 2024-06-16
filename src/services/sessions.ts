@@ -1,5 +1,5 @@
-import { PrismaClient, Session, User } from "@prisma/client";
-import { randomUUID } from "crypto";
+import { PrismaClient, Session, User } from '@prisma/client';
+import { randomUUID } from 'crypto';
 
 const prisma = new PrismaClient();
 

@@ -1,5 +1,5 @@
-import bcrypt from "bcrypt";
-import { Prisma, PrismaClient, User } from "@prisma/client";
+import bcrypt from 'bcrypt';
+import { Prisma, PrismaClient, User } from '@prisma/client';
 
 const prisma = new PrismaClient();
 
@@ -40,7 +40,7 @@ const getByEmail = async (email: string): Promise<User | null> => {
 
 const update = async (
   id: string,
-  params: Prisma.UserCreateInput,
+  params: Prisma.UserCreateInput
 ): Promise<User> => {
   const user = await prisma.user.update({
     where: {

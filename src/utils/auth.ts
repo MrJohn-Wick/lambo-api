@@ -1,17 +1,17 @@
-import jwt, { JwtPayload } from "jsonwebtoken";
-import { NextFunction, Request, Response } from "express";
-import { error } from "console";
-import { usersService } from "@lambo/services/users";
-import { sessionsService } from "@lambo/services/sessions";
+import jwt, { JwtPayload } from 'jsonwebtoken';
+import { NextFunction, Request, Response } from 'express';
+import { error } from 'console';
+import { usersService } from '@lambo/services/users';
+import { sessionsService } from '@lambo/services/sessions';
 
 export function getToken(req: Request): string | undefined {
-  const authHeader = req.headers["authorization"];
-  const token = authHeader && authHeader.split(" ")[1];
+  const authHeader = req.headers['authorization'];
+  const token = authHeader && authHeader.split(' ')[1];
   return token;
 }
 
 export async function verifyToken(
-  token: string,
+  token: string
 ): Promise<JwtPayload | undefined> {
   return new Promise((resolv, reject) => {
     jwt.verify(
@@ -22,7 +22,7 @@ export async function verifyToken(
           reject(error);
         }
         resolv(payload);
-      },
+      }
     );
   });
 }
@@ -30,7 +30,7 @@ export async function verifyToken(
 export async function isAuthorized(
   req: Request,
   res: Response,
-  next: NextFunction,
+  next: NextFunction
 ): Promise<void> {
   const token = getToken(req);
 

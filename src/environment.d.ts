@@ -1,4 +1,4 @@
-import { User } from "@prisma/client";
+import { User } from '@prisma/client';
 
 declare global {
   namespace NodeJS {
@@ -11,7 +11,7 @@ declare global {
   }
 }
 
-declare module "jsonwebtoken" {
+declare module 'jsonwebtoken' {
   export interface JwtPayload {
     user: User;
   }

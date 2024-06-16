@@ -1,13 +1,13 @@
-import bcrypt from "bcrypt";
-import jwt from "jsonwebtoken";
-import { Request, Response } from "express";
-import { sessionsService } from "@lambo/services/sessions";
-import { usersService } from "@lambo/services/users";
-import { getToken } from "@lambo/utils/auth";
+import bcrypt from 'bcrypt';
+import jwt from 'jsonwebtoken';
+import { Request, Response } from 'express';
+import { sessionsService } from '@lambo/services/sessions';
+import { usersService } from '@lambo/services/users';
+import { getToken } from '@lambo/utils/auth';
 
 export const authController = {
   singin: async (req: Request, res: Response) => {
-    console.info("Sing in");
+    console.info('Sing in');
     const email = req.body.email;
     const user = await usersService.getByEmail(email);
     if (user && (await bcrypt.compare(req.body.password, user.password))) {
@@ -16,28 +16,28 @@ export const authController = {
         {
           user,
         },
-        secret as string,
+        secret as string
       );
       await sessionsService.create(token, user);
       res.json({
-        status: "ok",
+        status: 'ok',
         token,
       });
     } else {
       res.status(400).json({
-        status: "error",
-        error: ["Auth failed"],
+        status: 'error',
+        error: ['Auth failed'],
       });
     }
   },
 
   logout: async (req: Request, res: Response) => {
-    console.log("Logout");
+    console.log('Logout');
     const token = getToken(req);
     if (token) await sessionsService.remove(token);
 
     res.json({
-      status: "ok",
+      status: 'ok',
     });
   },
 };
