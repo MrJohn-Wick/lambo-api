@@ -5,12 +5,11 @@ const prisma = new PrismaClient();
 
 export const sessionsService = {
   create: async (token: string, user: User): Promise<Session | undefined> => {
-
     const session = await prisma.session.create({
       data: {
         token,
         user_id: user.id,
-      }
+      },
     });
     return session;
   },
@@ -18,9 +17,9 @@ export const sessionsService = {
   verifyToken: async (token: string) => {
     const session = await prisma.session.findFirst({
       where: {
-        token
-      }
-    })
+        token,
+      },
+    });
     return session;
   },
 
@@ -28,7 +27,7 @@ export const sessionsService = {
     await prisma.session.deleteMany({
       where: {
         token,
-      }
+      },
     });
-  }
+  },
 };

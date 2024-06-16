@@ -1,5 +1,5 @@
 import bcrypt from 'bcrypt';
-import { Prisma, PrismaClient, User } from "@prisma/client";
+import { Prisma, PrismaClient, User } from '@prisma/client';
 
 const prisma = new PrismaClient();
 
@@ -16,34 +16,37 @@ const create = async (params: Prisma.UserCreateInput): Promise<User | null> => {
 };
 
 const getAll = async (): Promise<User[]> => {
-  const users = prisma.user.findMany()
+  const users = prisma.user.findMany();
   return users;
 };
 
-const get = async (id:string): Promise<User | null> => {
+const get = async (id: string): Promise<User | null> => {
   const user: User | null = await prisma.user.findUnique({
     where: {
-      id
-    }
+      id,
+    },
   });
   return user;
 };
 
-const getByEmail = async (email:string): Promise<User | null> => {
+const getByEmail = async (email: string): Promise<User | null> => {
   const user: User | null = await prisma.user.findUnique({
     where: {
-      email
-    }
+      email,
+    },
   });
   return user;
 };
 
-const update = async (id: string, params: Prisma.UserCreateInput): Promise<User> => {
+const update = async (
+  id: string,
+  params: Prisma.UserCreateInput
+): Promise<User> => {
   const user = await prisma.user.update({
     where: {
       id,
     },
-    data: params
+    data: params,
   });
   return user;
 };
@@ -51,8 +54,8 @@ const update = async (id: string, params: Prisma.UserCreateInput): Promise<User>
 const delUser = async (id: string) => {
   await prisma.user.delete({
     where: {
-      id
-    }
+      id,
+    },
   });
 };
 

@@ -1,10 +1,10 @@
-import { usersService } from "@lambo/services/users";
-import { Prisma } from "@prisma/client";
-import { Request, Response } from "express";
+import { usersService } from '@lambo/services/users';
+import { Prisma } from '@prisma/client';
+import { Request, Response } from 'express';
 
 const userController = {
   getAll: async (req: Request, res: Response) => {
-    console.info("Geta all users");
+    console.info('Geta all users');
     const users = await usersService.getAll();
     res.json({
       status: 'ok',
@@ -13,23 +13,23 @@ const userController = {
   },
 
   getOne: async (req: Request, res: Response) => {
-    console.info("Get user by id");
+    console.info('Get user by id');
     const user = await usersService.get(req.params.id);
     if (user) {
       res.json({
         status: 'ok',
-        data: user
-      })
+        data: user,
+      });
     } else {
       res.status(404).json({
         status: 'error',
-        error: 'User not found'
-      })
+        error: 'User not found',
+      });
     }
   },
 
   create: async (req: Request, res: Response) => {
-    console.info("Creating user");
+    console.info('Creating user');
     try {
       const createdUser = await usersService.create(req.body);
       if (createdUser) {
@@ -42,16 +42,16 @@ const userController = {
       console.log(error);
       res.status(500).json({
         status: 'error',
-        errors: [error]
+        errors: [error],
       });
     }
   },
 
   update: async (req: Request, res: Response) => {
-    console.info("Update user");
+    console.info('Update user');
     const id = req.params.id;
     try {
-      const values: Prisma.UserCreateInput = {...req.body};
+      const values: Prisma.UserCreateInput = { ...req.body };
       const user = await usersService.update(id, values);
       res.json({
         status: 'Ok',
@@ -60,13 +60,13 @@ const userController = {
     } catch (error) {
       res.status(400).json({
         status: 'error',
-        errors: [error]
+        errors: [error],
       });
     }
   },
 
   delete: async (req: Request, res: Response) => {
-    console.info("Delete user");
+    console.info('Delete user');
     const id = req.params.id;
     try {
       await usersService.delete(id);
@@ -76,10 +76,10 @@ const userController = {
     } catch (error) {
       res.status(400).json({
         status: 'error',
-        errors: [error]
+        errors: [error],
       });
     }
   },
-}
+};
 
 export default userController;

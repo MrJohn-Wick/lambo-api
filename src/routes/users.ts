@@ -1,5 +1,5 @@
-import express from "express";
-import userController from "@lambo/controllers/users";
+import express from 'express';
+import userController from '@lambo/controllers/users';
 import { isAuthorized } from '@lambo/utils/auth';
 import { signupValidator } from '@lambo/validators/signup';
 import { resultValidation } from '@lambo/validators/chains';
@@ -29,30 +29,19 @@ const router = express.Router();
  *                   items:
  *                     type: object
  */
-router.get(
-  '/',
-  isAuthorized,
-  userController.getAll
-);
+router.get('/', isAuthorized, userController.getAll);
 
 // Register new user
 router.post(
   '/signup',
   signupValidator,
   resultValidation,
-  userController.create,
+  userController.create
 );
 
-router.post(
-  '/signin',
-  authController.singin
-);
+router.post('/signin', authController.singin);
 
-router.get(
-  '/logout',
-  isAuthorized,
-  authController.logout 
-);
+router.get('/logout', isAuthorized, authController.logout);
 
 /**
  * @openapi
@@ -94,33 +83,16 @@ router.get(
  *                       type: string
  *                     date_of_birth:
  *                       type: string
-*/
-router.get(
-  '/:id',
-  isAuthorized,
-  userController.getOne
-);
+ */
+router.get('/:id', isAuthorized, userController.getOne);
 
 // create new user
-router.post(
-  '/',
-  isAuthorized,
-  userController.create
-);
+router.post('/', isAuthorized, userController.create);
 
-// update existing user 
-router.patch(
-  '/:id',
-  isAuthorized,
-  userController.update
-);
+// update existing user
+router.patch('/:id', isAuthorized, userController.update);
 
 // delete existing user
-router.delete(
-  '/:id',
-  isAuthorized,
-  userController.delete
-);
-
+router.delete('/:id', isAuthorized, userController.delete);
 
 export default router;

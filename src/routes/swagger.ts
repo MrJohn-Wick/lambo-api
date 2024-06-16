@@ -10,19 +10,12 @@ const options = {
       version: '1.0.0',
     },
   },
-  apis: [
-    './src/routes/users.ts',
-    './src/services/users.ts',
-  ]
-}
+  apis: ['./src/routes/users.ts', './src/services/users.ts'],
+};
 
 const swaggerSpec = swaggerJSDoc(options);
 
 export const swaggerDocs = (app: Express, port: number) => {
-  app.use(
-    '/docs',
-    swaggerUi.serve,
-    swaggerUi.setup(swaggerSpec)
-  );
+  app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
   console.log('Swagger docs available');
-}
+};
