@@ -1,9 +1,6 @@
 import express from 'express';
 import userController from '@lambo/controllers/users';
 import { isAuthorized } from '@lambo/utils/auth';
-import { signupValidator } from '@lambo/validators/signup';
-import { resultValidation } from '@lambo/validators/chains';
-import { authController } from '@lambo/controllers/auth';
 
 const router = express.Router();
 
@@ -13,28 +10,6 @@ router.get('/', isAuthorized, userController.getAll
      #swagger.security = [{
        "bearerAuth": []
      }]
-  */
-);
-
-// Register new user
-router.post(
-  '/signup',
-  signupValidator,
-  resultValidation,
-  userController.create
-  // #swagger.summary = 'Register new user'
-);
-
-router.post('/signin', authController.singin
-  // #swagger.summary = 'Login user by email, password'
-);
-
-router.get('/logout', isAuthorized, authController.logout
-  /*
-    #swagger.summary = 'User logout'
-    #swagger.security = [{
-      "bearerAuth": []
-    }]
   */
 );
 
