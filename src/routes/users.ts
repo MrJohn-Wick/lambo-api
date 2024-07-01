@@ -7,29 +7,14 @@ import { isAuthenticated } from '@lambo/utils/auth';
 
 const router = express.Router();
 
-/**
- * @openapi
- * /user:
- *   get:
- *     tags:
- *       - Users
- *     responses:
- *       200:
- *         description: OK
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 status:
- *                   type: string
- *                   example: OK
- *                 data:
- *                   type: array
- *                   items:
- *                     type: object
- */
-router.get('/', isAuthenticated, userController.getAll);
+router.get('/', isAuthorized, userController.getAll
+  /* 
+     #swagger.summary = 'Get users list'
+     #swagger.security = [{
+       "bearerAuth": []
+     }]
+  */
+);
 
 // Register new user
 router.post(
@@ -37,6 +22,7 @@ router.post(
   signupValidator,
   resultValidation,
   userController.create
+  // #swagger.summary = 'Register new user'
 );
 
 /**
@@ -90,5 +76,3 @@ router.patch('/:id', isAuthenticated, userController.update);
 
 // delete existing user
 router.delete('/:id', isAuthenticated, userController.delete);
-
-export default router;
