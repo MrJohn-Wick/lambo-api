@@ -1,7 +1,9 @@
+import bcrypt from 'bcrypt';
 import * as LocalStrategy from 'passport-local';
 import { Express, NextFunction, Request, Response } from 'express';
 import passport from 'passport';
 import { LoginSchema } from '@lambo/schemas/login';
+import { usersService } from '@lambo/services/users';
 
 export function initPassport(app: Express) {
   app.use(passport.initialize());
@@ -13,13 +15,10 @@ export function initPassport(app: Express) {
       try {
         const validatedValues = LoginSchema.safeParse({ email, password });
         if ( !validatedValues.success ) { done(null, false, { message: "Invalid fields" }) }
-        // const user = usersDB.findUser(email);
-        if (email === "ashibeko@gmail.com" && password === "123456") {
-          done(null, {
-            id: '1',
-            email: 'ashibeko@gmail.com',
-            roles: ['admin']
-          });
+
+        const user = await usersService.getByEmail(email);
+        if (user && await bcrypt.compare(password, user.password)) {
+          done(null, user);
         } else {
           done(null, false, { message: "Invalid credentials" });
         }
