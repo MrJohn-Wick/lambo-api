@@ -1,7 +1,7 @@
 import 'module-alias/register';
 import cors from 'cors';
 import express, { Express, Request, Response } from 'express';
-import dotenv from 'dotenv';
+import dotenv from 'dotenv-flow';
 import authRouter from '@lambo/routes/auth';
 import userRouter from '@lambo/routes/users';
 import { swaggerDocs } from '@lambo/routes/swagger';

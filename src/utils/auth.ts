@@ -1,6 +1,7 @@
 import * as LocalStrategy from 'passport-local';
 import { Express, NextFunction, Request, Response } from 'express';
 import passport from 'passport';
+import { LoginSchema } from '@lambo/schemas/login';
 
 export function initPassport(app: Express) {
   app.use(passport.initialize());
@@ -9,9 +10,9 @@ export function initPassport(app: Express) {
   passport.use(new LocalStrategy.Strategy(
     { usernameField: "email" },
     async (email, password, done) => {
-      console.log("Passport");
       try {
-        if (!email || !passport) { done(null, false, { message: "Invalid fields" }) }
+        const validatedValues = LoginSchema.safeParse({ email, password });
+        if ( !validatedValues.success ) { done(null, false, { message: "Invalid fields" }) }
         // const user = usersDB.findUser(email);
         if (email === "ashibeko@gmail.com" && password === "123456") {
           done(null, {
