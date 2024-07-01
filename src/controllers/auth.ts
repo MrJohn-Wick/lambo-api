@@ -1,43 +1,68 @@
-import bcrypt from 'bcrypt';
-import jwt from 'jsonwebtoken';
-import { Request, Response } from 'express';
-import { sessionsService } from '@lambo/services/sessions';
+import { RegisterSchema } from '@lambo/schemas/register';
 import { usersService } from '@lambo/services/users';
-import { getToken } from '@lambo/utils/auth';
+import { Prisma } from '@prisma/client';
+import { NextFunction, Request, Response } from 'express';
+import passport from 'passport';
 
 export const authController = {
-  singin: async (req: Request, res: Response) => {
-    console.info('Sing in');
-    const email = req.body.email;
-    const user = await usersService.getByEmail(email);
-    if (user && (await bcrypt.compare(req.body.password, user.password))) {
-      const secret = process.env.JWT_SECRET;
-      const token = jwt.sign(
-        {
-          user,
-        },
-        secret as string
-      );
-      await sessionsService.create(token, user);
-      res.json({
-        status: 'ok',
-        token,
-      });
-    } else {
-      res.status(400).json({
-        status: 'error',
-        error: ['Auth failed'],
-      });
+  login: async (req: Request, res: Response, next: NextFunction) => {
+    passport.authenticate(
+      'local',
+      (err:any, user:any, info:any) => {
+        if (err)
+          return next(err);
+        if (!user) {
+          res.status(401).json({
+            success: false,
+            message: info.message,
+          });
+        }
+        req.login(user, { session: true }, async (error) => {
+          if (error) return next(error);
+          return res.json({
+            success: true,
+          })
+        });
     }
+    )(req, res, next);
   },
 
-  logout: async (req: Request, res: Response) => {
-    console.log('Logout');
-    const token = getToken(req);
-    if (token) await sessionsService.remove(token);
-
-    res.json({
-      status: 'ok',
+  logout: async (req: Request, res: Response, next: NextFunction) => {
+    req.logout((err) => {
+      if (err)
+        return next(err);
+      return {
+        success: "ok",
+      }
     });
+  },
+
+  register: async (req: Request, res: Response, next: NextFunction) => {
+    const validatedValues = RegisterSchema.safeParse(req.body);
+    if (validatedValues.success) {
+      try {
+        await usersService.create({
+          email: validatedValues.data.email,
+          password: validatedValues.data.password
+        });
+        res.json({
+          success: true,
+          message: "User created"
+        });
+      } catch (error) {
+        if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === "P2002") {
+          res.json({
+            success: false,
+            message: "Email is exist",
+          });
+        }
+        next(error);
+      }
+    } else {
+      res.json({
+        success: false,
+        message: 'Invalid parameters',
+      });
+    }
   },
 };

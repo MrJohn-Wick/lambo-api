@@ -1,55 +1,58 @@
-import jwt, { JwtPayload } from 'jsonwebtoken';
-import { NextFunction, Request, Response } from 'express';
-import { error } from 'console';
+import bcrypt from 'bcrypt';
+import * as LocalStrategy from 'passport-local';
+import { Express, NextFunction, Request, Response } from 'express';
+import passport from 'passport';
+import { LoginSchema } from '@lambo/schemas/login';
 import { usersService } from '@lambo/services/users';
-import { sessionsService } from '@lambo/services/sessions';
 
-export function getToken(req: Request): string | undefined {
-  const authHeader = req.headers['authorization'];
-  const token = authHeader && authHeader.split(' ')[1];
-  return token;
-}
+export function initPassport(app: Express) {
+  app.use(passport.initialize());
+  app.use(passport.authenticate('session'));
 
-export async function verifyToken(
-  token: string
-): Promise<JwtPayload | undefined> {
-  return new Promise((resolv, reject) => {
-    jwt.verify(
-      token,
-      process.env.JWT_SECRET as string,
-      (err: any, payload: any) => {
-        if (err) {
-          reject(error);
+  passport.use(new LocalStrategy.Strategy(
+    { usernameField: "email" },
+    async (email, password, done) => {
+      try {
+        const validatedValues = LoginSchema.safeParse({ email, password });
+        if ( !validatedValues.success ) { done(null, false, { message: "Invalid fields" }) }
+
+        const user = await usersService.getByEmail(email);
+        if (user && await bcrypt.compare(password, user.password)) {
+          done(null, user);
+        } else {
+          done(null, false, { message: "Invalid credentials" });
         }
-        resolv(payload);
+      } catch (e) {
+        done(e);
       }
-    );
+    }
+  ));
+
+  passport.serializeUser((req: Request, user: any, done: any) => {
+    done(null, user);
+  });
+  
+  passport.deserializeUser((user: any, done) => {
+    done(null, user);
   });
 }
 
-export async function isAuthorized(
-  req: Request,
-  res: Response,
-  next: NextFunction
-): Promise<void> {
-  const token = getToken(req);
-
-  if (!token) {
-    res.sendStatus(401);
-    return;
+export function isAuthenticated(req: Request ,res: Response, next: NextFunction): Response | void {
+  if(req.user) {
+    return next();
+  } else {
+    res.status(401).json({
+      error: "Unauthenticated"
+    })
   }
+}
 
-  const payload = await verifyToken(token);
-  if (!payload) {
-    res.sendStatus(401);
-    return;
+export function isAnonymous(req: Request ,res: Response, next: NextFunction): Response | void {
+  if (!req.user) {
+    return next();
+  } else {
+    res.json({
+      error: "Alredy authenticated"
+    })
   }
-
-  const session = await sessionsService.verifyToken(token);
-  if (!session) {
-    res.sendStatus(401);
-    return;
-  }
-
-  next();
 }

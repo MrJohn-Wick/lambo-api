@@ -10,7 +10,6 @@ const create = async (params: Prisma.UserCreateInput): Promise<User | null> => {
     ...params,
     password: hash,
   };
-  console.log(user);
   const createdUser = await prisma.user.create({ data: user });
   return createdUser;
 };
