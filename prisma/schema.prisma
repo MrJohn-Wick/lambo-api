@@ -72,5 +72,4 @@ model Session {
   user          User      @relation(fields: [user_id], references: [id])
   user_id       String    
   created_at    DateTime  @default(now())
-  session       String
 } 

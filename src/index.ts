@@ -29,7 +29,9 @@ app.get('/', (req: Request, res: Response) => {
 
 app.use('/', authRouter);
 
-app.use('/user', userRouter);
+app.use('/user', userRouter
+  // #swagger.tags = ['Users']
+);
 
 app.listen(port, () => {
   console.log(`API is listening on port ${port}`);

@@ -1,94 +1,55 @@
 import express from 'express';
 import userController from '@lambo/controllers/users';
-import { signupValidator } from '@lambo/validators/signup';
-import { resultValidation } from '@lambo/validators/chains';
-import { authController } from '@lambo/controllers/auth';
 import { isAuthenticated } from '@lambo/utils/auth';
 
 const router = express.Router();
 
-/**
- * @openapi
- * /user:
- *   get:
- *     tags:
- *       - Users
- *     responses:
- *       200:
- *         description: OK
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 status:
- *                   type: string
- *                   example: OK
- *                 data:
- *                   type: array
- *                   items:
- *                     type: object
- */
-router.get('/', isAuthenticated, userController.getAll);
-
-// Register new user
-router.post(
-  '/signup',
-  signupValidator,
-  resultValidation,
-  userController.create
+router.get('/', isAuthenticated, userController.getAll
+  /* 
+     #swagger.summary = 'Get users list'
+     #swagger.security = [{
+       "bearerAuth": []
+     }]
+  */
 );
 
-/**
- * @openapi
- * /user/{id}:
- *   get:
- *     tags:
- *       - Users
- *     parameters:
- *       - name: id
- *         in: path
- *         required: true
- *         description: "ID of the user"
- *         schema:
- *           type: integer
- *     responses:
- *       200:
- *         description: OK
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 status:
- *                   type: string
- *                   example: OK
- *                 data:
- *                   type: object
- *                   properties:
- *                     id:
- *                       type: string
- *                       description: "UUID of the user"
- *                     email:
- *                       type: string
- *                     phone:
- *                       type: string
- *                     first_name:
- *                       type: string
- *                     last_name:
- *                       type: string
- *                     date_of_birth:
- *                       type: string
- */
-router.get('/:id', isAuthenticated, userController.getOne);
+router.get('/:id', isAuthenticated, userController.getOne
+  /*
+    #swagger.summary = 'Get user by ID'
+    #swagger.security = [{
+      "bearerAuth": []
+    }]
+  */
+);
 
 // create new user
-router.post('/', isAuthenticated, userController.create);
+router.post('/', isAuthenticated, userController.create
+  /*
+    #swagger.summary = 'Create new user '
+    #swagger.security = [{
+      "bearerAuth": []
+    }]
+  */
+);
 
 // update existing user
-router.patch('/:id', isAuthenticated, userController.update);
+router.patch('/:id', isAuthenticated, userController.update
+  /*
+    #swagger.summary = 'Update existing user'
+    #swagger.security = [{
+      "bearerAuth": []
+    }]
+  */
+);
 
 // delete existing user
-router.delete('/:id', isAuthenticated, userController.delete);
+router.delete('/:id', isAuthenticated, userController.delete
+  /*
+    #swagger.summary = 'Delete user'
+    #swagger.security = [{
+      "bearerAuth": []
+    }]
+  */
+);
 
 export default router;
