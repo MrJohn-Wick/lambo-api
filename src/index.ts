@@ -1,26 +1,17 @@
-import 'module-alias/register';
-import express, { Express, Request, Response } from 'express';
-import dotenv from 'dotenv';
-import userRouter from '@lambo/routes/users';
-import { swaggerDocs } from '@lambo/routes/swagger';
+import Express from "express";
+import cors from 'cors';
+import bodyParser from "body-parser";
+import { bootstrap_auth } from './main.js';
 
-dotenv.config();
-dotenv.config({ path: `.env.local`, override: true });
 
-const app: Express = express();
-const port = Number(process.env.PORT) || 3000;
+const app = Express();
 
-app.use(express.json());
+app.use(cors())
 
-app.get('/', (req: Request, res: Response) => {
-  res.send("<h1>It's work!!!</h1>");
-});
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: false }));
 
-app.use('/user', userRouter
-  // #swagger.tags = ['Users']
-);
+bootstrap_auth(app);
 
-app.listen(port, () => {
-  console.log(`API is listening on port ${port}`);
-  swaggerDocs(app, port);
-});
+app.listen(3000);
+console.log("app is listening on http://localhost:3000");

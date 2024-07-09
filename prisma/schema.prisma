@@ -1,75 +1,99 @@
 // This is your Prisma schema file,
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+datasource db {
+  provider = "postgres"
+  url      = "postgresql://lambo:lambo@localhost/lambo?schema=public"
+}
 
 generator client {
   provider = "prisma-client-js"
 }
 
-datasource db {
-  provider = "mysql"
-  url      = env("DATABASE_URL")
-}
-
 model User {
-  id              String   @id @default(uuid())
-  email           String   @unique
-  password        String
-  phone           String?
-  first_name      String?
-  last_name       String?
-  date_of_birth   DateTime?
-  roles           UsersRoles[]
-  streams         Stream[]
-  calls_out       Call[]  @relation("CallOut")
-  calls_in        Call[]  @relation("CallIn")
-  sessions        Session[]
+  id             String          @id @db.Uuid
+  email          String          @unique
+  passwordHash   String          @db.VarChar(255)
+  OAuthAuthCodes OAuthAuthCode[]
+  OAuthTokens    OAuthToken[]
+
+  @@index([email], name: "idx_user_email")
 }
 
-model Role {
-  id    String   @id @default(uuid())
-  name  String
-  users UsersRoles[]
+enum GrantTypes {
+  client_credentials
+  authorization_code
+  refresh_token
+  implicit
+  password
 }
 
-model UsersRoles {
-  user      User      @relation(fields: [user_id], references: [id])
-  user_id   String
-  role      Role      @relation(fields: [role_id], references: [id])
-  role_id   String
-
-  @@id([user_id, role_id])
+model OAuthClient {
+  id               String             @id @default(uuid()) @db.Uuid
+  name             String             @db.VarChar(255)
+  secret           String?            @db.VarChar(255)
+  redirectUris     String[]
+  allowedGrants    GrantTypes[]
+  scopes           OAuthScope[]
+  authCodes        OAuthAuthCode[]
+  tokens           OAuthToken[]
+  OAuthClientScope OAuthClientScope[]
 }
 
-model Stream {
-  id            String    @id @default(uuid())
+model OAuthClientScope {
+  clientId String      @db.Uuid
+  client   OAuthClient @relation(fields: [clientId], references: [id])
+  scopeId  String      @db.Uuid
+  scope    OAuthScope  @relation(fields: [scopeId], references: [id])
+
+  @@id([clientId, scopeId])
+  @@index([clientId], name: "idx_oauthclient_oauthscope_clientid")
+  @@index([scopeId], name: "idx_oauthclient_oauthscope_scopeid")
+  @@map("oauthClient_oauthScope")
+}
+
+enum CodeChallengeMethod {
+  S256
+  plain
+}
+
+model OAuthAuthCode {
+  code                String              @id
+  redirectUri         String?
+  codeChallenge       String?
+  codeChallengeMethod CodeChallengeMethod @default(plain)
+  expiresAt           DateTime
+  user                User?               @relation(fields: [userId], references: [id])
+  userId              String?             @db.Uuid
+  client              OAuthClient         @relation(fields: [clientId], references: [id])
+  clientId            String              @db.Uuid
+  scopes              OAuthScope[]
+}
+
+model OAuthToken {
+  accessToken           String       @id
+  accessTokenExpiresAt  DateTime
+  refreshToken          String?      @unique
+  refreshTokenExpiresAt DateTime?
+  client                OAuthClient  @relation(fields: [clientId], references: [id])
+  clientId              String       @db.Uuid
+  user                  User?        @relation(fields: [userId], references: [id])
+  userId                String?      @db.Uuid
+  scopes                OAuthScope[]
+  createdAt             DateTime?
+
+  @@index([accessToken], name: "idx_oauthtoken_accesstoken")
+  @@index([refreshToken], name: "idx_oauthtoken_refreshtoken")
+}
+
+model OAuthScope {
+  id            String          @id @db.Uuid
   name          String
-  user          User      @relation(fields: [user_id], references: [id])
-  user_id       String
-  category      Category  @relation(fields: [category_id], references: [id])
-  category_id   String
-}
+  OAuthClients  OAuthClient[]
+  OAuthAuthCode OAuthAuthCode[]
+  OAuthToken    OAuthToken[]
 
-model Category {
-  id        String    @id @default(uuid())
-  name      String
-  streams   Stream[]
-}
 
-model Call {
-  id            String    @id @default(uuid())
-  user_src      User      @relation("CallOut", fields: [user_src_id], references: [id])
-  user_src_id   String
-  user_dst      User      @relation("CallIn", fields: [user_dst_id], references: [id])
-  user_dst_id   String
+  OAuthClientScope OAuthClientScope[]
+  @@index([name], name: "idx_oauthscope_name")
 }
-
-model Session {
-  id            String    @id @default(uuid())
-  token         String    @db.Text
-  user          User      @relation(fields: [user_id], references: [id])
-  user_id       String    
-  created_at    DateTime  @default(now())
-} 
