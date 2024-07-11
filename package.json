@@ -1,5 +1,5 @@
 {
-  "name": "@jmondi/oauth2-server-example",
+  "name": "lambo-backend",
   "license": "MIT",
   "scripts": {
     "gen": "prisma generate",

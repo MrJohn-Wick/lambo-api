@@ -1,3 +1,4 @@
+import bcrypt from 'bcryptjs';
 import { GrantIdentifier, OAuthUserRepository } from "@jmondi/oauth2-server";
 import { PrismaClient } from "@prisma/client";
 
@@ -23,5 +24,20 @@ export class UserRepository implements OAuthUserRepository {
     if (password) await user.verify(password);
 
     return user;
+  }
+
+  async registerNewUser(
+    email: string,
+    password: string,
+  ): Promise<User | null> {
+    const passwordHash = await bcrypt.hash(password, 12);
+    const user = await this.prisma.user.create({
+      data: {
+        email,
+        passwordHash
+      }
+    });
+    if (user) return new User(user);
+    return null;
   }
 }

@@ -1,7 +1,8 @@
 import Express from "express";
 import cors from 'cors';
 import bodyParser from "body-parser";
-import { bootstrap_auth } from './main.js';
+import { bootstrap_auth } from './routers/oauth2';
+import { bootstrap_register } from './routers/register.js';
 
 
 const app = Express();
@@ -12,6 +13,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 
 bootstrap_auth(app);
+bootstrap_register(app);
 
 app.listen(3000);
 console.log("app is listening on http://localhost:3000");

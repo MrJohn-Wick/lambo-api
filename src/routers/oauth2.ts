@@ -6,11 +6,11 @@ import { AuthorizationServer, DateInterval } from "@jmondi/oauth2-server";
 import { handleExpressError, handleExpressResponse } from "@jmondi/oauth2-server/express";
 
 // import { AuthCodeRepository } from "./repositories/auth_code_repository.js";
-import { ClientRepository } from "./repositories/client_repository.js";
-import { ScopeRepository } from "./repositories/scope_repository.js";
-import { TokenRepository } from "./repositories/token_repository.js";
-import { UserRepository } from "./repositories/user_repository.js";
-import { MyCustomJwtService } from "./utils/custom_jwt_service.js";
+import { ClientRepository } from "../repositories/client_repository.js";
+import { ScopeRepository } from "../repositories/scope_repository.js";
+import { TokenRepository } from "../repositories/token_repository.js";
+import { UserRepository } from "../repositories/user_repository.js";
+import { MyCustomJwtService } from "../utils/custom_jwt_service.js";
 
 export async function bootstrap_auth(app: Express) {
   const prisma = new PrismaClient();
@@ -73,10 +73,13 @@ export async function bootstrap_auth(app: Express) {
   });
 
   app.post("/token/revoke", async (req: express.Request, res: express.Response) => {
+    console.log("Token revoke");
     try {
       const oauthResponse = await authorizationServer.revoke(req);
+      console.log('OK');
       return handleExpressResponse(res, oauthResponse);
     } catch (e) {
+      console.log('error');
       handleExpressError(e, res);
       return;
     }
