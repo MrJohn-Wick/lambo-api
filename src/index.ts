@@ -1,7 +1,7 @@
 import Express from "express";
 import cors from 'cors';
 import bodyParser from "body-parser";
-import { bootstrap_auth } from './routers/oauth2';
+import { bootstrap_auth } from './routers/oauth2.js';
 import { bootstrap_register } from './routers/register.js';
 
 
