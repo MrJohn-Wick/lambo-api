@@ -26,6 +26,32 @@ export class UserRepository implements OAuthUserRepository {
     return user;
   }
 
+  async getUserById(id: User['id']): Promise<User | null> {
+    const user = await this.prisma.user.findUnique({
+      where: { id },
+    });
+    if (user) 
+      return new User(user);
+    return null;
+  }
+
+  async getUserWithProfile(id: User['id']): Promise<any | null> {
+    const user = await this.prisma.user.findUnique({
+      where: { id },
+      include: { Profile: true }
+    });
+    if (user) 
+      console.log(user);
+      return {
+        id: user?.id,
+        email: user?.email,
+        firstnane: user?.Profile?.firstname,
+        lastname: user?.Profile?.lastname,
+        birthday: user?.Profile?.birthday,
+      };
+    return null;
+  }
+
   async registerNewUser(
     email: string,
     password: string,

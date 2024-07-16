@@ -3,7 +3,7 @@
 
 datasource db {
   provider = "postgres"
-  url      = env("DATABASE_URL")
+  url      = env("DATABASE_URI")
 }
 
 generator client {
@@ -16,6 +16,7 @@ model User {
   passwordHash   String          @db.VarChar(255)
   OAuthAuthCodes OAuthAuthCode[]
   OAuthTokens    OAuthToken[]
+  Profile        Profile?
 
   @@index([email], name: "idx_user_email")
 }
@@ -96,4 +97,13 @@ model OAuthScope {
 
   OAuthClientScope OAuthClientScope[]
   @@index([name], name: "idx_oauthscope_name")
+}
+
+model Profile {
+  id          String      @id @default(uuid()) @db.Uuid
+  firstname   String
+  lastname    String
+  birthday    DateTime
+  user        User        @relation(fields: [userId], references: [id])
+  userId      String      @unique @db.Uuid
 }

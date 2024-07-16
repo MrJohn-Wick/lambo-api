@@ -1,5 +1,3 @@
-import "dotenv/config";
-
 import { PrismaClient } from "@prisma/client";
 import express, { Express } from "express";
 import { AuthorizationServer, DateInterval } from "@jmondi/oauth2-server";

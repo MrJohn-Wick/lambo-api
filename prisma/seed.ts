@@ -17,6 +17,13 @@ void (async function () {
       email: "ashibeko@gmail.com",
       // createdIP: "127.0.0.1",
       passwordHash,
+      Profile: {
+        create: {
+          firstname: "Alexander",
+          lastname: "Shibeko",
+          birthday: new Date("1983-10-08"),
+        }
+      }
     },
   });
 
