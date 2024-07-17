@@ -45,7 +45,7 @@ export class UserRepository implements OAuthUserRepository {
       return {
         id: user?.id,
         email: user?.email,
-        firstnane: user?.Profile?.firstname,
+        firstname: user?.Profile?.firstname,
         lastname: user?.Profile?.lastname,
         birthday: user?.Profile?.birthday,
       };
