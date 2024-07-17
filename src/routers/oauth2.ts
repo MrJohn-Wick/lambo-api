@@ -28,34 +28,6 @@ export async function bootstrap_auth(app: Express) {
     // { grant: "authorization_code", authCodeRepository, userRepository },
   );
 
-  app.get("/authorize", async (req: express.Request, res: express.Response) => {
-    console.log('Authorize');
-    try {
-      // Validate the HTTP request and return an AuthorizationRequest object.
-      const authRequest = await authorizationServer.validateAuthorizationRequest(req);
-
-      // The auth request object can be serialized and saved into a user's session.
-      // You will probably want to redirect the user at this point to a login endpoint.
-
-      // Once the user has logged in set the user on the AuthorizationRequest
-      console.log("Once the user has logged in set the user on the AuthorizationRequest");
-      authRequest.user = { id: "abc", email: "user@example.com" };
-
-      // At this point you should redirect the user to an authorization page.
-      // This form will ask the user to approve the client and the scopes requested.
-
-      // Once the user has approved or denied the client update the status
-      // (true = approved, false = denied)
-      authRequest.isAuthorizationApproved = true;
-
-      // Return the HTTP redirect response
-      const oauthResponse = await authorizationServer.completeAuthorizationRequest(authRequest);
-      return handleExpressResponse(res, oauthResponse);
-    } catch (e) {
-      handleExpressError(e, res);
-    }
-  });
-
   app.post("/token", async (req: express.Request, res: express.Response) => {
     console.log('token');
     try {
