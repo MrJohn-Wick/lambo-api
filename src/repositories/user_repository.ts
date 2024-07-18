@@ -55,14 +55,32 @@ export class UserRepository implements OAuthUserRepository {
   async registerNewUser(
     email: string,
     password: string,
+    firstname: string,
+    lastname: string,
+    birthday: string,
   ): Promise<User | null> {
+    const existUser = await this.prisma.user.findUnique({
+      where: { email }
+    })
+    if (existUser) {
+      throw new Error('this email is alredy exist');
+    }
+
     const passwordHash = await bcrypt.hash(password, 12);
     const user = await this.prisma.user.create({
       data: {
         email,
-        passwordHash
+        passwordHash,
+        Profile: {
+          create: {
+            firstname,
+            lastname,
+            birthday: new Date(birthday),
+          }
+        }
       }
     });
+
     if (user) return new User(user);
     return null;
   }
