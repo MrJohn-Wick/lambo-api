@@ -1,9 +1,17 @@
-# lambo-api
+# Typescript OAuth2.0 Server Example
 
-## How to run:
+## Want a better example?
 
-1. npm i
-2. create .env.prod file
-3. setup DATABASE_URL variable
-4. npx dotenv -c prod -- prisma db push
-5. npx dotenv -c prod -- npm run start
+See the [ts-oauth2-server-example](https://github.com/jasonraimondi/ts-oauth2-server-example) repository for a more full example.
+
+## Getting Started
+
+```bash
+cp .env.example .env
+```
+
+```dotenv
+# String, buffer, or object containing either the secret for HMAC algorithms or the PEM encoded private key for RSA and ECDSA
+# https://github.com/auth0/node-jsonwebtoken#usage
+OAUTH_CODES_SECRET=changeme
+```

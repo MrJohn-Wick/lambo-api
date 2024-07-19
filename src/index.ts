@@ -1,25 +1,48 @@
-import 'module-alias/register';
-import express, { Express, Request, Response } from 'express';
 import dotenv from 'dotenv';
-import userRouter from '@lambo/routes/users';
-import { swaggerDocs } from '@lambo/routes/swagger';
+import Express from 'express';
+import cors from 'cors';
+import bodyParser from "body-parser";
+import { bootstrap_auth } from './routers/oauth2.js';
+import { bootstrap_register } from './routers/register.js';
+import { ExtractJwt, Strategy } from "passport-jwt";
+import passport from "passport";
+import { profileRouter } from './routers/profile.js';
+import { UserRepository } from './repositories/user_repository.js';
+import { PrismaClient } from '@prisma/client';
 
+const app = Express();
 
 dotenv.config();
-dotenv.config({ path: `.env.local`, override: true });
 
-const app: Express = express();
-const port = Number(process.env.PORT) || 3000;
+app.use(cors())
 
-app.use(express.json());
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: false }));
 
-app.get('/', (req: Request, res:Response) => {
-  res.send("<h1>It's work!!!</h1>");
-});
+bootstrap_auth(app);
+bootstrap_register(app);
 
-app.use('/user', userRouter);
+const strategyOpts = {
+  jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
+  secretOrKey: process.env.OAUTH_CODES_SECRET || "secret",
+};
+passport.use(
+  new Strategy(
+    strategyOpts,
+    async (payload, done) => {
+      console.log("token payload", payload);
+      const prisma = new PrismaClient();
+      const usersRepositiory = new UserRepository(prisma);
+      const user = await usersRepositiory.getUserById(payload.sub);
+      if (user)
+        return done(null, user);
+      return done(new Error("invalid token"));
+    }
+  )
+);
 
-app.listen(port, () => {
-  console.log(`API is listening on port ${port}`);
-  swaggerDocs(app, port);
-});
+app.use("/users", profileRouter);
+
+const PORT = process.env.NODE_PORT || 3000;
+app.listen(PORT);
+console.log(`app is listening on http://localhost:${PORT}`);
