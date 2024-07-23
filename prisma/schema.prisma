@@ -1,75 +1,43 @@
 // This is your Prisma schema file,
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
 }
 
 datasource db {
-  provider = "mysql"
+  provider = "sqlite"
   url      = env("DATABASE_URL")
 }
 
+
 model User {
-  id              String   @id @default(uuid())
-  email           String   @unique
-  password        String
-  phone           String?
-  first_name      String?
-  last_name       String?
-  date_of_birth   DateTime?
-  roles           UsersRoles[]
-  streams         Stream[]
-  calls_out       Call[]  @relation("CallOut")
-  calls_in        Call[]  @relation("CallIn")
-  sessions        Session[]
+  id            String  @id @default(cuid())
+  email         String  @unique
+  passwordHash  String?
+  accessTokens  AccessToken[]
+  refreshTokens RefreshToken[]
+
+  @@map("users")
 }
 
-model Role {
-  id    String   @id @default(uuid())
-  name  String
-  users UsersRoles[]
-}
-
-model UsersRoles {
-  user      User      @relation(fields: [user_id], references: [id])
-  user_id   String
-  role      Role      @relation(fields: [role_id], references: [id])
-  role_id   String
-
-  @@id([user_id, role_id])
-}
-
-model Stream {
-  id            String    @id @default(uuid())
-  name          String
+model AccessToken {
+  id            String    @id @default(cuid())
+  token         String
+  expiresAt     DateTime
   user          User      @relation(fields: [user_id], references: [id])
   user_id       String
-  category      Category  @relation(fields: [category_id], references: [id])
-  category_id   String
+
+  @@map("auth_access_tokens")
 }
 
-model Category {
-  id        String    @id @default(uuid())
-  name      String
-  streams   Stream[]
-}
-
-model Call {
-  id            String    @id @default(uuid())
-  user_src      User      @relation("CallOut", fields: [user_src_id], references: [id])
-  user_src_id   String
-  user_dst      User      @relation("CallIn", fields: [user_dst_id], references: [id])
-  user_dst_id   String
-}
-
-model Session {
-  id            String    @id @default(uuid())
-  token         String    @db.Text
+model RefreshToken {
+  id            String    @id @default(cuid())
+  token         String
+  expiresAt    DateTime
   user          User      @relation(fields: [user_id], references: [id])
-  user_id       String    
-  created_at    DateTime  @default(now())
-} 
+  user_id       String
+
+  @@map("auth_refresh_tokens")
+}
+  

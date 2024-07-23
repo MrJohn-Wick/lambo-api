@@ -1,68 +1,35 @@
-import { RegisterSchema } from '@lambo/schemas/register';
-import { usersService } from '@lambo/services/users';
-import { Prisma } from '@prisma/client';
-import { NextFunction, Request, Response } from 'express';
-import passport from 'passport';
+import { Request, Response } from "express";
+import { SignUpSchema } from "../schemas/signup";
+import { createUser, getUserByEmail } from "../repositories/users";
 
 export const authController = {
-  login: async (req: Request, res: Response, next: NextFunction) => {
-    passport.authenticate(
-      'local',
-      (err:any, user:any, info:any) => {
-        if (err)
-          return next(err);
-        if (!user) {
-          res.status(401).json({
-            success: false,
-            message: info.message,
-          });
-        }
-        req.login(user, { session: true }, async (error) => {
-          if (error) return next(error);
-          return res.json({
-            success: true,
-          })
-        });
-    }
-    )(req, res, next);
-  },
-
-  logout: async (req: Request, res: Response, next: NextFunction) => {
-    req.logout((err) => {
-      if (err)
-        return next(err);
-      return {
-        success: "ok",
-      }
-    });
-  },
-
-  register: async (req: Request, res: Response, next: NextFunction) => {
-    const validatedValues = RegisterSchema.safeParse(req.body);
-    if (validatedValues.success) {
-      try {
-        await usersService.create({
-          email: validatedValues.data.email,
-          password: validatedValues.data.password
-        });
-        res.json({
-          success: true,
-          message: "User created"
-        });
-      } catch (error) {
-        if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === "P2002") {
-          res.json({
-            success: false,
-            message: "Email is exist",
-          });
-        }
-        next(error);
-      }
-    } else {
-      res.json({
-        success: false,
-        message: 'Invalid parameters',
+  async signUp(req: Request, res: Response) {
+    const validatedValues = SignUpSchema.safeParse(req.body);
+    if (!validatedValues.success) {
+      return res.json({
+        error: true,
+        message: "Invalid credentials: " + validatedValues.error        
       });
     }
-  },
+    
+    const { username, password } = validatedValues.data;
+    const user = await getUserByEmail(username);
+    
+    if (user) {
+      return res.json({
+        error: true,
+        message: "Email is alredy used"
+      });
+    }
+    const newUser = await createUser(username, password);
+    if (newUser) {
+      return res.json({
+        success: true,
+      })
+    }
+    return {
+      error: true,
+      message: "Something go wrong"
+    }
+  }
 };
