@@ -1,39 +1,64 @@
-import 'module-alias/register';
+import bodyParser from 'body-parser';
+import express, { Request, Response } from 'express';
+import passport from 'passport';
+import { authController } from './controllers/auth';
+import { oauthServer } from './passport';
+import { profileController } from './controllers/profile';
 import cors from 'cors';
-import express, { Express, Request, Response } from 'express';
-import dotenv from 'dotenv-flow';
-import authRouter from '@lambo/routes/auth';
-import userRouter from '@lambo/routes/users';
-import { swaggerDocs } from '@lambo/routes/swagger';
-import session from 'express-session';
-import { initPassport } from './utils/auth';
+import { generateToken } from './utils/auth';
+import { storeTokens } from './repositories/tokens';
+import { User } from '@prisma/client';
 
-dotenv.config();
 
-const app: Express = express();
-const port = Number(process.env.PORT) || 3000;
-
-app.use(cors())
+const app = express();
+app.use(cors());
 app.use(express.json());
-app.use(express.urlencoded());
-
-app.use(session({
-  secret: process.env.APP_SECRET || 'secret',
-}));
-
-initPassport(app);
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(express.json());
 
 app.get('/', (req: Request, res: Response) => {
-  res.send(`<h1>It's work!!!</h1>`);
+  res.json({
+    status: "Server ok"
+  });
 });
 
-app.use('/', authRouter);
-
-app.use('/user', userRouter
-  // #swagger.tags = ['Users']
+app.post(
+  '/signup',
+  authController.signUp
 );
 
-app.listen(port, () => {
-  console.log(`API is listening on port ${port}`);
-  swaggerDocs(app, port);
+app.post(
+  '/oauth/token',
+  oauthServer.token(),
+  oauthServer.errorHandler()
+);
+
+app.get(
+  '/oauth/provider/google',
+  passport.authenticate('google-token', { session: false }),
+  async (req: Request, res: Response) => {
+    const aToken = generateToken();
+    const rToken = generateToken();
+    const expiresAt = new Date(new Date().getTime() + 60*60*1000);
+    if (req.user) {
+      await storeTokens(req.user as User, aToken, rToken, expiresAt);
+      res.json({
+        token_type: 'Bearer',
+        access_token: aToken,
+        refresh_token: rToken,
+        expires_in: expiresAt,
+      });
+    }
+    res.status(401);
+  }
+);
+
+app.get(
+  '/me',
+  passport.authenticate('bearer', { session: false }),
+  profileController.me
+);
+
+app.listen(process.env.PORT || 3000, () => {
+  console.log("Server starting!");
 });
