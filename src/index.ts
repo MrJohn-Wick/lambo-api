@@ -57,7 +57,6 @@ app.post(
   oauthServer.errorHandler()
 );
 
-
 app.get(
   /* 
     #swagger.tags = ['Security']
