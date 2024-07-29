@@ -8,6 +8,7 @@ import cors from 'cors';
 import { generateToken } from './utils/auth';
 import { storeTokens } from './repositories/tokens';
 import { User } from '@prisma/client';
+import { subscriptionController } from './controllers/subscribtion';
 import swaggerUi from 'swagger-ui-express';
 import { readFileSync } from 'fs';
 
@@ -100,8 +101,33 @@ app.get(
   profileController.me
 );
 
+app.get(
+  '/users/available-for-call',
+  passport.authenticate('bearer', { session: false }),
+  profileController.availableForCall
+);
+
+app.post(
+  '/users/subscribe',
+  passport.authenticate('bearer', { session: false }),
+  subscriptionController.create
+);
+
+/**
+ * 
+ */
+app.get(
+  '/users/:userId/subscriptions',
+  passport.authenticate('bearer', { session: false }),
+  subscriptionController.get
+);
+
+/**
+ * 
+ */
 const file = readFileSync('./swagger-doc.json', 'utf8')
 const swaggerDocument = JSON.parse(file);
+
 app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 app.listen(process.env.PORT || 3000, () => {

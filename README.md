@@ -13,3 +13,13 @@
 1. docker-compose up
 2. npx dotenv -c local -- prisma db push
 3. npx dotenv -c local -- npm run dev
+
+
+
+
+
+1. npx prisma generate
+2. npx prisma db push
+3. npm run swagger
+4. npm install
+5. npm run dev

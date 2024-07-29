@@ -15,6 +15,7 @@ oauthServer.exchange(
   oauth2orize.exchange.password(async (client, username, passport, scope, done) => {
     console.log('Search user', username);
     const user = await getUserByEmail(username);
+    
     if (user && user.passwordHash && await compare(passport, user.passwordHash)) {
       const accessToken = generateToken();
       const refreshToken = generateToken();
@@ -22,6 +23,7 @@ oauthServer.exchange(
       await storeTokens(user, accessToken, refreshToken, expiresAt);
       return done(null, accessToken, refreshToken, {expires_in: expiresAt});
     }
+
     return done(new Error('User not found'));
   })
 );
@@ -30,6 +32,7 @@ oauthServer.exchange(oauth2orize.exchange.refreshToken(async (client, refreshTok
   console.log(client, refreshToken);
   const token = await getRefreshToken(refreshToken);
   console.log(token);
+  
   if (token && isValidToken(token)) {
     deleteRefreshToken(refreshToken);
 
@@ -39,6 +42,7 @@ oauthServer.exchange(oauth2orize.exchange.refreshToken(async (client, refreshTok
     await storeTokens(token.user, aToken, rToken, expiresAt);
     return done(null, aToken, rToken, { expires_in: expiresAt });
   }
+
   return done(null, false);
 }));
 
@@ -63,10 +67,13 @@ passport.use('google-token', new BearerStrategy( async (token: string, done) => 
   if (userInfo.email) {
     try {
       const user = await getUserByEmail(userInfo.email);
+
       if (user) {
         return done(null, user);
       }
+
       const newUser = await createUser(userInfo.email);
+      
       return done(null, newUser);
     } catch (error) {
       done(error, false); 
