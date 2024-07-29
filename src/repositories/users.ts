@@ -24,3 +24,10 @@ export async function createUser(email: string, password?: string) {
 
   return user;
 }
+
+export async function getUsers(limit: number) {
+  const users = await prisma.user.findMany({
+    take: limit
+  });
+  return users;
+}
