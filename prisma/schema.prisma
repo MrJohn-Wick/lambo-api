@@ -17,6 +17,7 @@ model User {
   passwordHash  String?
   accessTokens  AccessToken[]
   refreshTokens RefreshToken[]
+  profile       Profile?
 
   @@map("users")
 }
@@ -34,10 +35,33 @@ model AccessToken {
 model RefreshToken {
   id            String    @id @default(cuid())
   token         String
-  expiresAt    DateTime
+  expiresAt     DateTime
   user          User      @relation(fields: [user_id], references: [id])
   user_id       String
 
   @@map("auth_refresh_tokens")
 }
   
+model Profile {
+  id                String      @id @default(cuid())
+  fullname          String  
+  username          String      @unique
+  photo             String  
+  phone             String  
+  location          String  
+  about             String  
+  availableForCall  Boolean     @default(false)
+  user              User        @relation(fields: [userId], references: [id])
+  userId            String      @unique
+  categories        Category[]
+
+  @@map("profiles")
+}
+
+model Category {
+  id            String    @id @default(cuid())
+  title         String
+  profiles      Profile[]
+
+  @@map("categories")
+}
