@@ -112,8 +112,22 @@ app.post(
   passport.authenticate('bearer', { session: false }),
   subscriptionController.create
 );
+
+/**
+ * 
+ */
+app.get(
+  '/users/:userId/subscriptions',
+  passport.authenticate('bearer', { session: false }),
+  subscriptionController.get
+);
+
+/**
+ * 
+ */
 const file = readFileSync('./swagger-doc.json', 'utf8')
 const swaggerDocument = JSON.parse(file);
+
 app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 app.listen(process.env.PORT || 3000, () => {

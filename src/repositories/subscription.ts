@@ -26,3 +26,26 @@ export async function getUserSubscriptions(userId: string, subscriberId: string)
 
   return subscribe;
 }
+
+/* */
+export async function getSubscriptionByUserAndAuthor(userId: string, authorId: string) {
+  const sub = await prisma.subscription.findFirst({
+    where: {
+      user_id: authorId,
+      subscriber_id: userId
+    }
+  });
+
+  return sub;
+}
+
+/* */
+export async function getSubscribtionsByUser(userId: string) {
+  const subscriptions = await prisma.subscription.findMany({
+    where: {
+      subscriber_id: userId
+    }
+  });
+
+  return subscriptions;
+}

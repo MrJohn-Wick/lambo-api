@@ -20,5 +20,6 @@
 
 1. npx prisma generate
 2. npx prisma db push
-3. npm install
-4. npm run dev
+3. npm run swagger
+4. npm install
+5. npm run dev

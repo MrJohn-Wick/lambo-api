@@ -34,7 +34,7 @@ export const authController = {
 
     return {
       error: true,
-      message: "Something go wrong"
+      message: "Something went wrong."
     }
   }
 };
