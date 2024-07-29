@@ -49,10 +49,17 @@ model Profile {
   id                String      @id @default(cuid())
   fullname          String  
   username          String      @unique
+<<<<<<< HEAD
   photo             String?
   phone             String?  
   location          String?  
   about             String?  
+=======
+  photo             String  
+  phone             String  
+  location          String  
+  about             String  
+>>>>>>> 1. profile model
   availableForCall  Boolean     @default(false)
   user              User        @relation(fields: [userId], references: [id])
   userId            String      @unique
@@ -68,6 +75,7 @@ model Category {
 
   @@map("categories")
 }
+<<<<<<< HEAD
 
 model Subscription {
   user_id       String
@@ -79,3 +87,5 @@ model Subscription {
   @@id([user_id, subscriber_id])
   @@map("subscription")
 }
+=======
+>>>>>>> 1. profile model
