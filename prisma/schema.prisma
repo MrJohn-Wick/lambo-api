@@ -19,6 +19,9 @@ model User {
   refreshTokens RefreshToken[]
   profile       Profile?
 
+  Follower Subscription[] @relation("follower")
+  Author Subscription[] @relation("author")
+
   @@map("users")
 }
 
@@ -64,4 +67,15 @@ model Category {
   profiles      Profile[]
 
   @@map("categories")
+}
+
+model Subscription {
+  user_id       String
+  subscriber_id String
+
+  user          User    @relation("author", fields: [user_id], references: [id])
+  subscriber    User    @relation("follower", fields: [subscriber_id], references: [id])
+
+  @@id([user_id, subscriber_id])
+  @@map("subscription")
 }
