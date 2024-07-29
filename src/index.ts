@@ -9,6 +9,8 @@ import { generateToken } from './utils/auth';
 import { storeTokens } from './repositories/tokens';
 import { User } from '@prisma/client';
 import { subscriptionController } from './controllers/subscribtion';
+import swaggerUi from 'swagger-ui-express';
+import { readFileSync } from 'fs';
 
 
 const app = express();
@@ -17,24 +19,54 @@ app.use(express.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.json());
 
-app.get('/', (req: Request, res: Response) => {
-  res.json({
-    status: "Server ok"
-  });
-});
-
 app.post(
+  /* 
+    #swagger.tags = ['Security']
+    #swagger.summary = 'Register new user'
+    #swagger.description = 'Register new user by they credentials'
+    #swagger.consumes = ['application/json', 'application/x-www-form-urlencoded']
+    #swagger.parameters['body'] = {
+      in: 'body',
+      description: 'User credentials',
+      schema: {
+        $username: 'username@example.com',
+        $password: '123456',
+      }
+    } 
+  */
   '/signup',
   authController.signUp
 );
 
 app.post(
+  /* 
+    #swagger.tags = ['Security']
+    #swagger.summary = 'User login by credentials'
+    #swagger.description = 'Exchnage user credentials to access_token'
+    #swagger.parameters['body'] = {
+      in: 'body',
+      description: 'OAuth2 implict flow parameters',
+      schema: {
+        $username: 'username@example.com',
+        $password: '123456',
+        $grant_type: 'password'
+      }
+    } 
+  */
   '/oauth/token',
   oauthServer.token(),
   oauthServer.errorHandler()
 );
 
 app.get(
+  /* 
+    #swagger.tags = ['Security']
+    #swagger.summary = 'Login with Google'
+    #swagger.description = 'Exchnage goole access_token to API access_token'
+    #swagger.security = [{
+      "apiKeyAuth": []
+    }]
+  */
   '/oauth/provider/google',
   passport.authenticate('google-token', { session: false }),
   async (req: Request, res: Response) => {
@@ -55,6 +87,15 @@ app.get(
 );
 
 app.get(
+  /* 
+    #swagger.tags = ['User']
+    #swagger.description = 'Need to pass user access_token in Authorization header'
+    #swagger.summary = 'Get current user profile'
+    #swagger.produces = ['application/json']
+    #swagger.security = [{
+      "apiKeyAuth": []
+    }]
+  */
   '/me',
   passport.authenticate('bearer', { session: false }),
   profileController.me
@@ -71,6 +112,9 @@ app.post(
   passport.authenticate('bearer', { session: false }),
   subscriptionController.create
 );
+const file = readFileSync('./swagger-doc.json', 'utf8')
+const swaggerDocument = JSON.parse(file);
+app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 app.listen(process.env.PORT || 3000, () => {
   console.log("Server starting!");
