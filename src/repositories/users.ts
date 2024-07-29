@@ -1,5 +1,6 @@
 import { hash } from "bcryptjs";
 import { PrismaClient } from "@prisma/client"
+import { number } from 'zod';
 
 const prisma = new PrismaClient();
 
@@ -19,4 +20,11 @@ export async function createUser(email:string, password?:string) {
     }
   });
   return user;
+}
+
+export async function getUsers(limit: number) {
+  const users = await prisma.user.findMany({
+    take: limit
+  });
+  return users;
 }

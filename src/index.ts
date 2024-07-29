@@ -10,6 +10,7 @@ import { storeTokens } from './repositories/tokens';
 import { User } from '@prisma/client';
 import swaggerUi from 'swagger-ui-express';
 import { readFileSync } from 'fs';
+import { usersRouter } from './routes/users';
 
 
 const app = express();
@@ -99,6 +100,8 @@ app.get(
   passport.authenticate('bearer', { session: false }),
   profileController.me
 );
+
+app.use('/users', usersRouter);
 
 const file = readFileSync('./swagger-doc.json', 'utf8')
 const swaggerDocument = JSON.parse(file);
