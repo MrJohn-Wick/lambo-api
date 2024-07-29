@@ -8,6 +8,7 @@ import cors from 'cors';
 import { generateToken } from './utils/auth';
 import { storeTokens } from './repositories/tokens';
 import { User } from '@prisma/client';
+import { subscriptionController } from './controllers/subscribtion';
 
 
 const app = express();
@@ -57,6 +58,18 @@ app.get(
   '/me',
   passport.authenticate('bearer', { session: false }),
   profileController.me
+);
+
+app.get(
+  '/users/available-for-call',
+  passport.authenticate('bearer', { session: false }),
+  profileController.availableForCall
+);
+
+app.post(
+  '/users/subscribe',
+  passport.authenticate('bearer', { session: false }),
+  subscriptionController.create
 );
 
 app.listen(process.env.PORT || 3000, () => {
