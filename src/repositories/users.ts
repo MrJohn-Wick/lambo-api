@@ -3,6 +3,8 @@ import { PrismaClient, User } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
+// TODO: return users without passwordHash
+
 export async function getUserByEmail(email: string) {
 
   const user = await prisma.user.findUnique({
@@ -12,13 +14,34 @@ export async function getUserByEmail(email: string) {
   return user;
 };
 
-export async function createUser(email: string, password?: string) {
+export async function createUser(
+  email: string,
+  password: string,
+  username: string,
+  fullname: string,
+  photo?: string,
+  phone?: string,
+  location?: string,
+  about?: string,
+  availableForCall?: boolean,
+) {
 
   const passwordHash = password ? await hash(password, 10) : null;
   const user = await prisma.user.create({
     data: {
       email,
       passwordHash,
+      profile: {
+        create: {
+          username,
+          fullname,
+          photo,
+          phone,
+          location,
+          about,
+          availableForCall
+        }
+      }
     }
   });
 

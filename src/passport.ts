@@ -72,9 +72,11 @@ passport.use('google-token', new BearerStrategy( async (token: string, done) => 
         return done(null, user);
       }
 
-      const newUser = await createUser(userInfo.email);
-      
-      return done(null, newUser);
+      // TODO: create profile from google account
+      // const newUser = await createUser(userInfo.email);
+     
+      // return done(null, newUser);
+      return done(null, false);
     } catch (error) {
       done(error, false); 
     }

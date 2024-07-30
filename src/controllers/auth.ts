@@ -14,7 +14,18 @@ export const authController = {
       });
     }
     
-    const { username, password } = validatedValues.data;
+    const {
+      email,
+      password,
+      username,
+      fullname,
+      phone,
+      photo,
+      location,
+      about,
+      availableForCall,
+    } = validatedValues.data;
+    
     const user = await getUserByEmail(username);
     
     if (user) {
@@ -24,7 +35,17 @@ export const authController = {
       });
     }
 
-    const newUser = await createUser(username, password);
+    const newUser = await createUser(
+      email,
+      password,
+      username,
+      fullname,
+      photo,
+      phone,
+      location,
+      about,
+      availableForCall
+    );
 
     if (newUser) {
       return res.json({

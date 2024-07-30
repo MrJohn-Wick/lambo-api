@@ -18,8 +18,15 @@ authRouter.post(
       in: 'body',
       description: 'User credentials',
       schema: {
-        $username: 'username@example.com',
+        $email: 'username@example.com',
         $password: '123456',
+        $username: 'stive',
+        $fullname: 'Stive Jobs',
+        $phone: '+7**********',
+        $photo: '',
+        $location: 'USA',
+        $about: 'Some text',
+        $availableForCall: false,
       }
     } 
   */
