@@ -1,5 +1,5 @@
 import { hash } from "bcryptjs";
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient, User } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
@@ -30,4 +30,14 @@ export async function getUsers(limit: number) {
     take: limit
   });
   return users;
+}
+
+export async function getUserById(id: string): Promise<User> {
+  const user = await prisma.user.findFirstOrThrow({
+    where: { id },
+    include: {
+      profile: true
+    }
+  });
+  return user;
 }
