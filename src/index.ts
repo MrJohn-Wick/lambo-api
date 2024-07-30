@@ -16,8 +16,6 @@ app.use(express.json());
 app.use('/', authRouter);
 app.use('/users', usersRouter);
 
-app.use('/users', usersRouter);
-
 const file = readFileSync('./swagger-doc.json', 'utf8')
 const swaggerDocument = JSON.parse(file);
 
