@@ -6,6 +6,7 @@ import { generateToken, isValidToken } from './utils/auth';
 import { deleteRefreshToken, getAccessToken, getRefreshToken, storeTokens } from './repositories/tokens';
 import { createUser, getUserByEmail } from './repositories/users';
 import { Issuer } from 'openid-client';
+import { User } from '@prisma/client';
 
 
 export const oauthServer = oauth2orize.createServer();
@@ -48,9 +49,8 @@ oauthServer.exchange(oauth2orize.exchange.refreshToken(async (client, refreshTok
 
 passport.use(new BearerStrategy(async (token: string, done) => {
   const storedToken = await getAccessToken(token);
-  console.log(storedToken);
   if ( storedToken && isValidToken(storedToken)) {
-    return done(null, storedToken.user);
+    return done(null, storedToken.user as User);
   }
   return done(null, false);
 }));
@@ -72,9 +72,11 @@ passport.use('google-token', new BearerStrategy( async (token: string, done) => 
         return done(null, user);
       }
 
-      const newUser = await createUser(userInfo.email);
-      
-      return done(null, newUser);
+      // TODO: create profile from google account
+      // const newUser = await createUser(userInfo.email);
+     
+      // return done(null, newUser);
+      return done(null, false);
     } catch (error) {
       done(error, false); 
     }
