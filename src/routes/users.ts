@@ -20,7 +20,7 @@ usersRouter.get(
       type: 'number'
     } 
   */
-  '/',
+  '/users',
   passport.authenticate('bearer', { session: false }),
   usersController.list
 );

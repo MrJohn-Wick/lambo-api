@@ -13,8 +13,8 @@ app.use(express.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.json());
 
-app.use('/', authRouter);
-app.use('/users', usersRouter);
+app.use('/', authRouter); // ["/oauth/*", "/signup"]
+app.use('/', usersRouter); // ["/users", "/me"]
 
 const file = readFileSync('./swagger-doc.json', 'utf8')
 const swaggerDocument = JSON.parse(file);
