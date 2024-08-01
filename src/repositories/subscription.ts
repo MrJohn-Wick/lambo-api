@@ -44,6 +44,13 @@ export async function getSubscribtionsByUser(userId: string) {
   const subscriptions = await prisma.subscription.findMany({
     where: {
       subscriber_id: userId
+    },
+    include: {
+      user: {
+        include: {
+          profile: true
+        }
+      }
     }
   });
 
