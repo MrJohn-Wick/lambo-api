@@ -5,6 +5,7 @@ import swaggerUi from 'swagger-ui-express';
 import { readFileSync } from 'fs';
 import { usersRouter } from './routes/users';
 import { authRouter } from './routes/auth';
+import { subcriptionsRouter } from './routes/subscriptions';
 
 
 const app = express();
@@ -15,6 +16,8 @@ app.use(express.json());
 
 app.use('/', authRouter); // ["/oauth/*", "/signup"]
 app.use('/', usersRouter); // ["/users", "/me"]
+
+app.use('/sub', subcriptionsRouter);
 
 const file = readFileSync('./swagger-doc.json', 'utf8')
 const swaggerDocument = JSON.parse(file);
