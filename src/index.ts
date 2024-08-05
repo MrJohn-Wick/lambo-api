@@ -7,6 +7,7 @@ import { readFileSync } from 'fs';
 import { usersRouter } from './routes/users';
 import { authRouter } from './routes/auth';
 import { subcriptionsRouter } from './routes/subscriptions';
+import { categoriesRouter } from './routes/categories';
 
 
 dotenv.config();
@@ -19,6 +20,7 @@ app.use(express.json());
 
 app.use('/', authRouter); // ["/oauth/*", "/signup"]
 app.use('/', usersRouter); // ["/users", "/me"]
+app.use('/categories', categoriesRouter);
 
 app.use('/sub', subcriptionsRouter);
 
