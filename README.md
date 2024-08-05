@@ -1,6 +1,6 @@
-# lambo-api
+# Typescript OAuth2.0 Server Example
 
-## How to run:
+## Want a better example?
 
 1. npm i
 2. create .env.prod file

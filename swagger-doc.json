@@ -1,0 +1,235 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "My API",
+    "description": "Description",
+    "version": "1.0.0"
+  },
+  "host": "localhost:3000",
+  "basePath": "/",
+  "schemes": [
+    "http"
+  ],
+  "securityDefinitions": {
+    "apiKeyAuth": {
+      "type": "apiKey",
+      "in": "header",
+      "name": "Authorization",
+      "value": "Bearer <access_token>",
+      "description": "Bearer token from /oauth/token"
+    }
+  },
+  "paths": {
+    "/signup": {
+      "post": {
+        "tags": [
+          "Security"
+        ],
+        "summary": "Register new user",
+        "description": "Register new user by they credentials",
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "description": "User credentials",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "username": {
+                  "type": "string",
+                  "example": "username@example.com"
+                },
+                "password": {
+                  "type": "string",
+                  "example": "123456"
+                }
+              },
+              "required": [
+                "username",
+                "password"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/oauth/token": {
+      "post": {
+        "tags": [
+          "Security"
+        ],
+        "summary": "User login by credentials",
+        "description": "Exchnage user credentials to access_token",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "description": "OAuth2 implict flow parameters",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "username": {
+                  "type": "string",
+                  "example": "username@example.com"
+                },
+                "password": {
+                  "type": "string",
+                  "example": "123456"
+                },
+                "grant_type": {
+                  "type": "string",
+                  "example": "password"
+                }
+              },
+              "required": [
+                "username",
+                "password",
+                "grant_type"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/oauth/provider/google": {
+      "get": {
+        "tags": [
+          "Security"
+        ],
+        "summary": "Login with Google",
+        "description": "Exchnage goole access_token to API access_token",
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        },
+        "security": [
+          {
+            "apiKeyAuth": []
+          }
+        ]
+      }
+    },
+    "/me": {
+      "get": {
+        "tags": [
+          "User"
+        ],
+        "summary": "Get current user profile",
+        "description": "Need to pass user access_token in Authorization header",
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "security": [
+          {
+            "apiKeyAuth": []
+          }
+        ]
+      }
+    },
+    "/users/": {
+      "get": {
+        "tags": [
+          "User"
+        ],
+        "summary": "list of users",
+        "description": "Returt list of users",
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "description": "Query limit",
+            "type": "number"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "security": [
+          {
+            "apiKeyAuth": []
+          }
+        ]
+      }
+    },
+    "/sub/subscribe": {
+      "post": {
+        "tags": [
+          "Subscriptions"
+        ],
+        "summary": "Create subscriptions with Author and Subscriber.",
+        "description": "-",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "description": "-",
+            "schema": {
+              "type": "object",
+              "properties": {}
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/sub/{userId}/subscriptions": {
+      "get": {
+        "tags": [
+          "Subscriptions"
+        ],
+        "summary": "Getting subscriptions by userId",
+        "description": "-",
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "description": "-",
+            "schema": {
+              "type": "object",
+              "properties": {}
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    }
+  }
+}

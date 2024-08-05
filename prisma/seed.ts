@@ -1,153 +1,62 @@
-import { PrismaClient } from '@prisma/client';
-import { hash } from 'bcryptjs';
+import bcryptjs from "bcryptjs";
+import { PrismaClient } from "@prisma/client";
 
-const prisma = new PrismaClient();
-const users = [
-  {
-    "email": "Nestor.Kihn91@ya.ru",
-    "username": "Nestor",
-    "fullname": "Нинель Сергеевна Филиппова",
-    "photo": "https://cloudflare-ipfs.com/ipfs/Qmd3W5DuhgHirLHGVixi6V76LhCkZUz6pnFt5AJBiyvHye/avatar/569.jpg",
-    "phone": "+7 (154)-664-152",
-    "location": "Нигерия",
-    "about": "Разработке проект реализация организационной в повышение поэтапного форм не также. Участия равным высшего значимость подготовке повышение социально-ориентированный управление дальнейших значительной. Обучения создание реализация позволяет обществом всего следует следует."
-  },
-  {
-    "email": "Samson.Wehner9@hotmail.com",
-    "username": "Samson",
-    "fullname": "Оксана Воронцова",
-    "photo": "https://cloudflare-ipfs.com/ipfs/Qmd3W5DuhgHirLHGVixi6V76LhCkZUz6pnFt5AJBiyvHye/avatar/679.jpg",
-    "phone": "+7 (950)-737-483",
-    "location": "Аомынь (не признана)",
-    "about": "Влечёт же обществом актуальность форм. Управление важную оценить таким нами. Особенности создание же проблем.\nСущности подготовке опыт не качественно принимаемых предпосылки укрепления. Кадров путь оценить для путь кругу управление реализация реализация. Постоянное административных правительством кадровой соображения информационно-пропогандистское влечёт.\nЭксперимент сущности формирования напрямую стороны значительной. Место определения систему вызывает поставленных следует. Богатый работы широкому напрямую способствует обществом отметить понимание."
-  },
-  {
-    "email": "Savvatii_Kovacek47@mail.ru",
-    "username": "Savvatii",
-    "fullname": "Муравьева Кира Ильинична",
-    "photo": "https://cloudflare-ipfs.com/ipfs/Qmd3W5DuhgHirLHGVixi6V76LhCkZUz6pnFt5AJBiyvHye/avatar/892.jpg",
-    "phone": "+7 (171)-097-285",
-    "location": "Нидерланды",
-    "about": "Позволяет общества в. Воздействия принимаемых современного создаёт сущности существующий стороны. Организации дальнейшее формирования высшего начало отметить модель.\nСоответствующей существующий начало эксперимент. Формированию прогресса дальнейших обуславливает кадровой. Другой идейные что выбранный проблем.\nСистемы воздействия сомнений оценить. Обществом высокотехнологичная обществом. Соображения поэтапного нами предложений базы очевидна активизации создание финансовых."
-  },
-  {
-    "email": "Miron.Tromp@yandex.ru",
-    "username": "Miron",
-    "fullname": "Боброва Юлия",
-    "photo": "https://cloudflare-ipfs.com/ipfs/Qmd3W5DuhgHirLHGVixi6V76LhCkZUz6pnFt5AJBiyvHye/avatar/1245.jpg",
-    "phone": "+7 (584)-065-397",
-    "location": "Тамил-Илам (не признана)",
-    "about": "Качества степени развития. Нами стороны организационной на. Для повышению равным плановых нами.\nС обеспечение способствует и сфера собой значимость порядка. Насущным также предпосылки инновационный направлений ресурсосберегающих значимость кадровой. Прогрессивного также сущности административных выбранный ресурсосберегающих.\nДальнейшее качественно богатый рост. Определения гражданского поэтапного процесс важную требует создаёт административных. Прогрессивного формированию обеспечение широкому кадровой."
-  },
-  {
-    "email": "Kondrat_Krajcik72@yahoo.com",
-    "username": "Kondrat",
-    "fullname": "Рыбакова Феврония Леоновна",
-    "photo": "https://cloudflare-ipfs.com/ipfs/Qmd3W5DuhgHirLHGVixi6V76LhCkZUz6pnFt5AJBiyvHye/avatar/402.jpg",
-    "phone": "+7 (664)-606-744",
-    "location": "Эстония",
-    "about": "Внедрения форм кадровой форм роль. Же подготовке влечёт таким общества обществом образом практика таким. Значимость по роль таким."
-  },
-  {
-    "email": "Kseniya_Prosacco@yahoo.com",
-    "username": "Kseniya",
-    "fullname": "Смирнова Фаина",
-    "photo": "https://cloudflare-ipfs.com/ipfs/Qmd3W5DuhgHirLHGVixi6V76LhCkZUz6pnFt5AJBiyvHye/avatar/309.jpg",
-    "phone": "+7 (703)-694-542",
-    "location": "Бразилия",
-    "about": "Проект способствует систему особенности кругу модель. Организационной проверки важную плановых. Курс способствует по соображения на эксперимент а качественно. Нашей в концепция различных."
-  },
-  {
-    "email": "Fedot_Batz30@mail.ru",
-    "username": "Fedot",
-    "fullname": "Лидия Андреевна Дементьева",
-    "photo": "https://cloudflare-ipfs.com/ipfs/Qmd3W5DuhgHirLHGVixi6V76LhCkZUz6pnFt5AJBiyvHye/avatar/453.jpg",
-    "phone": "+7 (732)-879-848",
-    "location": "Суринам",
-    "about": "Дальнейшее базы оценить значение обеспечивает соображения структура равным социально-ориентированный. Поставленных для специалистов постоянное роль кадров предложений."
-  },
-  {
-    "email": "Averukyan_Hettinger18@yandex.ru",
-    "username": "Averukyan",
-    "fullname": "Гуляев Роман Архипович",
-    "photo": "https://cloudflare-ipfs.com/ipfs/Qmd3W5DuhgHirLHGVixi6V76LhCkZUz6pnFt5AJBiyvHye/avatar/412.jpg",
-    "phone": "+7 (464)-134-328",
-    "location": "Восточный Тимор",
-    "about": "Сознания обществом потребностям сфера социально-ориентированный роль. Воздействия дальнейшее кругу принимаемых не. Обеспечивает работы потребностям задач понимание соответствующей активности равным сомнений. Отметить повседневной проблем формировании представляет сфера отношении гражданского проблем. Постоянное новая целесообразности управление прогресса информационно-пропогандистское поэтапного стороны выполнять."
-  },
-  {
-    "email": "Vlas.Gutmann34@gmail.com",
-    "username": "Vlas",
-    "fullname": "Крюков Аристарх",
-    "photo": "https://cloudflare-ipfs.com/ipfs/Qmd3W5DuhgHirLHGVixi6V76LhCkZUz6pnFt5AJBiyvHye/avatar/165.jpg",
-    "phone": "+7 (785)-679-525",
-    "location": "Лаос",
-    "about": "Порядка же уточнения национальный процесс.\nПуть рамки забывать равным позволяет.\nСоответствующей качества требует значительной.\nПрактика проект сложившаяся мира эксперимент."
-  },
-  {
-    "email": "Olimpiada_Hegmann83@hotmail.com",
-    "username": "Olimpiada",
-    "fullname": "Степанова Лукия",
-    "photo": "https://cloudflare-ipfs.com/ipfs/Qmd3W5DuhgHirLHGVixi6V76LhCkZUz6pnFt5AJBiyvHye/avatar/179.jpg",
-    "phone": "+7 (705)-316-863",
-    "location": "Мозамбик",
-    "about": "Начало влечёт для значительной процесс другой административных."
-  }
-];
-const categories = [
-  'Psychology',
-  'Games',
-  'Food',
-  'Entertainment',
-  'Humor',
-];
-const defaultPassword = '123456';
+const prisma = new PrismaClient({
+  log: ["query", "info", "warn", "error"],
+});
 
+void (async function () {
+  const passwordHash = await bcryptjs.hash("password123", 10);
 
-async function main() {
-  await prisma.category.createMany({
-    data: categories.map(c => ({
-      title: c
-    })),
+  const jasonId = "dd74961a-c348-4471-98a5-19fc3c5b5079";
+  await prisma.user.upsert({
+    where: { id: jasonId },
+    update: { passwordHash },
+    create: {
+      id: jasonId,
+      email: "ashibeko@gmail.com",
+      // createdIP: "127.0.0.1",
+      passwordHash,
+      Profile: {
+        create: {
+          firstname: "Alexander",
+          lastname: "Shibeko",
+          birthday: new Date("1983-10-08"),
+        }
+      }
+    },
   });
 
-  const cats = await prisma.category.findMany({});
-  let i = 0;
-  const c = 3;
-
-  users.forEach(async u => {
-    const password = await hash(defaultPassword, 10);
-    await prisma.user.upsert({
-      where: { email: u.email },
-      update: {},
-      create: {
-        email: u.email,
-        passwordHash: password,
-        profile: {
-          create: {
-            username: u.username,
-            fullname: u.fullname,
-            photo: u.photo,
-            phone: u.phone,
-            location: u.location,
-            about: u.about,
-            availableForCall: Math.random() < 0.5,
-            categories: {
-              connect: cats.map(c => ({id: c.id}))
-            }
-          },
-        },
-      },
-    })
+  const clientId = "0e2ec2df-ee53-4327-a472-9d78c278bdbb";
+  await prisma.oAuthClient.upsert({
+    where: { id: clientId },
+    update: {},
+    create: {
+      id: clientId,
+      name: "Sample Client",
+      secret: null,
+      allowedGrants: ["authorization_code", "client_credentials", "refresh_token", "password"],
+      redirectUris: ["http://localhost:3001"],
+    },
   });
-}
 
-main()
-  .then(async () => {
-    await prisma.$disconnect()
-  })
-  .catch(async (e) => {
-    console.error(e)
-    await prisma.$disconnect()
-    process.exit(1)
+  const scopeId = "c3d49dba-53c8-4d08-970f-9c567414732e";
+  await prisma.oAuthScope.upsert({
+    where: { id: scopeId },
+    update: {},
+    create: {
+      id: scopeId,
+      name: "contacts.read",
+    },
   });
+
+  const scopeId2 = "22861a6c-dd8d-47b3-be1f-a3e7b67943bc";
+  await prisma.oAuthScope.upsert({
+    where: { id: scopeId2 },
+    update: {},
+    create: {
+      id: scopeId2,
+      name: "contacts.write",
+    },
+  });
+})();
