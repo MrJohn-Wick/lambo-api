@@ -1,3 +1,4 @@
+import dotenv from 'dotenv-flow';
 import bodyParser from 'body-parser';
 import express from 'express';
 import cors from 'cors';
@@ -7,6 +8,8 @@ import { usersRouter } from './routes/users';
 import { authRouter } from './routes/auth';
 import { subcriptionsRouter } from './routes/subscriptions';
 
+
+dotenv.config();
 
 const app = express();
 app.use(cors());
