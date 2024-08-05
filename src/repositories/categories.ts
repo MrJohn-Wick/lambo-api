@@ -1,14 +1,28 @@
-import { Category, PrismaClient } from "@prisma/client";
+import { Category, Prisma, PrismaClient } from "@prisma/client";
+import { ListenOptions } from 'net';
 
 const prisma = new PrismaClient();
 
 
-export async function getCategories(limit: number): Promise<Category[]> {
-  const options = {
-    take: limit ? limit : undefined
+interface ListOptions {
+  userId?: string;
+  limit?: number;
+};
+
+export async function getCategories(options: ListOptions): Promise<Category[]> {
+  let prismaOptions: Prisma.CategoryFindManyArgs = {};
+
+  if (options.userId) {
+    prismaOptions.where = {
+      profiles: {
+        some: {
+          userId: options.userId
+        }
+      }
+    }
   };
 
-  const categories = await prisma.category.findMany(options);
+  const categories = await prisma.category.findMany(prismaOptions);
 
   return categories;
 }

@@ -2,6 +2,7 @@ import passport from 'passport';
 import { Router } from 'express';
 import { profileController } from '../controllers/profile';
 import { subscriptionController } from '../controllers/subscribtion';
+import { categoriesController } from '../controllers/categories';
 
 export const meRouter = Router();
 
@@ -37,3 +38,9 @@ meRouter.post(
   passport.authenticate('bearer', { session: false }),
   subscriptionController.create
 );
+
+meRouter.get(
+  '/categories',
+  passport.authenticate('bearer', { session: false }),
+  categoriesController.userCategories
+)
