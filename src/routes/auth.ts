@@ -38,14 +38,16 @@ authRouter.post(
   /* 
     #swagger.tags = ['Security']
     #swagger.summary = 'User login by credentials'
-    #swagger.description = 'Exchnage user credentials to access_token'
+    #swagger.description = 'Exchnage user credentials to access_token <br>
+    or refresh_token to access_token'
     #swagger.parameters['body'] = {
       in: 'body',
-      description: 'OAuth2 implict flow parameters',
+      description: 'OAuth2 implict flow parameters or refresh flow parameters',
       schema: {
         $username: 'username@example.com',
         $password: '123456',
-        $grant_type: 'password'
+        $refresh_token: '<refresh_token>',
+        $grant_type: 'password or refresh_token'
       }
     } 
   */
