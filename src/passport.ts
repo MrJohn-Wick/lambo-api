@@ -8,6 +8,13 @@ import { createUser, getUserByEmail } from './repositories/users';
 import { Issuer } from 'openid-client';
 import { User } from '@prisma/client';
 
+declare global {
+  namespace Express {
+    interface User {
+      id: string;
+    }
+  }
+}
 
 export const oauthServer = oauth2orize.createServer();
 const accessTokenLifetime = 60 * 60 * 1000; //one hour
