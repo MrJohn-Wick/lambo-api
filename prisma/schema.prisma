@@ -18,9 +18,10 @@ model User {
   accessTokens  AccessToken[]
   refreshTokens RefreshToken[]
   profile       Profile?
+  streams       Stream[]
 
-  Follower Subscription[] @relation("follower")
-  Author Subscription[] @relation("author")
+  Follower      Subscription[] @relation("follower")
+  Author        Subscription[] @relation("author")
 
   @@map("users")
 }
@@ -65,6 +66,7 @@ model Category {
   id            String    @id @default(cuid())
   title         String
   profiles      Profile[]
+  streams       Stream[]
 
   @@map("categories")
 }
@@ -78,4 +80,15 @@ model Subscription {
 
   @@id([user_id, subscriber_id])
   @@map("subscription")
+}
+
+model Stream {
+  id            String    @id @default(cuid())
+  title         String
+  user_id       String
+  user          User    @relation(fields: [user_id], references: [id])
+  categories    Category[]
+  preview       String?
+
+  @@map("streams")
 }

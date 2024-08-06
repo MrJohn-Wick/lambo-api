@@ -9,13 +9,13 @@ import { authRouter } from './routes/auth';
 import { subcriptionsRouter } from './routes/subscriptions';
 import { categoriesRouter } from './routes/categories';
 import { meRouter } from './routes/me';
+import { streamsRouter } from './routes/streams';
 
 
 dotenv.config();
 
 const app = express();
 app.use(cors());
-app.use(express.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.json());
 
@@ -23,6 +23,7 @@ app.use('/', authRouter); // ["/oauth/*", "/signup"]
 app.use('/me', meRouter);
 app.use('/users', usersRouter);
 app.use('/categories', categoriesRouter);
+app.use('/streams', streamsRouter);
 
 app.use('/sub', subcriptionsRouter);
 
