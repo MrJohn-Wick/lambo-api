@@ -24,6 +24,10 @@ meRouter.get(
 meRouter.get(
   /* 
     #swagger.tags = ['User']
+    #swagger.summary = 'Get users available for call to current user'
+    #swagger.security = [{
+      "apiKeyAuth": []
+    }]
   */
   '/available-for-call',
   passport.authenticate('bearer', { session: false }),
@@ -33,6 +37,10 @@ meRouter.get(
 meRouter.post(
   /* 
     #swagger.tags = ['User']
+    #swagger.summary = 'Subscribe current user to another'
+    #swagger.security = [{
+      "apiKeyAuth": []
+    }]
   */
   '/subscribe',
   passport.authenticate('bearer', { session: false }),
@@ -40,7 +48,14 @@ meRouter.post(
 );
 
 meRouter.get(
-  '/categories',
+  /* 
+    #swagger.tags = ['User']
+    #swagger.summary = 'Get categories for current user'
+    #swagger.security = [{
+      "apiKeyAuth": []
+    }]
+  */
+    '/categories',
   passport.authenticate('bearer', { session: false }),
   categoriesController.userCategories
-)
+);
