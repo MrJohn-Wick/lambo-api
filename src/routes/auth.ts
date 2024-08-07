@@ -39,7 +39,14 @@ authRouter.post(
     #swagger.tags = ['Security']
     #swagger.summary = 'User login by credentials'
     #swagger.description = 'Exchnage user credentials to access_token <br>
-    or refresh_token to access_token'
+    or refresh_token to access_token <BR><BR>
+    Nestor.Kihn91@ya.ru <br>
+    Samson.Wehner9@hotmail.com <br>
+    Savvatii_Kovacek47@mail.ru <br>
+    Miron.Tromp@yandex.ru <br>
+    Kondrat_Krajcik72@yahoo.com <br>
+    Kseniya_Prosacco@yahoo.com <br>
+    '
     #swagger.parameters['body'] = {
       in: 'body',
       description: 'OAuth2 implict flow parameters or refresh flow parameters',

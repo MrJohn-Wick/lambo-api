@@ -4,13 +4,14 @@ import { categoriesController } from '../controllers/categories';
 
 export const categoriesRouter = Router();
 
-// use authorization for all endpoints
-categoriesRouter.use(passport.authenticate('bearer', { session: false }));
-
 categoriesRouter.get(
   /* 
     #swagger.tags = ['Categories']
+    #swagger.security = [{
+      "apiKeyAuth": []
+    }]
   */
   '/',
+  categoriesRouter.use(passport.authenticate('bearer', { session: false })),
   categoriesController.list
 );

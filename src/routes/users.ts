@@ -27,6 +27,10 @@ usersRouter.get(
 usersRouter.get(
   /* 
     #swagger.tags = ['Users']
+    #swagger.security = [{
+      "apiKeyAuth": []
+    }]
+
   */
   '/:userId/subscriptions',
   passport.authenticate('bearer', { session: false }),

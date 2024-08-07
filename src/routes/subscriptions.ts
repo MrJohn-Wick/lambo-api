@@ -14,6 +14,10 @@ subcriptionsRouter.post(
       description: '-',
       schema: {}
     } 
+    #swagger.security = [{
+      "apiKeyAuth": []
+    }]
+
   */
   '/subscribe',
   passport.authenticate('bearer', { session: false }),
@@ -33,6 +37,9 @@ subcriptionsRouter.get(
       description: '-',
       schema: {}
     } 
+    #swagger.security = [{
+      "apiKeyAuth": []
+    }]
   */
   '/:userId/subscriptions',
   passport.authenticate('bearer', { session: false }),
