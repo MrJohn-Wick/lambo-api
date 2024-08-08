@@ -6,7 +6,8 @@ npm i
 
 npx dotenv-flow npx prisma generate
 npx dotenv-flow npx prisma migrate deploy
-npx dotenv-flow npm run seed
+# uncomment next line if you need to create mock data
+# npx dotenv-flow npm run seed
 
 npm run swagger
 
