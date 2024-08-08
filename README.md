@@ -1,22 +1,18 @@
 # lambo-api
 
-## How to run:
+## How to run Dev
 
-1. npm i
-2. create .env.prod file
-3. setup DATABASE_URL variable
-4. npx dotenv -c prod -- prisma db push
-5. npx dotenv -c prod -- npm run start
+```bash
+npm i
+npx dotenv-flow npx prisma generate
+npx dotenv-flow npx prisma db push
+npx dotenv-flow npm run seed
+npm run swagger
+npm run dev
+```
 
-## With Docker
+## How to deploy on dev server
 
-1. docker-compose up
-2. npx dotenv -c local -- prisma db push
-3. npx dotenv -c local -- npm run dev
-
-
-1. npx prisma generate
-2. npx prisma db push
-3. npm run swagger
-4. npm install
-5. npm run dev
+```bash
+./deploy.sh
+```
