@@ -1,7 +1,9 @@
 import { hash } from "bcryptjs";
-import { PrismaClient, User } from "@prisma/client";
+import { Prisma, PrismaClient, User } from "@prisma/client";
 
 const prisma = new PrismaClient();
+
+type UserWithProfile = Prisma.UserGetPayload<{ include: { profile: true} }>;
 
 // TODO: return users without passwordHash
 
@@ -55,7 +57,7 @@ export async function getUsers(limit: number) {
   return users;
 }
 
-export async function getUserById(id: string): Promise<User> {
+export async function getUserById(id: string): Promise<UserWithProfile> {
   const user = await prisma.user.findFirstOrThrow({
     where: { id },
     include: {

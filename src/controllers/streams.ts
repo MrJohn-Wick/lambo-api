@@ -7,7 +7,10 @@ export const streamsController = {
     const limit = req.query.limit ? Number(req.query.limit) : 0;
     const streams = await getStreams(limit);
 
-    res.json(streams);
+    res.json({
+      success: true,
+      payload: streams
+    });
   },
 
   async create(req: Request, res: Response) {
@@ -17,8 +20,10 @@ export const streamsController = {
     const validatedData = StreamCreateSchema.safeParse(req.body);
     if (!validatedData.success) {
       return res.json({
-        error: true,
-        message: validatedData.error,
+        success: false,
+        error: {
+          message: validatedData.error,
+        }
       })
     }
     const { title, user_id, categories, preview } = validatedData.data;
@@ -26,7 +31,7 @@ export const streamsController = {
     // if(user_id && user.role == 'admin') { createStreamForUser }
     res.json({
       success: true,
-      item: await createStream(user.id, title, categories, preview),
+      payload: await createStream(user.id, title, categories, preview),
     });
   },
 
@@ -36,13 +41,18 @@ export const streamsController = {
     if (streamId) {
       const stream = await getStream(streamId);
       if (stream) {
-        return res.json(stream);
+        return res.json({
+          success: true,
+          payload: stream
+        });
       }
     }
 
     return res.status(404).json({
-      error: true,
-      message: "Not found"
+      success: false,
+      error: {
+        message: "Not found"
+      }
     });
   },
 
@@ -54,8 +64,10 @@ export const streamsController = {
     const validatedData = StreamEditSchema.safeParse(req.body);
     if (!validatedData.success) {
       return res.json({
-        error: true,
-        message: validatedData.error,
+        success: false,
+        error: {
+          message: validatedData.error,
+        }
       })
     }
 
@@ -74,6 +86,9 @@ export const streamsController = {
 
     const streams = await getStreams(5); // TODO: there is no criteria.
 
-    res.json(streams);
+    res.json({
+      success: true,
+      payload: streams
+    });
   },
 }
