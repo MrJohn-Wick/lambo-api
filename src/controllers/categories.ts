@@ -11,7 +11,8 @@ export const categoriesController = {
     });
 
     res.json({
-      items: categories
+      success: true,
+      payload: categories
     });
   },
 
@@ -27,7 +28,8 @@ export const categoriesController = {
     });
 
     res.json({
-      items: categories
+      success: true,
+      payload: categories
     });
   }
 }

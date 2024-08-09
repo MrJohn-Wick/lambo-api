@@ -19,16 +19,20 @@ export const subscriptionController = {
 
     if (sub) {
       return res.json({
-        error: true,
-        message: "Subscription already exist."
+        success: false,
+        error: {
+          message: "Subscription already exist."
+        }
       });
     }
 
-    createSubscribe(authorId, user.id);
+    const subscrbe = await createSubscribe(authorId, user.id);
 
     return res.json({
       success: true,
-      message: "Subscription was added."
+      payload: {
+        subscrbe
+      }
     });
   },
 
@@ -39,8 +43,9 @@ export const subscriptionController = {
 
     return res.json({
       success: true,
-      data: subscriptions,
-      message: !subscriptions ? "Subscriptions not found" : "Subscription was founded."
+      payload: {
+        subscriptions
+      }
     });
   }
 }

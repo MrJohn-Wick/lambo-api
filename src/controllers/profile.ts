@@ -7,15 +7,28 @@ export const profileController = {
     const currentUser = req.user as User;
     if (currentUser) {
       const user = await getUserById(currentUser.id);
-      return res.json(user);
+      return res.json({
+        success: true,
+        payload: {
+          id: user.id,
+          email: user.email,
+          profile: user.profile
+        }
+      });
     }
 
-    res.sendStatus(404);
+    res.sendStatus(404).json({
+      success: false,
+      error: {
+        message: "User not found"
+      }
+    });
   },
 
   availableForCall(req: Request, res: Response) {
     res.json({
-      user: req.user, // current user
+      success: true,
+      paylod: req.user, // current user
     })
   }
 }
