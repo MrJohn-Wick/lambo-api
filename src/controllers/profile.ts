@@ -16,6 +16,9 @@ export const profileController = {
         data: {
           id: user.id,
           email: user.email,
+          emailVerified: user.emailVerified,
+          phone: user.phone,
+          phoneVerified: user.phoneVerified,
           profile: profile
         }
       });

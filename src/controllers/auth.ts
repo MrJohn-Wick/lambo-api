@@ -1,9 +1,10 @@
-import { Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 import { SignUpCodeSchema, SignUpSchema } from "../schemas/signup";
 import { createUser, getUserByEmail, getUserById, getUserByPhone, verifyPhone } from "../repositories/users";
 import { OnetimeCodeType } from '../types';
-import { createUserCode, getUserCodes } from '../repositories/verificationCode';
+import { createUserCode, deleteUserCodes, getUserCodes } from '../repositories/verificationCode';
 import { getTokens } from '../passport';
+import { SignInMobileSchema } from '../schemas/auth';
 
 export const authController = {
   async signUp(req: Request, res: Response) {
@@ -55,6 +56,7 @@ export const authController = {
         success: true,
         payload: {
           token: user.id,
+          // TODO: remove code after 
           onetimecode: code.code
         }
       });
@@ -95,6 +97,7 @@ export const authController = {
     const codes = await getUserCodes(user.id, OnetimeCodeType.PHONE);
     if (codes && code === codes[0].code) {
       verifyPhone(user.id);
+      deleteUserCodes(user.id, OnetimeCodeType.PHONE);
       const { accessToken, refreshToken, expiresAt } = await getTokens(user);
       return res.json({
         access_token: accessToken,
@@ -111,4 +114,35 @@ export const authController = {
       }
     })
   },
+
+  async mobile(req: Request, res: Response, next: NextFunction) {
+    const validatedValues = SignInMobileSchema.safeParse(req.body);
+
+    if (validatedValues.success) {
+      const { grant_type, phone } = validatedValues.data;
+      if (grant_type === 'mobile') {
+        const user = await getUserByPhone(phone);
+
+        if (user && user.phoneVerified) {
+          const code = await createUserCode(user.id, OnetimeCodeType.PHONE);
+          return res.json({
+            success: true,
+            payload: {
+              token: user.id,
+              // TODO: remove code after 
+              onetimecode: code.code
+            }
+          });
+        }
+        return res.json({
+          success: false,
+          error: {
+            message: "User not found"
+          }
+        });
+      }
+    }
+
+    next()
+  }
 };

@@ -42,7 +42,7 @@ authRouter.post(
       }
     } 
   */
-  '/signup/code',
+  '/oauth/code',
   authController.signUpCode
 )
 
@@ -66,11 +66,13 @@ authRouter.post(
         $username: 'username@example.com',
         $password: '123456',
         $refresh_token: '<refresh_token>',
-        $grant_type: 'password or refresh_token'
+        $phone: '+7123456789',
+        $grant_type: 'password or refresh_token or mobile'
       }
     } 
   */
   '/oauth/token',
+  authController.mobile,
   oauthServer.token(),
   oauthServer.errorHandler()
 );
