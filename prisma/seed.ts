@@ -6,7 +6,9 @@ const users = [
   {
     "email": "Nestor.Kihn91@ya.ru",
     "username": "Nestor",
-    "fullname": "Нинель Сергеевна Филиппова",
+    "firstname": "Nestor",
+    "lastname": "Kihn",
+    "birthday": "2023-10-20T00:00:00.000Z",
     "photo": "https://cloudflare-ipfs.com/ipfs/Qmd3W5DuhgHirLHGVixi6V76LhCkZUz6pnFt5AJBiyvHye/avatar/569.jpg",
     "phone": "+7 (154)-664-152",
     "location": "Нигерия",
@@ -15,7 +17,9 @@ const users = [
   {
     "email": "Samson.Wehner9@hotmail.com",
     "username": "Samson",
-    "fullname": "Оксана Воронцова",
+    "firstname": "Samson",
+    "lastname": "Wehner",
+    "birthday": "2023-10-20T00:00:00.000Z",
     "photo": "https://cloudflare-ipfs.com/ipfs/Qmd3W5DuhgHirLHGVixi6V76LhCkZUz6pnFt5AJBiyvHye/avatar/679.jpg",
     "phone": "+7 (950)-737-483",
     "location": "Аомынь (не признана)",
@@ -24,7 +28,9 @@ const users = [
   {
     "email": "Savvatii_Kovacek47@mail.ru",
     "username": "Savvatii",
-    "fullname": "Муравьева Кира Ильинична",
+    "firstname": "Savvatii",
+    "lastname": "Kovacek",
+    "birthday": "2023-10-20T00:00:00.000Z",
     "photo": "https://cloudflare-ipfs.com/ipfs/Qmd3W5DuhgHirLHGVixi6V76LhCkZUz6pnFt5AJBiyvHye/avatar/892.jpg",
     "phone": "+7 (171)-097-285",
     "location": "Нидерланды",
@@ -33,7 +39,9 @@ const users = [
   {
     "email": "Miron.Tromp@yandex.ru",
     "username": "Miron",
-    "fullname": "Боброва Юлия",
+    "firstname": "Miron",
+    "lastname": "Tromp",
+    "birthday": "2023-10-20T00:00:00.000Z",
     "photo": "https://cloudflare-ipfs.com/ipfs/Qmd3W5DuhgHirLHGVixi6V76LhCkZUz6pnFt5AJBiyvHye/avatar/1245.jpg",
     "phone": "+7 (584)-065-397",
     "location": "Тамил-Илам (не признана)",
@@ -42,7 +50,9 @@ const users = [
   {
     "email": "Kondrat_Krajcik72@yahoo.com",
     "username": "Kondrat",
-    "fullname": "Рыбакова Феврония Леоновна",
+    "firstname": "Kondrat",
+    "lastname": "Krajcik",
+    "birthday": "2023-10-20T00:00:00.000Z",
     "photo": "https://cloudflare-ipfs.com/ipfs/Qmd3W5DuhgHirLHGVixi6V76LhCkZUz6pnFt5AJBiyvHye/avatar/402.jpg",
     "phone": "+7 (664)-606-744",
     "location": "Эстония",
@@ -51,7 +61,9 @@ const users = [
   {
     "email": "Kseniya_Prosacco@yahoo.com",
     "username": "Kseniya",
-    "fullname": "Смирнова Фаина",
+    "firstname": "Kseniya",
+    "lastname": "Prosacco",
+    "birthday": "2023-10-20T00:00:00.000Z",
     "photo": "https://cloudflare-ipfs.com/ipfs/Qmd3W5DuhgHirLHGVixi6V76LhCkZUz6pnFt5AJBiyvHye/avatar/309.jpg",
     "phone": "+7 (703)-694-542",
     "location": "Бразилия",
@@ -60,7 +72,9 @@ const users = [
   {
     "email": "Fedot_Batz30@mail.ru",
     "username": "Fedot",
-    "fullname": "Лидия Андреевна Дементьева",
+    "firstname": "Fedot",
+    "lastname": "Batz",
+    "birthday": "2023-10-20T00:00:00.000Z",
     "photo": "https://cloudflare-ipfs.com/ipfs/Qmd3W5DuhgHirLHGVixi6V76LhCkZUz6pnFt5AJBiyvHye/avatar/453.jpg",
     "phone": "+7 (732)-879-848",
     "location": "Суринам",
@@ -69,7 +83,9 @@ const users = [
   {
     "email": "Averukyan_Hettinger18@yandex.ru",
     "username": "Averukyan",
-    "fullname": "Гуляев Роман Архипович",
+    "firstname": "Averukyan",
+    "lastname": "Hettinger",
+    "birthday": "2023-10-20T00:00:00.000Z",
     "photo": "https://cloudflare-ipfs.com/ipfs/Qmd3W5DuhgHirLHGVixi6V76LhCkZUz6pnFt5AJBiyvHye/avatar/412.jpg",
     "phone": "+7 (464)-134-328",
     "location": "Восточный Тимор",
@@ -78,7 +94,9 @@ const users = [
   {
     "email": "Vlas.Gutmann34@gmail.com",
     "username": "Vlas",
-    "fullname": "Крюков Аристарх",
+    "firstname": "Vlas",
+    "lastname": "Gutmann",
+    "birthday": "2023-10-20T00:00:00.000Z",
     "photo": "https://cloudflare-ipfs.com/ipfs/Qmd3W5DuhgHirLHGVixi6V76LhCkZUz6pnFt5AJBiyvHye/avatar/165.jpg",
     "phone": "+7 (785)-679-525",
     "location": "Лаос",
@@ -87,7 +105,9 @@ const users = [
   {
     "email": "Olimpiada_Hegmann83@hotmail.com",
     "username": "Olimpiada",
-    "fullname": "Степанова Лукия",
+    "firstname": "Olimpiada",
+    "lastname": "Hegmann",
+    "birthday": "2023-10-20T00:00:00.000Z",
     "photo": "https://cloudflare-ipfs.com/ipfs/Qmd3W5DuhgHirLHGVixi6V76LhCkZUz6pnFt5AJBiyvHye/avatar/179.jpg",
     "phone": "+7 (705)-316-863",
     "location": "Мозамбик",
@@ -122,16 +142,18 @@ async function main() {
       update: {},
       create: {
         email: u.email,
+        emailVerified: true,
+        phone: u.phone,
+        phoneVerified: true,
         passwordHash: password,
         profile: {
           create: {
             username: u.username,
-            fullname: u.fullname,
+            firstname: u.firstname,
+            lastname: u.lastname,
+            birthday: u.birthday,
             photo: u.photo,
-            phone: u.phone,
             location: u.location,
-            about: u.about,
-            availableForCall: Math.random() < 0.5,
             categories: {
               connect: cats.map(c => ({id: c.id}))
             }

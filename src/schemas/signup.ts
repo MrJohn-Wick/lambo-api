@@ -1,13 +1,16 @@
+import validator from 'validator';
 import * as z from 'zod';
 
 export const SignUpSchema = z.object({
   email: z.string().email(),
+  phone: z.string().refine(validator.isMobilePhone),
+});
+
+export const SignUpCodeSchema = z.object({
+  token: z.string().min(1),
+  code: z.string().min(4).max(4),
+});
+
+export const PasswordUpdateSchema = z.object({
   password: z.string().min(6),
-  username: z.string().min(1),
-  fullname: z.string().min(1),
-  photo: z.string().optional(),
-  phone: z.string().optional(),
-  location: z.string().optional(),
-  about: z.string().optional(),
-  availableForCall: z.boolean().optional(),
 });

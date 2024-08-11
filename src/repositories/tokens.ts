@@ -31,9 +31,10 @@ export async function deleteRefreshToken(token: string) {
 }
 
 export async function storeTokens(user: User, accessToken:string, refreshToken:string, expiresAt: Date) {
+
   await prisma.user.update({
     where: {
-      email: user.email,
+      id: user.id,
     },
     data: {
       accessTokens: {

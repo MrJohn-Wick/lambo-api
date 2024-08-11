@@ -19,20 +19,32 @@ authRouter.post(
       description: 'User credentials',
       schema: {
         $email: 'username@example.com',
-        $password: '123456',
-        $username: 'stive',
-        $fullname: 'Stive Jobs',
-        $phone: '+7**********',
-        $photo: '',
-        $location: 'USA',
-        $about: 'Some text',
-        $availableForCall: false,
+        $phone: '+375000000000',
       }
     } 
   */
   '/signup',
   authController.signUp
 );
+
+authRouter.post(
+  /* 
+    #swagger.tags = ['Security']
+    #swagger.summary = 'Confirm phone number'
+    #swagger.description = 'Register new user by they credentials'
+    #swagger.consumes = ['application/json', 'application/x-www-form-urlencoded']
+    #swagger.parameters['body'] = {
+      in: 'body',
+      description: 'User credentials',
+      schema: {
+        $token: '',
+        $code: '',
+      }
+    } 
+  */
+  '/signup/code',
+  authController.signUpCode
+)
 
 authRouter.post(
   /* 

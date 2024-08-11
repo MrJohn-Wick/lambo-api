@@ -10,15 +10,19 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-
 model User {
-  id            String  @id @default(cuid())
-  email         String  @unique
+  id            String   @id @default(cuid())
+  email         String   @unique
+  emailVerified Boolean  @default(false)
+  phone         String   @unique
+  phoneVerified Boolean  @default(false)
   passwordHash  String?
+
   accessTokens  AccessToken[]
   refreshTokens RefreshToken[]
   profile       Profile?
   streams       Stream[]
+  codes         VerificationCode[]
 
   Follower      Subscription[] @relation("follower")
   Author        Subscription[] @relation("author")
@@ -48,13 +52,12 @@ model RefreshToken {
   
 model Profile {
   id                String      @id @default(cuid())
-  fullname          String  
-  username          String      @unique
+  username          String?     @unique
+  firstname         String?
+  lastname          String?
+  birthday          DateTime?
   photo             String?
-  phone             String?  
   location          String?  
-  about             String?  
-  availableForCall  Boolean     @default(false)
   user              User        @relation(fields: [userId], references: [id])
   userId            String      @unique
   categories        Category[]
@@ -91,4 +94,14 @@ model Stream {
   preview       String?
 
   @@map("streams")
+}
+
+model VerificationCode {
+  id          String  @id @default(cuid())
+  code        String
+  type        String
+  user_id     String
+  user        User    @relation(fields: [user_id], references: [id])
+
+  @@map("verification_code")
 }

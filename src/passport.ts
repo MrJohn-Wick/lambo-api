@@ -19,16 +19,21 @@ declare global {
 export const oauthServer = oauth2orize.createServer();
 const accessTokenLifetime = 60 * 60 * 1000; //one hour
 
+export async function getTokens(user: User) {
+  const accessToken = generateToken();
+  const refreshToken = generateToken();
+  const expiresAt = new Date(new Date().getTime() + accessTokenLifetime);
+  await storeTokens(user, accessToken, refreshToken, expiresAt);
+  return { accessToken, refreshToken, expiresAt }
+}
+
 oauthServer.exchange(
   oauth2orize.exchange.password(async (client, username, passport, scope, done) => {
     console.log('Search user', username);
     const user = await getUserByEmail(username);
     
     if (user && user.passwordHash && await compare(passport, user.passwordHash)) {
-      const accessToken = generateToken();
-      const refreshToken = generateToken();
-      const expiresAt = new Date(new Date().getTime() + accessTokenLifetime);
-      await storeTokens(user, accessToken, refreshToken, expiresAt);
+      const { accessToken, refreshToken, expiresAt } = await getTokens(user);
       return done(null, accessToken, refreshToken, {expires_in: expiresAt});
     }
 
@@ -44,11 +49,8 @@ oauthServer.exchange(oauth2orize.exchange.refreshToken(async (client, refreshTok
   if (token && isValidToken(token)) {
     deleteRefreshToken(refreshToken);
 
-    const aToken = generateToken();
-    const rToken = generateToken();
-    const expiresAt = new Date(new Date().getTime() + accessTokenLifetime);
-    await storeTokens(token.user, aToken, rToken, expiresAt);
-    return done(null, aToken, rToken, { expires_in: expiresAt });
+    const tokens = await getTokens(token.user);
+    return done(null, tokens.accessToken, tokens.refreshToken, { expires_in: tokens.expiresAt });
   }
 
   return done(null, false);
