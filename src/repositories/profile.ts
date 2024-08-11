@@ -31,7 +31,7 @@ export async function updateProfile(userId: string, data: z.infer<typeof Profile
     },
     update: {
       categories: {
-        connect: categories
+        set: categories
       },
       ...upsertData
     },

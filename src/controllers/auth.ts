@@ -85,7 +85,7 @@ export const authController = {
     const { token, code } = validatedValues.data;
     const user = await getUserById(token);
 
-    if (!user || user.phoneVerified || user.emailVerified) {
+    if (!user) {
       return res.json({
         success: false,
         error: {
