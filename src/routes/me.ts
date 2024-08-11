@@ -74,9 +74,12 @@ meRouter.post(
       in: 'body',
       description: 'User credentials',
       schema: {
-        $password: '',
         $username: '',
-
+        $firstname: '',
+        $lastname: '',
+        $birthday: '',
+        $location: '',
+        $categories: ['id1', 'id2']
       }
     } 
   */
