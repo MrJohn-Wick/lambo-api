@@ -29,9 +29,9 @@ meRouter.get(
       "apiKeyAuth": []
     }]
   */
-  '/available-for-call',
+  '/subscriptions',
   passport.authenticate('bearer', { session: false }),
-  profileController.availableForCall
+  subscriptionController.getForCurrentUser
 );
 
 meRouter.post(

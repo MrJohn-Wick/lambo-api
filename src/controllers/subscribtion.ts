@@ -47,5 +47,18 @@ export const subscriptionController = {
         subscriptions
       }
     });
+  },
+
+  async getForCurrentUser(req: Request, res: Response) {
+    const user = req.user as User;
+    
+    const subscriptions = await getSubscribtionsByUser(user?.id);
+
+    return res.json({
+      success: true,
+      data: {
+        subscriptions
+      }
+    });
   }
 }
