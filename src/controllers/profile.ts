@@ -9,7 +9,7 @@ export const profileController = {
       const user = await getUserById(currentUser.id);
       return res.json({
         success: true,
-        payload: {
+        data: {
           id: user.id,
           email: user.email,
           profile: user.profile
@@ -23,12 +23,5 @@ export const profileController = {
         message: "User not found"
       }
     });
-  },
-
-  availableForCall(req: Request, res: Response) {
-    res.json({
-      success: true,
-      paylod: req.user, // current user
-    })
   }
 }

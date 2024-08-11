@@ -22,3 +22,10 @@ npx dotenv-flow npx prisma migrate dev
 ```bash
 ./deploy.sh
 ```
+
+1. npx prisma generate
+2. npx prisma db push
+3. npm run seed
+4. npm run swagger
+5. npm install
+6. npm run dev
