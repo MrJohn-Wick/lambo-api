@@ -3,6 +3,7 @@ import { Router } from 'express';
 import { profileController } from '../controllers/profile';
 import { subscriptionController } from '../controllers/subscribtion';
 import { categoriesController } from '../controllers/categories';
+import { usersController } from '../controllers/users';
 
 export const meRouter = Router();
 
@@ -58,4 +59,54 @@ meRouter.get(
     '/categories',
   passport.authenticate('bearer', { session: false }),
   categoriesController.userCategories
+);
+
+meRouter.post(
+  /* 
+    #swagger.tags = ['User']
+    #swagger.summary = 'Edit user profile'
+    #swagger.description = 'Edit user profile, all parameters are optional'
+    #swagger.consumes = ['application/json', 'application/x-www-form-urlencoded']
+    #swagger.security = [{
+      "apiKeyAuth": []
+    }]
+    #swagger.parameters['body'] = {
+      in: 'body',
+      description: 'User credentials',
+      schema: {
+        $username: '',
+        $firstname: '',
+        $lastname: '',
+        $birthday: '',
+        $location: '',
+        $categories: ['id1', 'id2']
+      }
+    } 
+  */
+  '/update',
+  passport.authenticate('bearer', { session: false }),
+  profileController.update
+);
+
+
+meRouter.post(
+  /* 
+    #swagger.tags = ['User']
+    #swagger.summary = 'Update user password'
+    #swagger.description = 'update user password'
+    #swagger.consumes = ['application/json', 'application/x-www-form-urlencoded']
+    #swagger.security = [{
+      "apiKeyAuth": []
+    }]
+    #swagger.parameters['body'] = {
+      in: 'body',
+      description: 'User credentials',
+      schema: {
+        $password: '',
+      }
+    } 
+  */
+  '/password',
+  passport.authenticate('bearer', { session: false }),
+  profileController.password
 );

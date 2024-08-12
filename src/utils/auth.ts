@@ -10,3 +10,11 @@ export function isValidToken(token: AccessToken) {
 export function generateToken() {
   return randomUUID();
 }
+
+export function getOnetimeCode(): string {
+  const high = 9999;
+  const low = 1000;
+  const code = Math.random() * (high - low) + low
+
+  return Math.floor(code).toString();
+}
