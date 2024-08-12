@@ -8,13 +8,15 @@
     "dev": "nodemon src/index.ts",
     "swagger": "node src/scripts/swagger.js",
     "seed": "npx ts-node prisma/seed.ts",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "s3": "nodemon s3test.ts"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "description": "",
   "dependencies": {
+    "@aws-sdk/client-s3": "^3.627.0",
     "@prisma/client": "^5.17.0",
     "@types/oauth2orize": "^1.11.5",
     "bcryptjs": "^2.4.3",

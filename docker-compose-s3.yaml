@@ -1,0 +1,14 @@
+version: '3.3'
+
+services:
+  s3:
+    image: scality/s3server
+    ports:
+      - '7000:8000'
+    volumes:
+      - s3data:/usr/src/app/localData
+      - s3metadata:/usr/src/app/localMetadata
+
+volumes:
+  s3data:
+  s3metadata:
