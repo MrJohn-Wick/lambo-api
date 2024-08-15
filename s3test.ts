@@ -5,10 +5,10 @@ import { readFileSync } from 'fs';
 (async () => {
   const s3client = new S3Client({
     region: "us-west-2",
-    endpoint: 'http://localhost:7000',
+    endpoint: 'http://localhost:9000',
     credentials: {
-      accessKeyId: 'accessKey1',
-      secretAccessKey: 'verySecretKey1'
+      accessKeyId: 'zR7JnW17Ot9xhLQBGo5S',
+      secretAccessKey: 'SG6qINQBjNNQGFsn5140SZxXOM5YRjTMB3ZAs0Co'
     },
     forcePathStyle: true,
   });
