@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { createStream, editStream, getStream, getStreams } from '../repositories/streams';
+import { createStream, editStream, getStream, getStreams, getStreamToken } from '../repositories/streams';
 import { StreamCreateSchema, StreamEditSchema } from '../schemas/streams';
 
 export const streamsController = {
@@ -15,7 +15,7 @@ export const streamsController = {
 
   async create(req: Request, res: Response) {
     const user = req.user;
-    if (!user) throw("Does'n have user after auth middleware!!!");
+    if (!user) throw("Premission denied");
 
     const validatedData = StreamCreateSchema.safeParse(req.body);
     if (!validatedData.success) {
@@ -29,6 +29,7 @@ export const streamsController = {
     const { title, user_id, categories, preview } = validatedData.data;
     // TODO: when added roles
     // if(user_id && user.role == 'admin') { createStreamForUser }
+
     res.json({
       success: true,
       payload: await createStream(user.id, title, categories, preview),
@@ -91,4 +92,25 @@ export const streamsController = {
       payload: streams
     });
   },
+
+  async token(req: Request, res: Response) {
+    const user = req.user;
+    const streamId = req.params.id;
+    if (!user) throw("Does'n have user after auth middleware!!!");
+
+    const token = await getStreamToken(streamId, user.id);
+    if (token) {
+      return res.json({
+        success: true,
+        payload: token,
+      })
+    }
+
+    res.json({
+      success: false,
+      error: {
+        message: "Can't generate token",
+      } 
+    })
+  }
 }

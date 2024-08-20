@@ -38,7 +38,7 @@ streamsRouter.post(
       schema: {
         $title: 'Stream title',
         $user_id: 'id',
-        $categories: '',
+        $categories: [],
         $preview: 'url'
       }
     } 
@@ -98,4 +98,23 @@ streamsRouter.patch(
   '/:id/edit',
   passport.authenticate('bearer', { session:false }),
   streamsController.edit
+);
+
+streamsRouter.get(
+  /* 
+    #swagger.tags = ['Streams']
+    #swagger.summary = 'Get stream token'
+    #swagger.description = 'Get participant tocken'
+    #swagger.security = [{
+      "apiKeyAuth": []
+    }]
+    #swagger.parameters['id'] = {
+      in: 'path',
+      description: 'Stream id',
+      type: 'string'
+    } 
+  */
+  '/:id/token',
+  passport.authenticate('bearer', { session:false }),
+  streamsController.token
 );

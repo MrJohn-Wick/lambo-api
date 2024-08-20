@@ -89,9 +89,11 @@ model Stream {
   id            String    @id @default(cuid())
   title         String
   user_id       String
+  preview       String?
+  room          String?
+
   user          User    @relation(fields: [user_id], references: [id])
   categories    Category[]
-  preview       String?
 
   @@map("streams")
 }
