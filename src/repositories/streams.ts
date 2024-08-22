@@ -1,12 +1,29 @@
 import { PrismaClient, Stream } from "@prisma/client";
 import z from 'zod';
 import { StreamEditSchema } from '../schemas/streams';
-import { createRoom, createToken } from './livekit';
+import { createToken } from './livekit';
 import { getProfileByUserId } from './profile';
 import { VideoGrant } from 'livekit-server-sdk';
 
 const prisma = new PrismaClient();
 
+interface StreamCreateParams {
+  uid:string,
+  cover?: string,
+  title: string,
+  description?: string,
+  language: string,
+  categories?: string[],
+  price_type: 'ticket' | 'rate',
+  price: number,
+  start_now?: boolean,
+  start_time?: string,
+  duration?: number,
+  charity?: number,
+  invited?: string[],
+  is_private?: boolean,
+  comments_off?: boolean,
+}
 
 export async function getStreams(limit: number): Promise<Stream[]> {
   const options = {
@@ -19,21 +36,48 @@ export async function getStreams(limit: number): Promise<Stream[]> {
   return streams;
 }
 
-export async function createStream(userId:string, title: string, categories: string[], preview?: string) {
-  const room = createRoom();
-  const categoriesData = categories.map(c => ({ id: c }));
+export async function createStream({
+    uid,
+    cover,
+    title,
+    description,
+    language,
+    categories,
+    price_type,
+    price,
+    start_now,
+    start_time,
+    duration,
+    charity,
+    invited,
+    is_private,
+    comments_off,
+  }: StreamCreateParams) {
+  const categoriesData = categories ? categories.map(c => ({ id: c })) : [];
+  const invitedData = invited ? invited.map(i => ({ id: i })) : [];
   const createdStream = await prisma.stream.create({
     data: {
+      cover,
       title,
-      preview,
-      room,
+      description,
+      language,
+      price_type,
+      price,
+      start_now,
+      start_time,
+      duration,
+      charity,
+      is_private,
+      comments_off,
       user: {
-        connect: { id: userId }
+        connect: { id: uid }
       },
       categories: {
         connect: categoriesData
+      },
+      invited: {
+        connect: invitedData
       }
-
     }
   });
 
@@ -55,8 +99,7 @@ export async function editStream(streamId: string, values: z.infer<typeof Stream
     data: {
       title: values.title || undefined,
       categories: categoriesData ? { connect: categoriesData } : undefined,
-      preview: values.preview || undefined,
-      user: values.user_id ? { connect: { id: values.user_id }} : undefined,
+      cover: values.cover || undefined,
     }
   });
 

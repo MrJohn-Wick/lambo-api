@@ -11,7 +11,7 @@ datasource db {
 }
 
 model User {
-  id            String   @id @default(cuid())
+  id            String   @id @default(uuid())
   email         String   @unique
   emailVerified Boolean  @default(false)
   phone         String   @unique
@@ -21,17 +21,18 @@ model User {
   accessTokens  AccessToken[]
   refreshTokens RefreshToken[]
   profile       Profile?
-  streams       Stream[]
+  streams       Stream[]  @relation("streams")
   codes         VerificationCode[]
 
   Follower      Subscription[] @relation("follower")
   Author        Subscription[] @relation("author")
+  invites       Stream[]  @relation("invites")
 
   @@map("users")
 }
 
 model AccessToken {
-  id            String    @id @default(cuid())
+  id            String    @id @default(uuid())
   token         String
   expiresAt     DateTime
   user          User      @relation(fields: [user_id], references: [id])
@@ -41,7 +42,7 @@ model AccessToken {
 }
 
 model RefreshToken {
-  id            String    @id @default(cuid())
+  id            String    @id @default(uuid())
   token         String
   expiresAt     DateTime
   user          User      @relation(fields: [user_id], references: [id])
@@ -51,7 +52,7 @@ model RefreshToken {
 }
   
 model Profile {
-  id                String      @id @default(cuid())
+  id                String      @id @default(uuid())
   username          String?     @unique
   firstname         String?
   lastname          String?
@@ -66,7 +67,7 @@ model Profile {
 }
 
 model Category {
-  id            String    @id @default(cuid())
+  id            String    @id @default(uuid())
   title         String
   profiles      Profile[]
   streams       Stream[]
@@ -86,20 +87,31 @@ model Subscription {
 }
 
 model Stream {
-  id            String    @id @default(cuid())
-  title         String
-  user_id       String
-  preview       String?
-  room          String?
+  id                String       @id @default(uuid())
+  user_id           String
+  cover             String?
+  title             String
+  description       String?
+  language          String
+  categories        Category[]
+  price_type        String      @default("ticket")  // ticket or rate
+  price             Float       @default(0.001)
+  start_now         Boolean     @default(false)
+  start_time        DateTime?
+  duration          Int?
+  charity           Int?
+  invited           User[]       @relation("invites")
+  is_private        Boolean     @default(false)
+  comments_off      Boolean     @default(false)
+  room              String?
 
-  user          User    @relation(fields: [user_id], references: [id])
-  categories    Category[]
+  user              User         @relation("streams", fields: [user_id], references: [id])
 
   @@map("streams")
 }
 
 model VerificationCode {
-  id          String  @id @default(cuid())
+  id          String  @id @default(uuid())
   code        String
   type        String
   user_id     String

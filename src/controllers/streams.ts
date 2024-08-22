@@ -17,6 +17,8 @@ export const streamsController = {
     const user = req.user;
     if (!user) throw("Premission denied");
 
+    // TODO: User roles
+
     const validatedData = StreamCreateSchema.safeParse(req.body);
     if (!validatedData.success) {
       return res.json({
@@ -26,13 +28,11 @@ export const streamsController = {
         }
       })
     }
-    const { title, user_id, categories, preview } = validatedData.data;
-    // TODO: when added roles
-    // if(user_id && user.role == 'admin') { createStreamForUser }
+    const streamData = { uid: user.id, ...validatedData.data};
 
     res.json({
       success: true,
-      payload: await createStream(user.id, title, categories, preview),
+      payload: await createStream(streamData),
     });
   },
 

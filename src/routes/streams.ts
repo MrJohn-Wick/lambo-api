@@ -37,9 +37,18 @@ streamsRouter.post(
       description: 'Stream values',
       schema: {
         $title: 'Stream title',
-        $user_id: 'id',
+        $description: 'Stream description',
+        $language: '',
         $categories: [],
-        $preview: 'url'
+        $price_type: 'ticket or rate',
+        $price: 0.5,
+        $start_now: false,
+        $start_time: '2024-08-22 22:50:00',
+        $duration: 123,
+        $charity: 10,
+        $invited: [],
+        $is_private: false,
+        $comments_off: false,
       }
     } 
   */
