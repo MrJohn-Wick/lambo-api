@@ -90,24 +90,24 @@ streamsRouter.get(
   streamsController.get
 );
 
-streamsRouter.patch(
-  /* 
-    #swagger.tags = ['Streams']
-    #swagger.summary = 'Edit stream'
-    #swagger.description = 'Edit stream info and return them'
-    #swagger.security = [{
-      "apiKeyAuth": []
-    }]
-    #swagger.parameters['id'] = {
-      in: 'path',
-      description: 'Stream id',
-      type: 'string'
-    } 
-  */
-  '/:id/edit',
-  passport.authenticate('bearer', { session:false }),
-  streamsController.edit
-);
+// streamsRouter.patch(
+//   /* 
+//     #swagger.tags = ['Streams']
+//     #swagger.summary = 'Edit stream'
+//     #swagger.description = 'Edit stream info and return them'
+//     #swagger.security = [{
+//       "apiKeyAuth": []
+//     }]
+//     #swagger.parameters['id'] = {
+//       in: 'path',
+//       description: 'Stream id',
+//       type: 'string'
+//     } 
+//   */
+//   '/:id/edit',
+//   passport.authenticate('bearer', { session:false }),
+//   streamsController.edit
+// );
 
 streamsRouter.get(
   /* 

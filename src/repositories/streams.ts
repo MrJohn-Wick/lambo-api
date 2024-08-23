@@ -1,9 +1,9 @@
+import * as z from 'zod';
 import { PrismaClient, Stream } from "@prisma/client";
-import z from 'zod';
-import { StreamEditSchema } from '../schemas/streams';
-import { createToken } from './livekit';
+import { createLivekitToken } from './livekit';
 import { getProfileByUserId } from './profile';
 import { VideoGrant } from 'livekit-server-sdk';
+import { StreamEditSchema } from '../schemas/streams';
 
 const prisma = new PrismaClient();
 
@@ -26,12 +26,15 @@ interface StreamCreateParams {
 }
 
 export async function getStreams(limit: number): Promise<Stream[]> {
-  const options = {
-    take: limit ? limit : undefined
-  };
-
-  console.log(options);
-  const streams = await prisma.stream.findMany(options);
+  const streams = await prisma.stream.findMany({
+    take: limit ? limit : undefined,
+    orderBy: {
+      created_at: 'desc'
+    },
+    include: {
+      categories: true,
+    }
+  });
 
   return streams;
 }
@@ -86,7 +89,10 @@ export async function createStream({
 
 export async function getStream(id: string) {
   const stream = await prisma.stream.findFirst({
-    where: { id }
+    where: { id },
+    include: {
+      categories: true,
+    }
   });
 
   return stream;
@@ -97,9 +103,9 @@ export async function editStream(streamId: string, values: z.infer<typeof Stream
   const stream = await prisma.stream.update({
     where: { id: streamId },
     data: {
+      cover: values.cover || undefined,
       title: values.title || undefined,
       categories: categoriesData ? { connect: categoriesData } : undefined,
-      cover: values.cover || undefined,
     }
   });
 
@@ -128,8 +134,7 @@ export async function getStreamToken(streamId: string, userId: string) {
     roomJoin: true,
     canPublish: false,
   }
-  const token = await createToken(userId, grands);
+  const token = await createLivekitToken(participant, grands);
 
   return token;
-
 }

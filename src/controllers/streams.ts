@@ -109,7 +109,7 @@ export const streamsController = {
     res.json({
       success: false,
       error: {
-        message: "Can't generate token",
+        message: "Can't generate token. Stream does'n created or user profile empty",
       } 
     })
   }

@@ -104,6 +104,7 @@ model Stream {
   is_private        Boolean     @default(false)
   comments_off      Boolean     @default(false)
   room              String?
+  created_at        DateTime    @default(now())
 
   user              User         @relation("streams", fields: [user_id], references: [id])
 

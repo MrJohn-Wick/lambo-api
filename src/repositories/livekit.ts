@@ -34,7 +34,7 @@ export function createRoom(): string | null {
 }
 
 
-export async function createToken(identity: string, grands: VideoGrant) {
+export async function createLivekitToken(identity: string, grands: VideoGrant) {
 
   const at = new AccessToken(process.env.LIVEKIT_API_KEY, process.env.LIVEKIT_API_SECRET, {
     identity,
