@@ -7,11 +7,10 @@ export const categoriesRouter = Router();
 categoriesRouter.get(
   /* 
     #swagger.tags = ['Categories']
-    #swagger.security = [{
-      "apiKeyAuth": []
-    }]
+    #swagger.summary = 'Return all categories'
+    #swagger.description = 'Return all categories'
   */
   '/',
-  categoriesRouter.use(passport.authenticate('bearer', { session: false })),
+  // passport.authenticate('bearer', { session: false }),
   categoriesController.list
 );
