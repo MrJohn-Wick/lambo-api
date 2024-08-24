@@ -1,9 +1,7 @@
-import { compare } from 'bcryptjs';
-import oauth2orize from 'oauth2orize';
 import passport from 'passport';
-import { Strategy as BearerStrategy, Strategy } from 'passport-http-bearer';
+import { Strategy as BearerStrategy } from 'passport-http-bearer';
 import { generateToken, isValidToken } from './utils/auth';
-import { deleteRefreshToken, getAccessToken, getRefreshToken, storeTokens } from './repositories/tokens';
+import { getAccessToken, storeTokens } from './repositories/tokens';
 import { createUser, getUserByEmail } from './repositories/users';
 import { Issuer } from 'openid-client';
 import { User } from '@prisma/client';
@@ -16,7 +14,7 @@ declare global {
   }
 }
 
-export const oauthServer = oauth2orize.createServer();
+// export const oauthServer = oauth2orize.createServer();
 const accessTokenLifetime = 60 * 60 * 1000; //one hour
 
 export async function getTokens(user: User) {
@@ -26,35 +24,6 @@ export async function getTokens(user: User) {
   await storeTokens(user, accessToken, refreshToken, expiresAt);
   return { accessToken, refreshToken, expiresAt }
 }
-
-oauthServer.exchange(
-  oauth2orize.exchange.password(async (client, username, passport, scope, done) => {
-    console.log('Search user', username);
-    const user = await getUserByEmail(username);
-    
-    if (user && user.passwordHash && await compare(passport, user.passwordHash)) {
-      const { accessToken, refreshToken, expiresAt } = await getTokens(user);
-      return done(null, accessToken, refreshToken, {expires_in: expiresAt});
-    }
-
-    return done(new Error('User not found'));
-  })
-);
-
-oauthServer.exchange(oauth2orize.exchange.refreshToken(async (client, refreshToken, scope, done) => {
-  console.log(client, refreshToken);
-  const token = await getRefreshToken(refreshToken);
-  console.log(token);
-  
-  if (token && isValidToken(token)) {
-    deleteRefreshToken(refreshToken);
-
-    const tokens = await getTokens(token.user);
-    return done(null, tokens.accessToken, tokens.refreshToken, { expires_in: tokens.expiresAt });
-  }
-
-  return done(null, false);
-}));
 
 passport.use(new BearerStrategy(async (token: string, done) => {
   const storedToken = await getAccessToken(token);
