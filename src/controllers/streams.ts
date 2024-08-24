@@ -1,16 +1,14 @@
 import { Request, Response } from 'express';
 import { createStream, editStream, getStream, getStreams } from '../repositories/streams';
 import { StreamCreateSchema, StreamEditSchema } from '../schemas/streams';
+import { apiErrorResponse, apiSuccessResponse } from '../utils/responses';
 
 export const streamsController = {
   async list(req: Request, res: Response) {
     const limit = req.query.limit ? Number(req.query.limit) : 0;
     const streams = await getStreams(limit);
 
-    res.json({
-      success: true,
-      payload: streams
-    });
+    res.json(apiSuccessResponse(streams));
   },
 
   async create(req: Request, res: Response) {
@@ -19,20 +17,14 @@ export const streamsController = {
 
     const validatedData = StreamCreateSchema.safeParse(req.body);
     if (!validatedData.success) {
-      return res.json({
-        success: false,
-        error: {
-          message: validatedData.error,
-        }
-      })
+      return res.json(apiErrorResponse('Invalid requiest'));
     }
+
     const { title, user_id, categories, preview } = validatedData.data;
     // TODO: when added roles
     // if(user_id && user.role == 'admin') { createStreamForUser }
-    res.json({
-      success: true,
-      payload: await createStream(user.id, title, categories, preview),
-    });
+    const stream = await createStream(user.id, title, categories, preview);
+    res.json(apiSuccessResponse(stream));
   },
 
   async get(req: Request, res: Response) {
@@ -41,19 +33,11 @@ export const streamsController = {
     if (streamId) {
       const stream = await getStream(streamId);
       if (stream) {
-        return res.json({
-          success: true,
-          payload: stream
-        });
+        return res.json(apiSuccessResponse(stream));
       }
     }
 
-    return res.status(404).json({
-      success: false,
-      error: {
-        message: "Not found"
-      }
-    });
+    return res.json(apiErrorResponse('Stream not found'));
   },
 
   async edit(req: Request, res: Response) {
@@ -63,19 +47,11 @@ export const streamsController = {
 
     const validatedData = StreamEditSchema.safeParse(req.body);
     if (!validatedData.success) {
-      return res.json({
-        success: false,
-        error: {
-          message: validatedData.error,
-        }
-      })
+      return res.json(apiErrorResponse('Invalid requiest'));
     }
 
-    res.json({
-      success: true,
-      item: await editStream(streamId, validatedData.data),
-    });
-
+    const stream = await editStream(streamId, validatedData.data);
+    res.json(apiSuccessResponse(stream));
   },
 
   async delete(req: Request, res: Response) {},
@@ -86,9 +62,6 @@ export const streamsController = {
 
     const streams = await getStreams(5); // TODO: there is no criteria.
 
-    res.json({
-      success: true,
-      payload: streams
-    });
+    res.json(apiSuccessResponse(streams));
   },
 }

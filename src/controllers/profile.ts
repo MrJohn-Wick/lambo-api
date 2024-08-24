@@ -4,32 +4,27 @@ import { User } from '@prisma/client';
 import { getProfileByUserId, updateProfile } from '../repositories/profile';
 import { ProfileUpdateSchema } from '../schemas/profile';
 import { PasswordUpdateSchema } from '../schemas/signup';
+import { apiErrorResponse, apiSuccessResponse } from '../utils/responses';
 
 export const profileController = {
   async me(req: Request, res: Response) {
     const currentUser = req.user as User;
-    if (currentUser) {
-      const user = await getUserById(currentUser.id);
+    if (!currentUser) throw("Does'n have user after auth middleware!!!");
+
+    const user = await getUserById(currentUser.id);
+    if (user) {
       const profile = await getProfileByUserId(user.id);
-      return res.json({
-        success: true,
-        data: {
-          id: user.id,
-          email: user.email,
-          emailVerified: user.emailVerified,
-          phone: user.phone,
-          phoneVerified: user.phoneVerified,
-          profile: profile
-        }
-      });
+      return res.json(apiSuccessResponse({
+        id: user.id,
+        email: user.email,
+        emailVerified: user.emailVerified,
+        phone: user.phone,
+        phoneVerified: user.phoneVerified,
+        profile: profile
+      }));
     }
 
-    res.sendStatus(404).json({
-      success: false,
-      error: {
-        message: "User not found"
-      }
-    });
+    res.json(apiErrorResponse('User not found'));
   },
 
   async update(req: Request, res: Response) {
@@ -37,36 +32,19 @@ export const profileController = {
     const validatedValues = ProfileUpdateSchema.safeParse(req.body);
 
     if (!validatedValues.success) {
-      return res.json({
-        success: false,
-        error: {
-          message: "Invalid request: " + validatedValues.error        
-        }
-      });
+      return res.json(apiErrorResponse('Invalid request'));
     }
 
     if (user && validatedValues.data) {
       try {
         await updateProfile(user.id, validatedValues.data);
-        return res.json({
-          success: true,
-        })
+        return res.json(apiSuccessResponse());
       } catch (error) {
-        return res.json({
-          success: false,
-          error: {
-            message: error instanceof Error ? error.message : 'Unknown error',
-          }
-        })
+        return res.json(apiErrorResponse(error instanceof Error ? error.message : 'Unknown error'));
       }
     }
 
-    res.json({
-      success: false,
-      error: {
-        message: 'Invalid requiest'
-      }
-    });
+    res.json(apiErrorResponse('Invalid requiest'));
   },
 
   async password(req: Request, res: Response) {
@@ -74,36 +52,19 @@ export const profileController = {
     const validatedValues = PasswordUpdateSchema.safeParse(req.body);
 
     if (!validatedValues.success) {
-      return res.json({
-        success: false,
-        error: {
-          message: "Invalid request: " + validatedValues.error        
-        }
-      });
+      return res.json(apiErrorResponse('Invalid requiest'));
     }
 
     if (user) {
       try {
         await updateUserPassword(user.id, validatedValues.data.password);
-        return res.json({
-          success: true,
-        })
+        return res.json(apiSuccessResponse());
       } catch (error) {
-        return res.json({
-          success: false,
-          error: {
-            message: error instanceof Error ? error.message : 'Unknown error',
-          }
-        })
+        return res.json(apiErrorResponse(error instanceof Error ? error.message : 'Unknown error'));
       }
     }
 
-    res.json({
-      success: false,
-      error: {
-        message: 'Invalid requiest'
-      }
-    });
+    res.json(apiErrorResponse('Invalid requiest'));
   },
 
 }

@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import { createSubscribe, getSubscribtionsByUser, getSubscriptionByUserAndAuthor } from '../repositories/subscription';
 import { SubscriptionSchema } from '../schemas/subscription';
 import { User } from '@prisma/client';
+import { apiErrorResponse, apiSuccessResponse } from '../utils/responses';
 
 export const subscriptionController = {
   async create(req: Request, res: Response) {
@@ -9,7 +10,7 @@ export const subscriptionController = {
     const validatedValues = SubscriptionSchema.safeParse(req.body);
 
     if (!validatedValues.success) {
-      return null;
+      return res.json(apiErrorResponse('Invalid requiest'));
     }
     
     const { authorId } = validatedValues.data;
@@ -18,22 +19,12 @@ export const subscriptionController = {
     const sub = await getSubscriptionByUserAndAuthor(user?.id, authorId);
 
     if (sub) {
-      return res.json({
-        success: false,
-        error: {
-          message: "Subscription already exist."
-        }
-      });
+      return res.json(apiErrorResponse('Subscription already exist.'));
     }
 
     const subscrbe = await createSubscribe(authorId, user.id);
 
-    return res.json({
-      success: true,
-      payload: {
-        subscrbe
-      }
-    });
+    return res.json(apiSuccessResponse(subscrbe));
   },
 
   async get(req: Request, res: Response) {    
@@ -41,12 +32,7 @@ export const subscriptionController = {
     
     const subscriptions = await getSubscribtionsByUser(userId);
 
-    return res.json({
-      success: true,
-      payload: {
-        subscriptions
-      }
-    });
+    return res.json(apiSuccessResponse(subscriptions));
   },
 
   async getForCurrentUser(req: Request, res: Response) {
@@ -54,11 +40,6 @@ export const subscriptionController = {
     
     const subscriptions = await getSubscribtionsByUser(user?.id);
 
-    return res.json({
-      success: true,
-      data: {
-        subscriptions
-      }
-    });
+    return res.json(apiSuccessResponse(subscriptions));
   }
 }
