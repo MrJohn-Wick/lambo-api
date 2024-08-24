@@ -4,7 +4,10 @@ import { createUser, getUserByEmail, getUserById, getUserByPhone, verifyPhone } 
 import { OnetimeCodeType } from '../types';
 import { createUserCode, deleteUserCodes, getUserCodes } from '../repositories/verificationCode';
 import { getTokens } from '../passport';
-import { SignInMobileSchema } from '../schemas/auth';
+import { RefreshTokenSchema, SignInEmailSchema, SignInMobileSchema } from '../schemas/auth';
+import { compare } from 'bcryptjs';
+import { deleteRefreshToken, getRefreshToken } from '../repositories/tokens';
+import { isValidToken } from '../utils/auth';
 
 export const authController = {
   async signUp(req: Request, res: Response) {
@@ -116,13 +119,15 @@ export const authController = {
   },
 
   async mobile(req: Request, res: Response, next: NextFunction) {
-    const validatedValues = SignInMobileSchema.safeParse(req.body);
+    console.log('Authorization with phone number');
+    const grant_type = req.body.grant_type;
 
-    if (validatedValues.success) {
-      const { grant_type, phone } = validatedValues.data;
-      if (grant_type === 'mobile') {
+    if (grant_type === 'mobile') {
+      const validatedValues = SignInMobileSchema.safeParse(req.body);
+      if (validatedValues.success) {
+        const { phone } = validatedValues.data;
         const user = await getUserByPhone(phone);
-
+  
         if (user && user.phoneVerified) {
           const code = await createUserCode(user.id, OnetimeCodeType.PHONE);
           return res.json({
@@ -141,8 +146,105 @@ export const authController = {
           }
         });
       }
+
+      return res.json({
+        success: false,
+        error: {
+          message: "Wrong phone number",
+          error: validatedValues.error
+        }
+      })
     }
 
-    next()
+    next();
+  },
+
+  async singIn(req: Request, res: Response, next: NextFunction) {
+    const grant_type = req.body.grant_type;
+
+    if (grant_type === 'password') {
+      const validatedValues = SignInEmailSchema.safeParse(req.body);
+
+      if (validatedValues.success) {
+        const { username, password } = validatedValues.data;
+
+        const user = await getUserByEmail(username);
+        
+        if (user && user.passwordHash && await compare(password, user.passwordHash)) {
+          const { accessToken, refreshToken, expiresAt } = await getTokens(user);
+
+          return res.json({
+            success: true,
+            payload: {
+              'access_token': accessToken,
+              'refresh_token': refreshToken,
+              'token_type': 'Bearer',
+              'expires_in': expiresAt,
+            }
+          });
+        }
+   
+        return res.json({
+          success: false,
+          error: {
+            message: 'Wrong credentials'
+          }
+        });
+      }
+
+      return res.json({
+        success: false,
+        error: {
+          message: "Wrong request"
+        }
+      });
+    }
+
+    next();
+  },
+
+  async refresh(req: Request, res: Response, next: NextFunction) {
+    const grant_type = req.body.grant_type;
+
+    if (grant_type === 'refresh_token') {
+      const validatedValues = RefreshTokenSchema.safeParse(req.body);
+
+      if (validatedValues.success) {
+        const { refresh_token } = validatedValues.data;
+
+        const token = await getRefreshToken(refresh_token);
+        
+        if (token && isValidToken(token)) {
+          deleteRefreshToken(refresh_token);
+      
+          const tokens = await getTokens(token.user);
+          return res.json({
+            success: true,
+            payload: {
+              access_token: tokens.accessToken,
+              refresh_token: tokens.refreshToken,
+              expires_in: tokens.expiresAt,
+              'token_type': 'Bearer',
+            }
+          })
+        }
+      
+        return res.json({
+          success: false,
+          error: {
+            message: "Invalid token",
+          }
+        });
+      }
+
+      return res.json({
+        success: false,
+        error: {
+          message: "Invalid request",
+        }
+      });
+    }
+
+    next();
   }
 };
