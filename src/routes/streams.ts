@@ -37,9 +37,18 @@ streamsRouter.post(
       description: 'Stream values',
       schema: {
         $title: 'Stream title',
-        $user_id: 'id',
-        $categories: '',
-        $preview: 'url'
+        $description: 'Stream description',
+        $language: '',
+        $categories: [],
+        $price_type: 'ticket or rate',
+        $price: 0.5,
+        $start_now: false,
+        $start_time: '2024-08-22 22:50:00',
+        $duration: 123,
+        $charity: 10,
+        $invited: [],
+        $is_private: false,
+        $comments_off: false,
       }
     } 
   */
@@ -81,11 +90,30 @@ streamsRouter.get(
   streamsController.get
 );
 
-streamsRouter.patch(
+// streamsRouter.patch(
+//   /* 
+//     #swagger.tags = ['Streams']
+//     #swagger.summary = 'Edit stream'
+//     #swagger.description = 'Edit stream info and return them'
+//     #swagger.security = [{
+//       "apiKeyAuth": []
+//     }]
+//     #swagger.parameters['id'] = {
+//       in: 'path',
+//       description: 'Stream id',
+//       type: 'string'
+//     } 
+//   */
+//   '/:id/edit',
+//   passport.authenticate('bearer', { session:false }),
+//   streamsController.edit
+// );
+
+streamsRouter.get(
   /* 
     #swagger.tags = ['Streams']
-    #swagger.summary = 'Edit stream'
-    #swagger.description = 'Edit stream info and return them'
+    #swagger.summary = 'Get stream token'
+    #swagger.description = 'Get participant tocken'
     #swagger.security = [{
       "apiKeyAuth": []
     }]
@@ -95,7 +123,7 @@ streamsRouter.patch(
       type: 'string'
     } 
   */
-  '/:id/edit',
+  '/:id/token',
   passport.authenticate('bearer', { session:false }),
-  streamsController.edit
+  streamsController.token
 );
