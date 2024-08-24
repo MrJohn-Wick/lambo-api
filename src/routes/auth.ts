@@ -1,7 +1,6 @@
 import { Request, Response, Router } from 'express';
 import passport from 'passport';
 import { authController } from '../controllers/auth';
-import { oauthServer } from '../passport';
 import { generateToken } from '../utils/auth';
 import { storeTokens } from '../repositories/tokens';
 import { User } from '@prisma/client';
@@ -42,7 +41,7 @@ authRouter.post(
       }
     } 
   */
-  '/oauth/code',
+  '/singin/code',
   authController.signUpCode
 )
 
@@ -71,10 +70,10 @@ authRouter.post(
       }
     } 
   */
-  '/oauth/token',
+  '/singin/token',
+  authController.refresh,
   authController.mobile,
-  oauthServer.token(),
-  oauthServer.errorHandler()
+  authController.singIn,
 );
 
 authRouter.get(
@@ -86,7 +85,7 @@ authRouter.get(
       "apiKeyAuth": []
     }]
   */
-  '/oauth/provider/google',
+  '/signin/provider/google',
   passport.authenticate('google-token', { session: false }),
   async (req: Request, res: Response) => {
     const aToken = generateToken();
