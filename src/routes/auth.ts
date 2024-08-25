@@ -41,7 +41,7 @@ authRouter.post(
       }
     } 
   */
-  '/singin/code',
+  '/signin/code',
   authController.signUpCode
 )
 
@@ -70,7 +70,7 @@ authRouter.post(
       }
     } 
   */
-  '/singin/token',
+  '/signin/token',
   authController.refresh,
   authController.mobile,
   authController.singIn,
