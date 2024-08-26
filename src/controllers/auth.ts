@@ -22,12 +22,12 @@ export const authController = {
     
     let user = await getUserByEmail(email);
     if (user && user.emailVerified) {
-      return res.json(apiErrorResponse('Email is alredy used'));
+      return res.status(406).json(apiErrorResponse('Email is alredy used'));
     }
 
     user = await getUserByPhone(phone);
     if (user && user.phoneVerified) {
-      return res.json(apiErrorResponse('Phone is alredy used'));
+      return res.status(406).json(apiErrorResponse('Phone is alredy used'));
     }
 
     if (!user) {
@@ -41,28 +41,28 @@ export const authController = {
       const code = await createUserCode(user.id, OnetimeCodeType.PHONE);
 
       // TODO: send one-time code to user
-      return res.json(apiSuccessResponse({
+      return res.status(200).json(apiSuccessResponse({
         token: user.id,
         // TODO: remove code after sms service will be created
         onetimecode: code.code
       }));
     }
 
-    return res.json(apiErrorResponse('Something went wrong.'));
+    return res.status(400).json(apiErrorResponse('Something went wrong.'));
   },
 
   async signUpCode(req: Request, res: Response) {
     const validatedValues = SignUpCodeSchema.safeParse(req.body);
     
     if (!validatedValues.success) {
-      return res.json(apiErrorResponse('Invalid request'));
+      return res.status(400).json(apiErrorResponse('Invalid request'));
     }
 
     const { token, code } = validatedValues.data;
     const user = await getUserById(token);
 
     if (!user) {
-      return res.json(apiErrorResponse('Wrong code'));
+      return res.status(406).json(apiErrorResponse('Wrong code'));
     }
 
     const codes = await getUserCodes(user.id, OnetimeCodeType.PHONE);
@@ -70,7 +70,7 @@ export const authController = {
       verifyPhone(user.id);
       deleteUserCodes(user.id, OnetimeCodeType.PHONE);
       const { accessToken, refreshToken, expiresAt } = await getTokens(user);
-      return res.json(apiSuccessResponse({
+      return res.status(200).json(apiSuccessResponse({
         access_token: accessToken,
         token_type: 'Bearer',
         refresh_token: refreshToken,
@@ -78,12 +78,13 @@ export const authController = {
       }));
     }
 
-    res.json(apiErrorResponse('Wrong code'));
+    res.status(400).json(apiErrorResponse('Wrong code'));
   },
 
   async mobile(req: Request, res: Response, next: NextFunction) {
     console.log('Authorization with phone number');
     const validatedValues = SignInMobileSchema.safeParse(req.body);
+
     if (validatedValues.success) {
       const { phone } = validatedValues.data;
       const user = await getUserByPhone(phone);
@@ -91,17 +92,17 @@ export const authController = {
       if (user && user.phoneVerified) {
         const code = await createUserCode(user.id, OnetimeCodeType.PHONE);
 
-        return res.json(apiSuccessResponse({
+        return res.status(200).json(apiSuccessResponse({
           token: user.id,
           // TODO: remove code after 
           onetimecode: code.code
         }));
       }
 
-      return res.json(apiErrorResponse('User not found'));
+      return res.status(404).json(apiErrorResponse('User not found'));
     }
 
-    return res.json(apiErrorResponse('Wrong phone number'));
+    return res.status(406).json(apiErrorResponse('Wrong phone number'));
   },
 
   async singIn(req: Request, res: Response, next: NextFunction) {
@@ -115,7 +116,7 @@ export const authController = {
       if (user && user.passwordHash && await compare(password, user.passwordHash)) {
         const { accessToken, refreshToken, expiresAt } = await getTokens(user);
 
-        return res.json(apiSuccessResponse({
+        return res.status(200).json(apiSuccessResponse({
           'access_token': accessToken,
           'refresh_token': refreshToken,
           'token_type': 'Bearer',
@@ -123,10 +124,10 @@ export const authController = {
         }));
       }
   
-      return res.json(apiErrorResponse('Wrong credentials'));
+      return res.status(403).json(apiErrorResponse('Wrong credentials'));
     }
 
-    return res.json(apiErrorResponse('Wrong request'));
+    return res.status(400).json(apiErrorResponse('Wrong request'));
   },
 
   async refresh(req: Request, res: Response, next: NextFunction) {
@@ -141,7 +142,7 @@ export const authController = {
         deleteRefreshToken(refresh_token);
     
         const tokens = await getTokens(token.user);
-        return res.json(apiSuccessResponse({
+        return res.status(200).json(apiSuccessResponse({
           access_token: tokens.accessToken,
           refresh_token: tokens.refreshToken,
           expires_in: tokens.expiresAt,
@@ -149,9 +150,9 @@ export const authController = {
         }));
       }
     
-      return res.json(apiErrorResponse('Invalid token'));
+      return res.status(406).json(apiErrorResponse('Invalid token'));
     }
 
-    return res.json(apiErrorResponse('Invalid request'));
+    return res.status(400).json(apiErrorResponse('Invalid request'));
   }
 };
