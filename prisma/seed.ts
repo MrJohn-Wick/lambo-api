@@ -114,22 +114,11 @@ const users = [
     "about": "Начало влечёт для значительной процесс другой административных."
   }
 ];
-const categories = [
-  'Psychology',
-  'Games',
-  'Food',
-  'Entertainment',
-  'Humor',
-];
+
 const defaultPassword = '123456';
 
 
 async function main() {
-  await prisma.category.createMany({
-    data: categories.map(c => ({
-      title: c
-    })),
-  });
 
   const cats = await prisma.category.findMany({});
   let i = 0;
