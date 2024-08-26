@@ -1,15 +1,9 @@
 export function apiErrorResponse(message: string) {
   return {
-    success: false,
-    error: {
-      message
-    }
+    message
   }
 }
 
 export function apiSuccessResponse(payload?: any) {
-  return {
-    success: true,
-    payload
-  }
+  return payload;
 }
