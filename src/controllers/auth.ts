@@ -83,93 +83,75 @@ export const authController = {
 
   async mobile(req: Request, res: Response, next: NextFunction) {
     console.log('Authorization with phone number');
-    const grant_type = req.body.grant_type;
+    const validatedValues = SignInMobileSchema.safeParse(req.body);
+    if (validatedValues.success) {
+      const { phone } = validatedValues.data;
+      const user = await getUserByPhone(phone);
 
-    if (grant_type === 'mobile') {
-      const validatedValues = SignInMobileSchema.safeParse(req.body);
-      if (validatedValues.success) {
-        const { phone } = validatedValues.data;
-        const user = await getUserByPhone(phone);
-  
-        if (user && user.phoneVerified) {
-          const code = await createUserCode(user.id, OnetimeCodeType.PHONE);
+      if (user && user.phoneVerified) {
+        const code = await createUserCode(user.id, OnetimeCodeType.PHONE);
 
-          return res.json(apiSuccessResponse({
-            token: user.id,
-            // TODO: remove code after 
-            onetimecode: code.code
-          }));
-        }
-
-        return res.json(apiErrorResponse('User not found'));
+        return res.json(apiSuccessResponse({
+          token: user.id,
+          // TODO: remove code after 
+          onetimecode: code.code
+        }));
       }
 
-      return res.json(apiErrorResponse('Wrong phone number'));
+      return res.json(apiErrorResponse('User not found'));
     }
 
-    next();
+    return res.json(apiErrorResponse('Wrong phone number'));
   },
 
   async singIn(req: Request, res: Response, next: NextFunction) {
-    const grant_type = req.body.grant_type;
+    const validatedValues = SignInEmailSchema.safeParse(req.body);
 
-    if (grant_type === 'password') {
-      const validatedValues = SignInEmailSchema.safeParse(req.body);
+    if (validatedValues.success) {
+      const { username, password } = validatedValues.data;
 
-      if (validatedValues.success) {
-        const { username, password } = validatedValues.data;
+      const user = await getUserByEmail(username);
+      
+      if (user && user.passwordHash && await compare(password, user.passwordHash)) {
+        const { accessToken, refreshToken, expiresAt } = await getTokens(user);
 
-        const user = await getUserByEmail(username);
-        
-        if (user && user.passwordHash && await compare(password, user.passwordHash)) {
-          const { accessToken, refreshToken, expiresAt } = await getTokens(user);
-
-          return res.json(apiSuccessResponse({
-            'access_token': accessToken,
-            'refresh_token': refreshToken,
-            'token_type': 'Bearer',
-            'expires_in': expiresAt,
-          }));
-        }
-   
-        return res.json(apiErrorResponse('Wrong credentials'));
+        return res.json(apiSuccessResponse({
+          'access_token': accessToken,
+          'refresh_token': refreshToken,
+          'token_type': 'Bearer',
+          'expires_in': expiresAt,
+        }));
       }
-
-      return res.json(apiErrorResponse('Wrong request'));
+  
+      return res.json(apiErrorResponse('Wrong credentials'));
     }
 
-    next();
+    return res.json(apiErrorResponse('Wrong request'));
   },
 
   async refresh(req: Request, res: Response, next: NextFunction) {
-    const grant_type = req.body.grant_type;
+    const validatedValues = RefreshTokenSchema.safeParse(req.body);
 
-    if (grant_type === 'refresh_token') {
-      const validatedValues = RefreshTokenSchema.safeParse(req.body);
+    if (validatedValues.success) {
+      const { refresh_token } = validatedValues.data;
 
-      if (validatedValues.success) {
-        const { refresh_token } = validatedValues.data;
-
-        const token = await getRefreshToken(refresh_token);
-        
-        if (token && isValidToken(token)) {
-          deleteRefreshToken(refresh_token);
+      const token = await getRefreshToken(refresh_token);
       
-          const tokens = await getTokens(token.user);
-          return res.json(apiSuccessResponse({
-            access_token: tokens.accessToken,
-            refresh_token: tokens.refreshToken,
-            expires_in: tokens.expiresAt,
-            'token_type': 'Bearer',
-          }));
-        }
-      
-        return res.json(apiErrorResponse('Invalid token'));
+      if (token && isValidToken(token)) {
+        deleteRefreshToken(refresh_token);
+    
+        const tokens = await getTokens(token.user);
+        return res.json(apiSuccessResponse({
+          access_token: tokens.accessToken,
+          refresh_token: tokens.refreshToken,
+          expires_in: tokens.expiresAt,
+          'token_type': 'Bearer',
+        }));
       }
-
-      return res.json(apiErrorResponse('Invalid request'));
+    
+      return res.json(apiErrorResponse('Invalid token'));
     }
 
-    next();
+    return res.json(apiErrorResponse('Invalid request'));
   }
 };

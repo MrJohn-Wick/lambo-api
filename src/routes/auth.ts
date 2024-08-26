@@ -60,20 +60,65 @@ authRouter.post(
     '
     #swagger.parameters['body'] = {
       in: 'body',
-      description: 'OAuth2 implict flow parameters or refresh flow parameters',
+      description: '',
       schema: {
         $username: 'username@example.com',
         $password: '123456',
-        $refresh_token: '<refresh_token>',
-        $phone: '+7123456789',
-        $grant_type: 'password or refresh_token or mobile'
       }
     } 
   */
-  '/signin/token',
-  authController.refresh,
-  authController.mobile,
+  '/signin/password',
   authController.singIn,
+);
+
+authRouter.post(
+  /* 
+    #swagger.tags = ['Security']
+    #swagger.summary = 'User login by credentials'
+    #swagger.description = 'Exchnage user credentials to access_token <br>
+    or refresh_token to access_token <BR><BR>
+    +79154664152 for Nestor.Kihn91@ya.ru <br>
+    +79507374830 for Samson.Wehner9@hotmail.com <br>
+    +79171097285 for Savvatii_Kovacek47@mail.ru <br>
+    +79584065397 for Miron.Tromp@yandex.ru <br>
+    +79664606744 for Kondrat_Krajcik72@yahoo.com <br>
+    +79703694542 for Kseniya_Prosacco@yahoo.com <br>
+    '
+    #swagger.parameters['body'] = {
+      in: 'body',
+      description: '',
+      schema: {
+        $phone: '+79154664152',
+      }
+    } 
+  */
+  '/signin/mobile',
+  authController.mobile,
+);
+
+authRouter.post(
+  /* 
+    #swagger.tags = ['Security']
+    #swagger.summary = 'User login by credentials'
+    #swagger.description = 'Exchnage user credentials to access_token <br>
+    or refresh_token to access_token <BR><BR>
+    Nestor.Kihn91@ya.ru <br>
+    Samson.Wehner9@hotmail.com <br>
+    Savvatii_Kovacek47@mail.ru <br>
+    Miron.Tromp@yandex.ru <br>
+    Kondrat_Krajcik72@yahoo.com <br>
+    Kseniya_Prosacco@yahoo.com <br>
+    '
+    #swagger.parameters['body'] = {
+      in: 'body',
+      description: 'OAuth2 implict flow parameters or refresh flow parameters',
+      schema: {
+        $refresh_token: '<refresh_token>',
+      }
+    } 
+  */
+  '/signin/refresh',
+  authController.refresh,
 );
 
 authRouter.get(
