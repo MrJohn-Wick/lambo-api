@@ -20,6 +20,7 @@ export const profileController = {
         emailVerified: user.emailVerified,
         phone: user.phone,
         phoneVerified: user.phoneVerified,
+        password: !!user.passwordHash,
         profile: profile
       }));
     }
