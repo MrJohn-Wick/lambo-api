@@ -115,7 +115,7 @@ const users = [
   }
 ];
 
-const defaultPassword = '123456';
+const defaultPassword = '12345678';
 
 
 async function main() {
