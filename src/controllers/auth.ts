@@ -110,7 +110,6 @@ export const authController = {
 
     if (validatedValues.success) {
       const { username, password } = validatedValues.data;
-
       const user = await getUserByEmail(username);
       
       if (user && user.passwordHash && await compare(password, user.passwordHash)) {

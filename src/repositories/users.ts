@@ -8,17 +8,14 @@ type UserWithProfile = Prisma.UserGetPayload<{ include: { profile: true} }>;
 
 // TODO: return users without passwordHash
 
-export async function getUserByEmail(email: string) {
+export async function getUserByEmail(email: string): Promise<User | null> {
+  const query = Prisma.sql`SELECT * FROM users WHERE lower(email)=lower(${email})`;
+  const users = await prisma.$queryRaw<User[]>(query);
 
-  const user = await prisma.user.findUnique({
-    where: { email: email }
-  });
-
-  return user;
+  return users.length ? users[0] : null;
 };
 
 export async function getUserByPhone(phone: string) {
-
   const user = await prisma.user.findUnique({
     where: { phone }
   });
