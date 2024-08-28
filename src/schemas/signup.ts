@@ -12,5 +12,5 @@ export const SignUpCodeSchema = z.object({
 });
 
 export const PasswordUpdateSchema = z.object({
-  password: z.string().min(6),
+  password: z.string().min(8),
 });
