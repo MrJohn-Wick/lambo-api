@@ -5,6 +5,7 @@ import { getProfileByUserId, updateProfile } from '../repositories/profile';
 import { ProfileUpdateSchema } from '../schemas/profile';
 import { PasswordUpdateSchema } from '../schemas/signup';
 import { apiErrorResponse, apiSuccessResponse } from '../utils/responses';
+import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 
 export const profileController = {
   async me(req: Request, res: Response) {
@@ -41,6 +42,9 @@ export const profileController = {
         await updateProfile(user.id, validatedValues.data);
         return res.json(apiSuccessResponse());
       } catch (error) {
+        if (error instanceof PrismaClientKnownRequestError && error.code === 'P2002') {
+          return res.json(apiErrorResponse('This username is already exists'));
+        }
         return res.json(apiErrorResponse(error instanceof Error ? error.message : 'Unknown error'));
       }
     }
