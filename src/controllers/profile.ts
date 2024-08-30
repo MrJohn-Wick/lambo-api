@@ -26,7 +26,7 @@ export const profileController = {
       }));
     }
 
-    res.json(apiErrorResponse('User not found'));
+    res.status(404).json(apiErrorResponse('User not found'));
   },
 
   async update(req: Request, res: Response) {
@@ -34,7 +34,7 @@ export const profileController = {
     const validatedValues = ProfileUpdateSchema.safeParse(req.body);
 
     if (!validatedValues.success) {
-      return res.json(apiErrorResponse('Invalid request'));
+      return res.status(400).json(apiErrorResponse('Invalid request'));
     }
 
     if (user && validatedValues.data) {
@@ -43,13 +43,13 @@ export const profileController = {
         return res.json(apiSuccessResponse());
       } catch (error) {
         if (error instanceof PrismaClientKnownRequestError && error.code === 'P2002') {
-          return res.json(apiErrorResponse('This username is already exists'));
+          return res.status(406).json(apiErrorResponse('This username is already exists'));
         }
-        return res.json(apiErrorResponse(error instanceof Error ? error.message : 'Unknown error'));
+        return res.status(422).json(apiErrorResponse(error instanceof Error ? error.message : 'Unknown error'));
       }
     }
 
-    res.json(apiErrorResponse('Invalid requiest'));
+    res.status(400).json(apiErrorResponse('Invalid requiest'));
   },
 
   async password(req: Request, res: Response) {
@@ -57,7 +57,7 @@ export const profileController = {
     const validatedValues = PasswordUpdateSchema.safeParse(req.body);
 
     if (!validatedValues.success) {
-      return res.json(apiErrorResponse('Invalid requiest'));
+      return res.status(400).json(apiErrorResponse('Invalid requiest'));
     }
 
     if (user) {
@@ -65,10 +65,10 @@ export const profileController = {
         await updateUserPassword(user.id, validatedValues.data.password);
         return res.json(apiSuccessResponse());
       } catch (error) {
-        return res.json(apiErrorResponse(error instanceof Error ? error.message : 'Unknown error'));
+        return res.status(422).json(apiErrorResponse(error instanceof Error ? error.message : 'Unknown error'));
       }
     }
 
-    res.json(apiErrorResponse('Invalid requiest'));
+    res.status(400).json(apiErrorResponse('Invalid requiest'));
   },
 }
