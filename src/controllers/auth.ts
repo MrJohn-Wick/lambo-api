@@ -15,7 +15,7 @@ export const authController = {
     const validatedValues = SignUpSchema.safeParse(req.body);
     
     if (!validatedValues.success) {
-      return res.json(apiErrorResponse("Invalid request"));
+      return res.status(400).json(apiErrorResponse("Invalid request"));
     }
     
     const { email, phone } = validatedValues.data;

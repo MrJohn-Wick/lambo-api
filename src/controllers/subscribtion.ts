@@ -10,7 +10,7 @@ export const subscriptionController = {
     const validatedValues = SubscriptionSchema.safeParse(req.body);
 
     if (!validatedValues.success) {
-      return res.json(apiErrorResponse('Invalid requiest'));
+      return res.status(400).json(apiErrorResponse('Invalid requiest'));
     }
     
     const { authorId } = validatedValues.data;
@@ -19,7 +19,7 @@ export const subscriptionController = {
     const sub = await getSubscriptionByUserAndAuthor(user?.id, authorId);
 
     if (sub) {
-      return res.json(apiErrorResponse('Subscription already exist.'));
+      return res.status(423).json(apiErrorResponse('Subscription already exist.'));
     }
 
     const subscrbe = await createSubscribe(authorId, user.id);
