@@ -19,7 +19,7 @@ export const streamsController = {
 
     const validatedData = StreamCreateSchema.safeParse(req.body);
     if (!validatedData.success) {
-      return res.json(apiErrorResponse('Invalid requiest'));
+      return res.status(400).json(apiErrorResponse('Invalid requiest'));
     }
     const streamData = { uid: user.id, ...validatedData.data};
 
@@ -36,7 +36,7 @@ export const streamsController = {
       }
     }
 
-    return res.json(apiErrorResponse('Stream not found'));
+    return res.status(404).json(apiErrorResponse('Stream not found'));
   },
 
   async edit(req: Request, res: Response) {
@@ -46,7 +46,7 @@ export const streamsController = {
 
     const validatedData = StreamEditSchema.safeParse(req.body);
     if (!validatedData.success) {
-      return res.json(apiErrorResponse('Invalid requiest'));
+      return res.status(400).json(apiErrorResponse('Invalid requiest'));
     }
 
     const stream = await editStream(streamId, validatedData.data);
@@ -71,17 +71,9 @@ export const streamsController = {
 
     const token = await getStreamToken(streamId, user.id);
     if (token) {
-      return res.json({
-        success: true,
-        payload: token,
-      })
+      return res.json(apiSuccessResponse(token));
     }
 
-    res.json({
-      success: false,
-      error: {
-        message: "Can't generate token. Stream does'n created or user profile empty",
-      } 
-    })
+    res.status(406).json(apiErrorResponse("Can't generate token. Stream does'n created or user profile empty"));
   }
 }
