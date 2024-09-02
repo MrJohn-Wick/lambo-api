@@ -15,7 +15,8 @@ export const authController = {
     const validatedValues = SignUpSchema.safeParse(req.body);
     
     if (!validatedValues.success) {
-      return res.status(400).json(apiErrorResponse("Invalid request"));
+      const messages = validatedValues.error.errors.map((e) => e.message);
+      return res.status(400).json(apiErrorResponse(messages.join('. ')));
     }
     
     const { email, phone } = validatedValues.data;
@@ -55,7 +56,8 @@ export const authController = {
     const validatedValues = SignUpCodeSchema.safeParse(req.body);
     
     if (!validatedValues.success) {
-      return res.status(400).json(apiErrorResponse('Invalid request'));
+      const messages = validatedValues.error.errors.map((e) => e.message);
+      return res.status(400).json(apiErrorResponse(messages.join('. ')));
     }
 
     const { token, code } = validatedValues.data;
@@ -85,73 +87,76 @@ export const authController = {
     console.log('Authorization with phone number');
     const validatedValues = SignInMobileSchema.safeParse(req.body);
 
-    if (validatedValues.success) {
-      const { phone } = validatedValues.data;
-      const user = await getUserByPhone(phone);
-
-      if (user && user.phoneVerified) {
-        const code = await createUserCode(user.id, OnetimeCodeType.PHONE);
-
-        return res.status(200).json(apiSuccessResponse({
-          token: user.id,
-          // TODO: remove code after 
-          onetimecode: code.code
-        }));
-      }
-
-      return res.status(404).json(apiErrorResponse('User not found'));
+    if (!validatedValues.success) {
+      const messages = validatedValues.error.errors.map((e) => e.message);
+      return res.status(400).json(apiErrorResponse(messages.join('. ')));
     }
 
-    return res.status(406).json(apiErrorResponse('Wrong phone number'));
+    const { phone } = validatedValues.data;
+    const user = await getUserByPhone(phone);
+
+    if (user && user.phoneVerified) {
+      const code = await createUserCode(user.id, OnetimeCodeType.PHONE);
+
+      return res.status(200).json(apiSuccessResponse({
+        token: user.id,
+        // TODO: remove code after 
+        onetimecode: code.code
+      }));
+    }
+
+    return res.status(404).json(apiErrorResponse('User not found'));
   },
 
   async singIn(req: Request, res: Response, next: NextFunction) {
     const validatedValues = SignInEmailSchema.safeParse(req.body);
 
-    if (validatedValues.success) {
-      const { username, password } = validatedValues.data;
-      const user = await getUserByEmail(username);
-      
-      if (user && user.passwordHash && await compare(password, user.passwordHash)) {
-        const { accessToken, refreshToken, expiresAt } = await getTokens(user);
-
-        return res.status(200).json(apiSuccessResponse({
-          'access_token': accessToken,
-          'refresh_token': refreshToken,
-          'token_type': 'Bearer',
-          'expires_in': expiresAt,
-        }));
-      }
-  
-      return res.status(403).json(apiErrorResponse('Wrong credentials'));
+    if (!validatedValues.success) {
+      const messages = validatedValues.error.errors.map((e) => e.message);
+      return res.status(400).json(apiErrorResponse(messages.join('. ')));
     }
 
-    return res.status(400).json(apiErrorResponse('Wrong request'));
+    const { username, password } = validatedValues.data;
+    const user = await getUserByEmail(username);
+    
+    if (user && user.passwordHash && await compare(password, user.passwordHash)) {
+      const { accessToken, refreshToken, expiresAt } = await getTokens(user);
+
+      return res.status(200).json(apiSuccessResponse({
+        'access_token': accessToken,
+        'refresh_token': refreshToken,
+        'token_type': 'Bearer',
+        'expires_in': expiresAt,
+      }));
+    }
+
+    return res.status(403).json(apiErrorResponse('Wrong credentials'));
   },
 
   async refresh(req: Request, res: Response, next: NextFunction) {
     const validatedValues = RefreshTokenSchema.safeParse(req.body);
 
-    if (validatedValues.success) {
-      const { refresh_token } = validatedValues.data;
-
-      const token = await getRefreshToken(refresh_token);
-      
-      if (token && isValidToken(token)) {
-        deleteRefreshToken(refresh_token);
-    
-        const tokens = await getTokens(token.user);
-        return res.status(200).json(apiSuccessResponse({
-          access_token: tokens.accessToken,
-          refresh_token: tokens.refreshToken,
-          expires_in: tokens.expiresAt,
-          'token_type': 'Bearer',
-        }));
-      }
-    
-      return res.status(406).json(apiErrorResponse('Invalid token'));
+    if (!validatedValues.success) {
+      const messages = validatedValues.error.errors.map((e) => e.message);
+      return res.status(400).json(apiErrorResponse(messages.join('. ')));
     }
 
-    return res.status(400).json(apiErrorResponse('Invalid request'));
+    const { refresh_token } = validatedValues.data;
+
+    const token = await getRefreshToken(refresh_token);
+    
+    if (token && isValidToken(token)) {
+      deleteRefreshToken(refresh_token);
+  
+      const tokens = await getTokens(token.user);
+      return res.status(200).json(apiSuccessResponse({
+        access_token: tokens.accessToken,
+        refresh_token: tokens.refreshToken,
+        expires_in: tokens.expiresAt,
+        'token_type': 'Bearer',
+      }));
+    }
+  
+    return res.status(406).json(apiErrorResponse('Invalid token'));
   }
 };
