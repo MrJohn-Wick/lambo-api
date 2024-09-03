@@ -2,7 +2,7 @@ import { NextFunction, Request, Response } from "express";
 import { SignUpCodeSchema, SignUpSchema } from "../schemas/signup";
 import { createUser, getUserByEmail, getUserById, getUserByPhone, verifyPhone } from "../repositories/users";
 import { OnetimeCodeType } from '../types';
-import { createUserCode, deleteUserCodes, getUserCodes } from '../repositories/verificationCode';
+import { createUserCode, deleteUserCodes, getCode } from '../repositories/verificationCode';
 import { getTokens } from '../passport';
 import { RefreshTokenSchema, SignInEmailSchema, SignInMobileSchema } from '../schemas/auth';
 import { compare } from 'bcryptjs';
@@ -43,7 +43,7 @@ export const authController = {
 
       // TODO: send one-time code to user
       return res.status(200).json(apiSuccessResponse({
-        token: user.id,
+        token: code.id,
         // TODO: remove code after sms service will be created
         onetimecode: code.code
       }));
@@ -61,17 +61,24 @@ export const authController = {
     }
 
     const { token, code } = validatedValues.data;
-    const user = await getUserById(token);
+    const verificationCode = await getCode(token);
 
-    if (!user) {
+    if (!verificationCode) {
       return res.status(406).json(apiErrorResponse('Wrong code'));
     }
 
-    const codes = await getUserCodes(user.id, OnetimeCodeType.PHONE);
-    if (codes && code === codes[0].code) {
-      verifyPhone(user.id);
-      deleteUserCodes(user.id, OnetimeCodeType.PHONE);
+    if (verificationCode.type == OnetimeCodeType.PHONE) {
+      verifyPhone(verificationCode.user_id);
+      deleteUserCodes(verificationCode.user_id, OnetimeCodeType.PHONE);
+  
+      const user = await getUserById(verificationCode.user_id);
+  
+      if (!user) {
+        return res.status(406).json(apiErrorResponse('User not found'));
+      }
+  
       const { accessToken, refreshToken, expiresAt } = await getTokens(user);
+  
       return res.status(200).json(apiSuccessResponse({
         access_token: accessToken,
         token_type: 'Bearer',
@@ -80,7 +87,7 @@ export const authController = {
       }));
     }
 
-    res.status(400).json(apiErrorResponse('Wrong code'));
+    return res.status(406).json(apiErrorResponse('Wrong code'));
   },
 
   async mobile(req: Request, res: Response, next: NextFunction) {
@@ -100,7 +107,7 @@ export const authController = {
 
       return res.status(200).json(apiSuccessResponse({
         token: user.id,
-        // TODO: remove code after 
+        // TODO: remove code after
         onetimecode: code.code
       }));
     }
@@ -158,5 +165,5 @@ export const authController = {
     }
   
     return res.status(406).json(apiErrorResponse('Invalid token'));
-  }
+  },
 };

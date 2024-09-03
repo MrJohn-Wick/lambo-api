@@ -63,7 +63,7 @@ export const profileController = {
     if (user) {
       try {
         await updateUserPassword(user.id, validatedValues.data.password);
-        return res.json(apiSuccessResponse());
+        return res.json(apiSuccessResponse({'message': 'Password changed'}));
       } catch (error) {
         return res.status(422).json(apiErrorResponse(error instanceof Error ? error.message : 'Unknown error'));
       }

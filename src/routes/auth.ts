@@ -4,6 +4,7 @@ import { authController } from '../controllers/auth';
 import { generateToken } from '../utils/auth';
 import { storeTokens } from '../repositories/tokens';
 import { User } from '@prisma/client';
+import { resetController } from '../controllers/reset';
 
 export const authRouter = Router();
 
@@ -147,4 +148,54 @@ authRouter.get(
     }
     res.status(401);
   }
+);
+
+authRouter.post(
+  /* 
+    #swagger.tags = ['Security']
+    #swagger.summary = 'Start user password reset flow'
+    #swagger.description = ''
+    #swagger.parameters['body'] = {
+      in: 'body',
+      schema: {
+        $identity: 'email or password',
+      }
+    } 
+  */
+  '/signin/reset',
+  resetController.reset,
+);
+
+authRouter.post(
+  /* 
+    #swagger.tags = ['Security']
+    #swagger.summary = 'Verify user started password reset'
+    #swagger.description = ''
+    #swagger.parameters['body'] = {
+      in: 'body',
+      schema: {
+        $token: '',
+        $code: '',
+      }
+    } 
+  */
+  '/signin/reset/code',
+  resetController.resetCode
+);
+
+authRouter.post(
+  /* 
+    #swagger.tags = ['Security']
+    #swagger.summary = 'Start user password reset flow'
+    #swagger.description = ''
+    #swagger.parameters['body'] = {
+      in: 'body',
+      schema: {
+        $token: '',
+        $password: '',
+      }
+    } 
+  */
+  '/signin/reset/password',
+  resetController.resetPassword
 );
