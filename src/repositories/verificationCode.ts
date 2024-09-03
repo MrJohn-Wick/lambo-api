@@ -53,3 +53,11 @@ export async function getUserCodes(userId: string, type?: string) {
 
   return codes;
 }
+
+export async function getCode(id: string) {
+  const code = prisma.verificationCode.findUnique({
+    where: { id }
+  });
+
+  return code;
+}
