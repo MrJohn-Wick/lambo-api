@@ -50,7 +50,7 @@ import validator from 'validator';
       const { token, code } = validatedValues.data;
       const verificationCode = await getCode(token);
   
-      if (!verificationCode || verificationCode.type !== OnetimeCodeType.RESET) {
+      if (!verificationCode || verificationCode.type !== OnetimeCodeType.RESET || verificationCode.code !== code) {
         return res.status(406).json(apiErrorResponse('Wrong code'));
       }
       
@@ -80,6 +80,7 @@ import validator from 'validator';
       }
 
       updateUserPassword(verificationCode.user_id, password);
+      deleteUserCodes(verificationCode.user_id, OnetimeCodeType.PASSWORD);
 
       res.json({
         message: "Password changed"
