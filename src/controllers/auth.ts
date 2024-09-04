@@ -106,7 +106,7 @@ export const authController = {
       const code = await createUserCode(user.id, OnetimeCodeType.PHONE);
 
       return res.status(200).json(apiSuccessResponse({
-        token: user.id,
+        token: code.id,
         // TODO: remove code after
         onetimecode: code.code
       }));
