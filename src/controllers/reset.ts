@@ -34,6 +34,7 @@ import validator from 'validator';
 
       return res.status(200).json(apiSuccessResponse({
         token: code.id,
+        expired_at: code.expired_at,
         // TODO: remove code after sms service will be created
         onetimecode: code.code
       }));
@@ -50,7 +51,12 @@ import validator from 'validator';
       const { token, code } = validatedValues.data;
       const verificationCode = await getCode(token);
   
-      if (!verificationCode || verificationCode.type !== OnetimeCodeType.RESET || verificationCode.code !== code) {
+      if (
+        !verificationCode || 
+        verificationCode.type !== OnetimeCodeType.RESET || 
+        verificationCode.code !== code ||
+        verificationCode.expired_at < new Date()
+      ) {
         return res.status(406).json(apiErrorResponse('Wrong code'));
       }
       
