@@ -44,6 +44,7 @@ export const authController = {
       // TODO: send one-time code to user
       return res.status(200).json(apiSuccessResponse({
         token: code.id,
+        expired_at: code.expired_at,
         // TODO: remove code after sms service will be created
         onetimecode: code.code
       }));
@@ -63,31 +64,32 @@ export const authController = {
     const { token, code } = validatedValues.data;
     const verificationCode = await getCode(token);
 
-    if (!verificationCode) {
+    if (
+      !verificationCode || 
+      verificationCode.type !== OnetimeCodeType.PHONE ||
+      verificationCode.code !== code ||
+      verificationCode.expired_at < new Date()
+    ) {
       return res.status(406).json(apiErrorResponse('Wrong code'));
     }
 
-    if (verificationCode.type == OnetimeCodeType.PHONE) {
-      verifyPhone(verificationCode.user_id);
-      deleteUserCodes(verificationCode.user_id, OnetimeCodeType.PHONE);
-  
-      const user = await getUserById(verificationCode.user_id);
-  
-      if (!user) {
-        return res.status(406).json(apiErrorResponse('User not found'));
-      }
-  
-      const { accessToken, refreshToken, expiresAt } = await getTokens(user);
-  
-      return res.status(200).json(apiSuccessResponse({
-        access_token: accessToken,
-        token_type: 'Bearer',
-        refresh_token: refreshToken,
-        expires_in: expiresAt,
-      }));
+    verifyPhone(verificationCode.user_id);
+    deleteUserCodes(verificationCode.user_id, OnetimeCodeType.PHONE);
+
+    const user = await getUserById(verificationCode.user_id);
+
+    if (!user) {
+      return res.status(406).json(apiErrorResponse('User not found'));
     }
 
-    return res.status(406).json(apiErrorResponse('Wrong code'));
+    const { accessToken, refreshToken, expiresAt } = await getTokens(user);
+
+    return res.status(200).json(apiSuccessResponse({
+      access_token: accessToken,
+      token_type: 'Bearer',
+      refresh_token: refreshToken,
+      expires_in: expiresAt,
+    }));
   },
 
   async mobile(req: Request, res: Response, next: NextFunction) {
@@ -107,6 +109,7 @@ export const authController = {
 
       return res.status(200).json(apiSuccessResponse({
         token: code.id,
+        expired_at: code.expired_at,
         // TODO: remove code after
         onetimecode: code.code
       }));
