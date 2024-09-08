@@ -57,11 +57,11 @@ model Profile {
   firstname         String?
   lastname          String?
   birthday          DateTime?
-  photo             String?
   location          String?  
   user              User        @relation(fields: [userId], references: [id])
   userId            String      @unique
   categories        Category[]
+  avatar            String?
 
   @@map("profiles")
 }
@@ -100,7 +100,7 @@ model Stream {
   start_time        DateTime?
   duration          Int?
   charity           Int?
-  invited           User[]       @relation("invites")
+  invited           User[]      @relation("invites")
   is_private        Boolean     @default(false)
   comments_off      Boolean     @default(false)
   room              String?
