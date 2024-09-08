@@ -4,6 +4,7 @@ import { profileController } from '../controllers/profile';
 import { subscriptionController } from '../controllers/subscribtion';
 import { categoriesController } from '../controllers/categories';
 import { usersController } from '../controllers/users';
+import { uploadAvatarController } from '../controllers/upload';
 
 export const meRouter = Router();
 
@@ -110,3 +111,23 @@ meRouter.post(
   passport.authenticate('bearer', { session: false }),
   profileController.password
 );
+
+meRouter.post(
+  /* 
+  #swagger.tags = ['User']
+  #swagger.summary = 'Upload user avatar'
+  #swagger.description = ''
+  #swagger.security = [{
+    "apiKeyAuth": []
+  }]
+  #swagger.parameters['avatar'] = {
+    in: 'formData',
+    type: 'file',
+    required: 'true',
+    description: 'Some description...',
+  } 
+  */
+  '/avatar',
+  passport.authenticate('bearer', { session: false }),
+  uploadAvatarController
+)
