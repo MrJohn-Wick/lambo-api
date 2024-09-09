@@ -41,7 +41,7 @@ export async function updateProfile(userId: string, data: z.infer<typeof Profile
 export async function updateAvatar(userId: string, value: string) {
   await prisma.profile.upsert({
     where: {
-      id: userId
+      userId: userId
     },
     create: {
       userId,
