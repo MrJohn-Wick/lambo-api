@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { LanguagesController } from '../controllers/langs';
+import { languagesController } from '../controllers/langs';
 
 export const languagesRouter = Router();
 
@@ -10,5 +10,5 @@ languagesRouter.get(
     #swagger.description = 'Return all languages'
   */
   '/',
-  LanguagesController.list
+  languagesController.list
 );

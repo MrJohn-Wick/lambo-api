@@ -2,7 +2,7 @@ import langs from 'langs';
 import { Request, Response } from 'express';
 import { apiSuccessResponse } from '../utils/responses';
 
-export const LanguagesController = {
+export const languagesController = {
   async list(req: Request, res: Response) {
     const fullLangs = langs.all();
     const list = fullLangs.map((l) => ({
