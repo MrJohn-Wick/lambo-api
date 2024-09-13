@@ -11,6 +11,7 @@ import { categoriesRouter } from './routes/categories';
 import { meRouter } from './routes/me';
 import { streamsRouter } from './routes/streams';
 import { languagesRouter } from './routes/langs';
+import { logger } from './utils/logger';
 
 
 dotenv.config();
@@ -19,6 +20,7 @@ const app = express();
 app.use(cors());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.json());
+app.use(logger);
 
 app.use('/', authRouter); // ["/oauth/*", "/signup"]
 app.use('/me', meRouter);
