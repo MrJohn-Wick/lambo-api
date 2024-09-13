@@ -10,6 +10,7 @@ import { subcriptionsRouter } from './routes/subscriptions';
 import { categoriesRouter } from './routes/categories';
 import { meRouter } from './routes/me';
 import { streamsRouter } from './routes/streams';
+import { languagesRouter } from './routes/langs';
 
 
 dotenv.config();
@@ -24,8 +25,8 @@ app.use('/me', meRouter);
 app.use('/users', usersRouter);
 app.use('/categories', categoriesRouter);
 app.use('/streams', streamsRouter);
-
 app.use('/sub', subcriptionsRouter);
+app.use('/langs', languagesRouter);
 
 const file = readFileSync('./swagger-doc.json', 'utf8')
 const swaggerDocument = JSON.parse(file);
