@@ -6,7 +6,7 @@ import multerS3 from 'multer-s3';
 import { apiErrorResponse, apiSuccessResponse } from '../utils/responses';
 import { updateAvatar } from '../repositories/profile';
 
-const s3 = new S3Client({
+export const s3 = new S3Client({
   region: 'lambo-me',
   forcePathStyle: true,
   // logger: console,
@@ -50,8 +50,11 @@ export function uploadAvatarController(req: Request, res: Response, next: NextFu
         await updateAvatar(req.user.id, file.location);
       }
       
+      console.log(file);
       return res.json(apiSuccessResponse({
-        uri: file.location
+        uri: file.location,
+        key: file.key,
+        etag: file.etag
       }));
     }
   });

@@ -1,4 +1,7 @@
+import langs from 'langs';
 import * as z from 'zod';
+import { s3 } from '../controllers/upload';
+import { GetObjectCommand } from '@aws-sdk/client-s3';
 
 const PriceTypeSchema = z.union([
   z.literal('ticket'),
@@ -27,9 +30,44 @@ export const StreamCreateSchema = z.object({
   if (!start_now && !start_time) {
     refinementContext.addIssue({
       code: z.ZodIssueCode.custom,
-      message: "field must be if start_now is false",
+      message: "Field must exist if start_now is false.",
       path: ['start_time']
     });
+  }
+  if (start_time && new Date(start_time) < new Date()) {
+    refinementContext.addIssue({
+      code: z.ZodIssueCode.custom,
+      message: "Start time must be in furute.",
+      path: ['start_time']
+    });
+  }
+}).superRefine(( 
+  { language },
+  refinementContext
+) => {
+  const langsCodes = langs.all().map(l => l['1']);
+  if (language && !langsCodes.includes(language)) {
+    refinementContext.addIssue({
+      code: z.ZodIssueCode.custom,
+      message: "Language code in wrong",
+      path: ['language']
+    });
+  }
+}).superRefine(async (
+  { cover },
+  context
+) => {
+  if (cover) {
+    const getObject = new GetObjectCommand({ Bucket: process.env.S3_LAMBO_AVATARS || 'lambo-avatars', Key: cover });
+    try {
+      const object = await s3.send(getObject);
+    } catch (e) {
+      context.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: 'Wrong file key',
+        path: ['cover']
+      });
+    }
   }
 });
 

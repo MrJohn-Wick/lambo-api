@@ -17,13 +17,19 @@ export const streamsController = {
 
     // TODO: User roles
 
-    const validatedData = StreamCreateSchema.safeParse(req.body);
+    const validatedData = await StreamCreateSchema.safeParseAsync(req.body);
     if (!validatedData.success) {
-      return res.status(400).json(apiErrorResponse('Invalid requiest'));
+      const messages = validatedData.error.errors.map((e) => e.path+":"+e.message);
+      return res.status(400).json(apiErrorResponse('Invalid requiest. '+messages.join('. ')));
     }
     const streamData = { uid: user.id, ...validatedData.data};
+    try {
+      const stream = await createStream(streamData);
 
-    res.json(apiSuccessResponse(streamData));
+      res.json(apiSuccessResponse(stream));
+    } catch (e) {
+      res.status(500).send();
+    }
   },
 
   async get(req: Request, res: Response) {
