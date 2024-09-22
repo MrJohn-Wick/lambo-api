@@ -6,6 +6,7 @@ import { ProfileUpdateSchema } from '../schemas/profile';
 import { PasswordUpdateSchema } from '../schemas/signup';
 import { apiErrorResponse, apiSuccessResponse } from '../utils/responses';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
+import { moveObjectToAvatars } from '../utils/s3';
 
 export const profileController = {
   async me(req: Request, res: Response) {
@@ -31,11 +32,19 @@ export const profileController = {
 
   async update(req: Request, res: Response) {
     const user = req.user;
-    const validatedValues = ProfileUpdateSchema.safeParse(req.body);
+    const validatedValues = await ProfileUpdateSchema.safeParseAsync(req.body);
 
     if (!validatedValues.success) {
-      return res.status(400).json(apiErrorResponse('Invalid request'));
+      const messages = validatedValues.error.errors.map((e) => e.path+":"+e.message);
+      return res.status(400).json(apiErrorResponse('Invalid requiest. '+messages.join('. ')));
     }
+    if (validatedValues.data.avatar) {
+      const fileObject = await moveObjectToAvatars(validatedValues.data.avatar);
+      if (fileObject) {
+          validatedValues.data.avatar = fileObject.uri;
+      }
+    }
+
 
     if (user && validatedValues.data) {
       try {

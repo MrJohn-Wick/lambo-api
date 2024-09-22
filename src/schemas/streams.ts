@@ -1,7 +1,7 @@
 import langs from 'langs';
 import * as z from 'zod';
-import { s3 } from '../controllers/upload';
 import { GetObjectCommand } from '@aws-sdk/client-s3';
+import { s3client } from '../utils/s3';
 
 const PriceTypeSchema = z.union([
   z.literal('ticket'),
@@ -58,9 +58,9 @@ export const StreamCreateSchema = z.object({
   context
 ) => {
   if (cover) {
-    const getObject = new GetObjectCommand({ Bucket: process.env.S3_LAMBO_AVATARS || 'lambo-avatars', Key: cover });
+    const getObject = new GetObjectCommand({ Bucket: process.env.S3_BUCKET || 'lambo', Key: cover });
     try {
-      const object = await s3.send(getObject);
+      const object = await s3client.send(getObject);
     } catch (e) {
       context.addIssue({
         code: z.ZodIssueCode.custom,

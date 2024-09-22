@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import { createStream, editStream, getStream, getStreams, getStreamToken } from '../repositories/streams';
 import { StreamCreateSchema, StreamEditSchema } from '../schemas/streams';
 import { apiErrorResponse, apiSuccessResponse } from '../utils/responses';
+import { moveObjectToStreamsCoves } from '../utils/s3';
 
 export const streamsController = {
   async list(req: Request, res: Response) {
@@ -21,6 +22,12 @@ export const streamsController = {
     if (!validatedData.success) {
       const messages = validatedData.error.errors.map((e) => e.path+":"+e.message);
       return res.status(400).json(apiErrorResponse('Invalid requiest. '+messages.join('. ')));
+    }
+    if (validatedData.data.cover) {
+      const fileObject = await moveObjectToStreamsCoves(validatedData.data.cover);
+      if (fileObject) {
+          validatedData.data.cover = fileObject.uri;
+      }
     }
     const streamData = { uid: user.id, ...validatedData.data};
     try {
