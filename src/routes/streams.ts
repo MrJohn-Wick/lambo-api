@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import passport from 'passport';
 import { streamsController } from '../controllers/streams';
+import { uploadStreamCoverController } from '../controllers/upload';
 
 export const streamsRouter = Router();
 
@@ -71,6 +72,33 @@ streamsRouter.get(
   passport.authenticate('bearer', { session:false }),
   streamsController.recomended
 );
+
+streamsRouter.post(
+  /* 
+  #swagger.tags = ['Streams']
+  #swagger.summary = 'Upload stream cover'
+  #swagger.description = ''
+  #swagger.security = [{
+    "apiKeyAuth": []
+  }]
+  #swagger.parameters['cover'] = {
+    in: 'formData',
+    type: 'file',
+    required: 'true',
+    description: 'Some description...',
+  }
+  #swagger.responses[200] = {
+    description: 'Return temporary file uri and s3 key',
+    schema: {
+      uri: 'file uri',
+      key: 's3 file key'
+    }
+  }
+  */
+  '/cover',
+  passport.authenticate('bearer', { session: false }),
+  uploadStreamCoverController
+)
 
 streamsRouter.get(
   /* 
