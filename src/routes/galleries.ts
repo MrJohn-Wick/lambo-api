@@ -41,3 +41,17 @@ galleriesRouter.post(
   passport.authenticate('bearer', { session: false }),
   GalleriesController.upload
 )
+
+galleriesRouter.post(
+  /* 
+  #swagger.tags = ['Galleries']
+  #swagger.summary = 'Delete image'
+  #swagger.description = ''
+  #swagger.security = [{
+    "apiKeyAuth": []
+  }]
+  */
+  '/images/:id/delete',
+  passport.authenticate('bearer', { session: false }),
+  GalleriesController.deleteImage
+)

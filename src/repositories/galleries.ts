@@ -28,7 +28,30 @@ export async function galleryAppendImages(id: string, keys: string[]): Promise<G
       if (item) items.push(item);
     }
     return items;
-  } catch {
+  } catch (err) {
+    console.log(err);
     return null;
+  }
+}
+
+export async function getImage(id: string): Promise<GalleryItem | null> {
+  try {
+    const image = await prisma.galleryItem.findUnique({
+      where: { id }
+    });
+    return image;
+  } catch (err) {
+    return null;
+  }
+}
+
+export async function deleteImage(id: string): Promise<boolean> {
+  try {
+    await prisma.galleryItem.delete({
+      where: { id }
+    });
+    return true;
+  } catch {
+    return false;
   }
 }

@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from 'express';
 import { userGalleryMulter } from '../utils/s3';
 import { apiErrorResponse, apiSuccessResponse } from '../utils/responses';
-import { galleryAppendImages, getGallery } from '../repositories/galleries';
+import { deleteImage, galleryAppendImages, getGallery, getImage } from '../repositories/galleries';
 
 export const GalleriesController = {
 
@@ -47,5 +47,23 @@ export const GalleriesController = {
         return res.json(apiSuccessResponse(images));
       }
     });
+  },
+
+  async deleteImage(req: Request, res: Response, next: NextFunction) {
+    const imageId = req.params.id;
+    const user = req.user;
+    if (!user) throw("Does'n have user after auth middleware!!!");
+
+    const image = await getImage(imageId);
+    if (!image) {
+      return res.status(404).json(apiErrorResponse("Image not found"));
+    }
+
+    const isDeleted = await deleteImage(imageId);
+    if (isDeleted) {
+      return res.json(apiSuccessResponse());
+    }
+
+    res.status(500).json(apiErrorResponse("Database error"));
   }
 }
