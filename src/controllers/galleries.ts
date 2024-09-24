@@ -4,6 +4,20 @@ import { apiErrorResponse, apiSuccessResponse } from '../utils/responses';
 import { galleryAppendImages, getGallery } from '../repositories/galleries';
 
 export const GalleriesController = {
+
+  async get(req: Request, res: Response, next: NextFunction) {
+    const galleryId = req.params.id;
+    const user = req.user;
+    if (!user) throw("Does'n have user after auth middleware!!!");
+
+    const gallery = await getGallery(galleryId);
+    if (!gallery) {
+      return res.status(404).json(apiErrorResponse("Gallery not found"));
+    }
+
+    return res.json(apiSuccessResponse(gallery));
+  },
+
   async upload(req: Request, res: Response, next: NextFunction) {
     const galleryId = req.params.id;
     const user = req.user;

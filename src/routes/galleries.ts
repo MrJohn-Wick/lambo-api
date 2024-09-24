@@ -5,6 +5,20 @@ import { GalleriesController } from '../controllers/galleries';
 export const galleriesRouter = Router();
 
 
+galleriesRouter.get(
+  /* 
+  #swagger.tags = ['Galleries']
+  #swagger.summary = 'Get gallery'
+  #swagger.description = ''
+  #swagger.security = [{
+    "apiKeyAuth": []
+  }]
+  */
+  '/:id',
+  passport.authenticate('bearer', { session: false }),
+  GalleriesController.get
+)
+
 galleriesRouter.post(
   /* 
   #swagger.tags = ['Galleries']
