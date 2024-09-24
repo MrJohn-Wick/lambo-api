@@ -1,4 +1,4 @@
-import { Gallery, PrismaClient } from '@prisma/client';
+import { Gallery, GalleryItem, PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient();
 
@@ -15,13 +15,20 @@ export async function getGallery(id: string): Promise<Gallery | null> {
   return gallery;
 }
 
-export async function galleryAppendImages(id: string, keys: string[]): Promise<boolean> {
+export async function galleryAppendImages(id: string, keys: string[]): Promise<GalleryItem[] | null> {
   try {
-    await prisma.galleryItem.createMany({
-      data: keys.map( (k) => ({key: k, gallery_id: id}) )
-    });
-    return true;
+    const items: GalleryItem[] = [];
+    for (const key in keys) {
+      const item = await prisma.galleryItem.create({
+        data: {
+          key,
+          gallery_id: id
+        }
+      });
+      if (item) items.push(item);
+    }
+    return items;
   } catch {
-    return false;
+    return null;
   }
 }

@@ -25,14 +25,12 @@ export const GalleriesController = {
         console.log("Upload SUCCESS", req.file, typeof req.file);
         const files: Express.MulterS3.File[] = req.files as Express.MulterS3.File[];
   
-        if (!galleryAppendImages(galleryId, files.map( f => (f.key) ))) {
+        const images = await galleryAppendImages(galleryId, files.map( f => (f.key) ));
+        if (!images) {
           return res.status(409).json(apiErrorResponse("Upload error"));
         }
 
-        return res.json(apiSuccessResponse(files.map(f => ({
-          uri: f.location,
-          key: f.key,
-        }))));
+        return res.json(apiSuccessResponse(images));
       }
     });
   }
