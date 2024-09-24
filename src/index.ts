@@ -12,6 +12,7 @@ import { meRouter } from './routes/me';
 import { streamsRouter } from './routes/streams';
 import { languagesRouter } from './routes/langs';
 import { logger } from './utils/logger';
+import { galleriesRouter } from './routes/galleries';
 
 
 dotenv.config();
@@ -29,6 +30,7 @@ app.use('/categories', categoriesRouter);
 app.use('/streams', streamsRouter);
 app.use('/sub', subcriptionsRouter);
 app.use('/langs', languagesRouter);
+app.use('/galleries', galleriesRouter);
 
 const file = readFileSync('./swagger-doc.json', 'utf8')
 const swaggerDocument = JSON.parse(file);
