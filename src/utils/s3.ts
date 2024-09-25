@@ -31,6 +31,23 @@ export const tmpMulter = multer({
   })
 });
 
+export const userGalleryMulter = (id: string) => multer({
+  storage: multerS3({
+    s3: s3client,
+    bucket: process.env.S3_BUCKET || 'lambo',
+    acl: 'public-read',
+    contentType: multerS3.AUTO_CONTENT_TYPE,
+    metadata: function (req, file, cb) {
+      cb(null, { filename: file.filename });
+    },
+    key: function(req, file, cb) {
+      const typeParts = file.mimetype.split('/');
+      cb(null, `gallery/${id}/${ randomUUID() }.${ typeParts[1] }`);
+    },
+  })
+});
+
+
 export function getS3PublicKey(key: string): string {
   return `${process.env.S3_ENDPOINT}/${process.env.S3_BUCKET}/${key}`;
 }
