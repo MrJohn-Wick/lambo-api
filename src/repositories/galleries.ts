@@ -21,7 +21,7 @@ export async function galleryAppendImages(id: string, keys: string[]): Promise<G
     for (const key in keys) {
       const item = await prisma.galleryItem.create({
         data: {
-          key,
+          key: keys[key],
           gallery_id: id
         }
       });

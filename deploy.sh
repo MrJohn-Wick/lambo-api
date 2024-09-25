@@ -12,6 +12,6 @@ npx dotenv-flow npx prisma migrate deploy
 
 npx dotenv-flow npm run swagger
 
-npm dotenv-flow npm run build
+npx dotenv-flow npm run build
 
 systemctl restart lambo-api.service
