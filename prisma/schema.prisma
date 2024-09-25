@@ -26,7 +26,7 @@ model User {
 
   Follower      Subscription[] @relation("follower")
   Author        Subscription[] @relation("author")
-  invites       Stream[]       @relation("invites")
+  invites       Stream[]  @relation("invites")
 
   @@map("users")
 }
@@ -62,7 +62,6 @@ model Profile {
   userId            String      @unique
   categories        Category[]
   avatar            String?     @db.Text
-  gallery           Gallery?    @relation("gallery")
 
   @@map("profiles")
 }
@@ -107,37 +106,19 @@ model Stream {
   room              String?
   created_at        DateTime    @default(now())
 
-  user              User        @relation("streams", fields: [user_id], references: [id])
+  user              User         @relation("streams", fields: [user_id], references: [id])
 
   @@map("streams")
 }
 
 model VerificationCode {
-  id          String    @id @default(uuid())
+  id          String  @id @default(uuid())
   code        String
   type        String
   user_id     String
-  user        User      @relation(fields: [user_id], references: [id])
+  user        User    @relation(fields: [user_id], references: [id])
   created_at  DateTime  @default(now())
   expired_at  DateTime  @default(now())
 
   @@map("verification_code")
-}
-
-model Gallery {
-  id             String    @id @default(uuid())
-  profile_id     String    @unique
-  profile        Profile   @relation("gallery", fields: [profile_id], references: [id])
-  items          GalleryItem[]
-
-  @@map("galleries")
-}
-
-model GalleryItem {
-  id          String    @id @default(uuid())
-  key         String    @db.Text
-  gallery_id  String
-  gallery     Gallery   @relation(fields: [gallery_id], references: [id])
-
-  @@map("gallery_items")
 }
