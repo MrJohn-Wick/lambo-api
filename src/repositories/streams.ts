@@ -1,9 +1,9 @@
 import * as z from 'zod';
 import { PrismaClient, Stream } from "@prisma/client";
-import { createLivekitToken } from './livekit';
 import { getProfileByUserId } from './profile';
 import { VideoGrant } from 'livekit-server-sdk';
 import { StreamEditSchema } from '../schemas/streams';
+import { createLivekitToken, roomService } from '../utils/livekit';
 
 const prisma = new PrismaClient();
 
@@ -137,4 +137,27 @@ export async function getStreamToken(streamId: string, userId: string) {
   const token = await createLivekitToken(participant, grands);
 
   return token;
+}
+
+export async function createStreamRoom(stream: Stream) {
+  const opts = {
+    name: stream.title,
+  };
+  const room = await roomService.createRoom(opts);
+
+  if (!room)
+    return null;
+  
+  const updatedStream = await prisma.stream.update({
+    where: { id: stream.id },
+    data: {
+      room: room.sid
+    }
+  });
+
+  if (updatedStream) {
+    return room.sid;
+  }
+
+  return null;
 }

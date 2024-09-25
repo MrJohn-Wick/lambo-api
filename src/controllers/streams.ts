@@ -1,8 +1,9 @@
 import { Request, Response } from 'express';
-import { createStream, editStream, getStream, getStreams, getStreamToken } from '../repositories/streams';
+import { createStream, createStreamRoom, editStream, getStream, getStreams, getStreamToken } from '../repositories/streams';
 import { StreamCreateSchema, StreamEditSchema } from '../schemas/streams';
 import { apiErrorResponse, apiSuccessResponse } from '../utils/responses';
 import { moveObjectToStreamsCoves } from '../utils/s3';
+import { getProfileByUserId } from '../repositories/profile';
 
 export const streamsController = {
   async list(req: Request, res: Response) {
@@ -82,11 +83,26 @@ export const streamsController = {
     const streamId = req.params.id;
     if (!user) throw("Does'n have user after auth middleware!!!");
 
+    let stream = await getStream(streamId);
+    if (!stream) {
+      return res.status(404).json(apiErrorResponse("Stream not found."));
+    }
+
+    const profile = await getProfileByUserId(user.id);
+    if (!profile?.username) {
+      return res.status(406).json(apiErrorResponse("Can't generate token. User profile empty."));
+    }
+
+    if (!stream.room && stream.user_id == user.id) {
+      if (!(await createStreamRoom(stream)))
+        return res.status(406).json(apiErrorResponse("Can't create room"));
+    }
+  
     const token = await getStreamToken(streamId, user.id);
     if (token) {
       return res.json(apiSuccessResponse(token));
     }
 
-    res.status(406).json(apiErrorResponse("Can't generate token. Stream does'n created or user profile empty"));
+    res.status(406).json(apiErrorResponse("Stream is inactive"));
   }
 }
