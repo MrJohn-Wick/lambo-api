@@ -36,7 +36,7 @@ export const GalleriesController = {
         console.log("Upload ERROR", req.file, err);
         return res.status(409).json(apiErrorResponse("Storage upload error"));
       } else {
-        console.log("Upload SUCCESS", req.file, typeof req.file);
+        console.log("Upload SUCCESS", req.files, typeof req.files);
         const files: Express.MulterS3.File[] = req.files as Express.MulterS3.File[];
   
         const images = await galleryAppendImages(galleryId, files.map( f => (f.key) ));

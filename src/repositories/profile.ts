@@ -13,7 +13,7 @@ export async function getProfileByUserId(id: string): Promise<Profile | null> {
   });
 
   if (profile && !profile?.gallery) {
-    prisma.profile.update({
+    await prisma.profile.update({
       where: {
         id: profile.id
       },
