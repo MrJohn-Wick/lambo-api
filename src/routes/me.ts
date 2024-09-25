@@ -3,7 +3,6 @@ import { Router } from 'express';
 import { profileController } from '../controllers/profile';
 import { subscriptionController } from '../controllers/subscribtion';
 import { categoriesController } from '../controllers/categories';
-import { usersController } from '../controllers/users';
 import { uploadAvatarController } from '../controllers/upload';
 
 export const meRouter = Router();
@@ -80,7 +79,8 @@ meRouter.post(
         $lastname: '',
         $birthday: '',
         $location: '',
-        $categories: ['id1', 'id2']
+        $categories: ['id1', 'id2'],
+        $avatar: 's3 key'
       }
     } 
   */

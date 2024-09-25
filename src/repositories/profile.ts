@@ -1,4 +1,4 @@
-import { Prisma, PrismaClient, Profile } from '@prisma/client';
+import { PrismaClient, Profile } from '@prisma/client';
 import z from 'zod';
 import { ProfileUpdateSchema } from '../schemas/profile';
 
@@ -6,8 +6,31 @@ const prisma = new PrismaClient();
 
 export async function getProfileByUserId(id: string): Promise<Profile | null> {
   const profile = await prisma.profile.findFirst({
-    where: { userId : id }
+    where: { userId : id },
+    include: {
+      gallery: true
+    }
   });
+
+  if (profile && !profile?.gallery) {
+    prisma.profile.update({
+      where: {
+        id: profile.id
+      },
+      data: {
+        gallery: {
+          create: {}
+        }
+      }
+    });
+
+    return await prisma.profile.findFirst({
+      where: { userId : id },
+      include: {
+        gallery: true
+      }
+    });
+  }
 
   return profile;
 }
@@ -26,6 +49,9 @@ export async function updateProfile(userId: string, data: z.infer<typeof Profile
       userId,
       categories: {
         connect: categories
+      },
+      gallery: {
+        create: {}
       },
       ...upsertData
     },
