@@ -46,8 +46,8 @@ export async function getUsers(limit: number) {
   return users;
 }
 
-export async function getUserById(id: string): Promise<User> {
-  const user = await prisma.user.findFirstOrThrow({
+export async function getUserById(id: string): Promise<User | null> {
+  const user = await prisma.user.findFirst({
     where: { id },
   });
 

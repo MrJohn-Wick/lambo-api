@@ -36,3 +36,17 @@ usersRouter.get(
   passport.authenticate('bearer', { session: false }),
   subscriptionController.get
 );
+
+usersRouter.get(
+  /* 
+    #swagger.tags = ['Users']
+    #swagger.summary = 'Subscribe to user'
+    #swagger.description = ''
+    #swagger.security = [{
+      "apiKeyAuth": []
+    }]
+  */
+    '/:id/subscribe',
+  passport.authenticate('bearer', { session: false }),
+  subscriptionController.subscribeToUser
+)

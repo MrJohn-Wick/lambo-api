@@ -35,19 +35,6 @@ meRouter.get(
   subscriptionController.getForCurrentUser
 );
 
-meRouter.post(
-  /* 
-    #swagger.tags = ['User']
-    #swagger.summary = 'Subscribe current user to another'
-    #swagger.security = [{
-      "apiKeyAuth": []
-    }]
-  */
-  '/subscribe',
-  passport.authenticate('bearer', { session: false }),
-  subscriptionController.create
-);
-
 meRouter.get(
   /* 
     #swagger.tags = ['User']
