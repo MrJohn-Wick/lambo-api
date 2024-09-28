@@ -22,12 +22,12 @@ export const authController = {
     const { email, phone } = validatedValues.data;
     
     let user = await getUserByEmail(email);
-    if (user && user.emailVerified) {
+    if (user) {
       return res.status(406).json(apiErrorResponse('Email is alredy used'));
     }
 
     user = await getUserByPhone(phone);
-    if (user && user.phoneVerified) {
+    if (user) {
       return res.status(406).json(apiErrorResponse('Phone is alredy used'));
     }
 
@@ -129,7 +129,7 @@ export const authController = {
     const { username, password } = validatedValues.data;
     const user = await getUserByEmail(username);
     
-    if (user && user.passwordHash && await compare(password, user.passwordHash)) {
+    if (user && user.emailVerified && user.passwordHash && await compare(password, user.passwordHash)) {
       const { accessToken, refreshToken, expiresAt } = await getTokens(user);
 
       return res.status(200).json(apiSuccessResponse({
