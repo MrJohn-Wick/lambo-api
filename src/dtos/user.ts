@@ -16,6 +16,7 @@ export class UserDTO {
   emailVerified: boolean;
   phone: string;
   phoneVerified: boolean;
+  password: boolean;
   profile?: ProfileDTO | null;
   metrics: UserMetricsDTO | null;
 
@@ -25,6 +26,7 @@ export class UserDTO {
     this.emailVerified = data?.emailVerified;
     this.phone = data?.phone;
     this.phoneVerified = data?.phoneVerified;
+    this.password = data?.password;
     this.profile = data?.profile ? new ProfileDTO(data.profile) : null;
     this.metrics = data?.metrics ? new UserMetricsDTO(data.metrics): null
   }

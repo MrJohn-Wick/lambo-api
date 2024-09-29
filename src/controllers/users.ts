@@ -32,6 +32,7 @@ export const usersController = {
       emailVerified: user.emailVerified,
       phone: user.phone,
       phoneVerified: user.phoneVerified,
+      password: !!user.passwordHash,
       profile: new ProfileDTO(profile),
       metrics: null,
     };
