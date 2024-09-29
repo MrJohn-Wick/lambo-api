@@ -17,6 +17,7 @@ export const usersController = {
   async get(req: Request, res: Response) {
     const userId = req.params.id;
     const { mode } = req.query as { mode?: string };
+    const modes = mode ? mode.split(',') : [];
 
     const user = await getUserById(userId);
 
@@ -35,13 +36,14 @@ export const usersController = {
       password: !!user.passwordHash,
       profile: new ProfileDTO(profile),
       metrics: null,
+      settings: null,
     };
 
-    switch (mode) {
-      case "metrics": {
-        userDto.metrics = await getUserMetrics(user.id);
-        break;
-      }
+    if (modes.includes('metrics')) {
+      userDto.metrics = await getUserMetrics(user.id);
+    }
+
+    if (modes.includes('settings')) {
     }
 
     return res.json(apiSuccessResponse(userDto));
