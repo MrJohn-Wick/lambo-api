@@ -7,27 +7,16 @@ import { PasswordUpdateSchema } from '../schemas/signup';
 import { apiErrorResponse, apiSuccessResponse } from '../utils/responses';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 import { moveObjectToAvatars } from '../utils/s3';
+import { usersController } from './users';
 
 export const profileController = {
   async me(req: Request, res: Response) {
     const currentUser = req.user as User;
     if (!currentUser) throw("Does'n have user after auth middleware!!!");
 
-    const user = await getUserById(currentUser.id);
-    if (user) {
-      const profile = await getProfileByUserId(user.id);
-      return res.json(apiSuccessResponse({
-        id: user.id,
-        email: user.email,
-        emailVerified: user.emailVerified,
-        phone: user.phone,
-        phoneVerified: user.phoneVerified,
-        password: !!user.passwordHash,
-        profile: profile
-      }));
-    }
-
-    res.status(404).json(apiErrorResponse('User not found'));
+    req.params.id = currentUser.id;
+    
+    return usersController.get(req, res);
   },
 
   async update(req: Request, res: Response) {

@@ -16,6 +16,11 @@ meRouter.get(
     #swagger.security = [{
       "apiKeyAuth": []
     }]
+    #swagger.parameters['mode'] = {
+      in: 'query',
+      description: 'default or metrics',
+      type: 'string'
+    } 
   */
   '/',
   passport.authenticate('bearer', { session: false }),
