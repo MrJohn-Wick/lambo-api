@@ -9,8 +9,8 @@ export class UserSettingsDTO {
   constructor(data: any) {
     this.notifications = data?.notifications || false;
     this.dark = data?.dark || false;
-    this.tfa = data?.tfs;
-    this.incognito = data?.incognito;
+    this.tfa = data?.tfs || false;
+    this.incognito = data?.incognito || false;
   }
 }
 

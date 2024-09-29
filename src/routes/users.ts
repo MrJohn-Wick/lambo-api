@@ -2,6 +2,7 @@ import passport from 'passport';
 import { Router } from 'express';
 import { usersController } from '../controllers/users';
 import { subscriptionController } from '../controllers/subscribtion';
+import { settingsController } from '../controllers/settings';
 
 export const usersRouter = Router();
 
@@ -68,3 +69,42 @@ usersRouter.get(
   passport.authenticate('bearer', { session: false }),
   subscriptionController.subscribeToUser
 )
+
+usersRouter.get(
+  /* 
+    #swagger.tags = ['Users']
+    #swagger.summary = 'Get user settings'
+    #swagger.description = ''
+    #swagger.security = [{
+      "apiKeyAuth": []
+    }]
+  */
+  '/:id/settings',
+  passport.authenticate('bearer', { session: false }),
+  settingsController.get
+);
+
+usersRouter.put(
+  /* 
+    #swagger.tags = ['Users']
+    #swagger.summary = 'Set user settings'
+    #swagger.description = ''
+    #swagger.security = [{
+      "apiKeyAuth": []
+    }]
+    #swagger.parameters['body'] = {
+      in: 'body',
+      description: 'one or many user settings',
+      schema: {
+        $notifications: false,
+        $dark: false,
+        $tfa: false,
+        $incognito: false,
+      }
+    } 
+
+  */
+  '/:id/settings',
+  passport.authenticate('bearer', { session: false }),
+  settingsController.set
+);
