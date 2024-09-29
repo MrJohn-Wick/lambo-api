@@ -1,30 +1,34 @@
 import { Request, Response } from 'express';
 import { createSubscribe, getSubscribtionsByUser, getSubscriptionByUserAndAuthor } from '../repositories/subscription';
-import { SubscriptionSchema } from '../schemas/subscription';
 import { User } from '@prisma/client';
 import { apiErrorResponse, apiSuccessResponse } from '../utils/responses';
+import { getUserById } from '../repositories/users';
 
 export const subscriptionController = {
-  async create(req: Request, res: Response) {
-    
-    const validatedValues = SubscriptionSchema.safeParse(req.body);
 
-    if (!validatedValues.success) {
-      return res.status(400).json(apiErrorResponse('Invalid requiest'));
+  async subscribeToUser(req: Request, res: Response) {
+    const currentUser = req.user;
+    const authorId = req.params.id;
+
+    if (!currentUser) throw("Does'n have user after auth middleware!!!");
+
+    if (currentUser.id == authorId) {
+      return res.status(409).json(apiErrorResponse(`Can't subscribe to themself`));
+    }
+
+    const authorUser = await getUserById(authorId);
+    if (!authorUser) {
+      return res.status(404).json(apiErrorResponse('User not found'));
     }
     
-    const { authorId } = validatedValues.data;
-    const user = req.user as User;
-
-    const sub = await getSubscriptionByUserAndAuthor(user?.id, authorId);
-
-    if (sub) {
+    const subscription = await getSubscriptionByUserAndAuthor(currentUser.id, authorUser.id);
+    if (subscription) {
       return res.status(423).json(apiErrorResponse('Subscription already exist.'));
     }
 
-    const subscrbe = await createSubscribe(authorId, user.id);
+    const subscribe = await createSubscribe(authorUser.id, currentUser.id);
 
-    return res.json(apiSuccessResponse(subscrbe));
+    return res.json(apiSuccessResponse(subscribe));
   },
 
   async get(req: Request, res: Response) {    

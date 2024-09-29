@@ -16,6 +16,11 @@ meRouter.get(
     #swagger.security = [{
       "apiKeyAuth": []
     }]
+    #swagger.parameters['mode'] = {
+      in: 'query',
+      description: 'default or metrics',
+      type: 'string'
+    } 
   */
   '/',
   passport.authenticate('bearer', { session: false }),
@@ -33,19 +38,6 @@ meRouter.get(
   '/subscriptions',
   passport.authenticate('bearer', { session: false }),
   subscriptionController.getForCurrentUser
-);
-
-meRouter.post(
-  /* 
-    #swagger.tags = ['User']
-    #swagger.summary = 'Subscribe current user to another'
-    #swagger.security = [{
-      "apiKeyAuth": []
-    }]
-  */
-  '/subscribe',
-  passport.authenticate('bearer', { session: false }),
-  subscriptionController.create
 );
 
 meRouter.get(
