@@ -1,13 +1,13 @@
 import { hash } from "bcryptjs";
 import { Prisma, PrismaClient, User } from "@prisma/client";
 import { getOnetimeCode } from '../utils/auth';
+import { UserDTO, UserMetricsDTO } from '../dtos/user';
 
 const prisma = new PrismaClient();
 
 type UserWithProfile = Prisma.UserGetPayload<{ include: { profile: true} }>;
 
 // TODO: return users without passwordHash
-
 export async function getUserByEmail(email: string): Promise<User | null> {
   const query = Prisma.sql`SELECT * FROM users WHERE lower(email)=lower(${email})`;
   const users = await prisma.$queryRaw<User[]>(query);
@@ -51,6 +51,7 @@ export async function getUserById(id: string): Promise<User | null> {
     where: { id },
   });
 
+  // const userDto = new UserDTO(user);
   return user;
 }
 
@@ -72,4 +73,20 @@ export async function updateUserPassword(userId: string, password: string) {
       passwordHash
     }
   })
+}
+
+export async function getUserMetrics(id: string): Promise<UserMetricsDTO> {
+  const user = await prisma.user.findFirst({
+    where: { id },
+    include: {
+      _count: {
+        select: {
+          subscribed: true,
+          subscriptions: true,
+        }
+      }
+    }
+  })
+
+  return new UserMetricsDTO(user?._count);
 }

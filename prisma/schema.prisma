@@ -24,8 +24,8 @@ model User {
   streams       Stream[]  @relation("streams")
   codes         VerificationCode[]
 
-  Follower      Subscription[] @relation("follower")
-  Author        Subscription[] @relation("author")
+  subscriptions Subscription[] @relation("follower")
+  subscribed    Subscription[] @relation("author")
   invites       Stream[]       @relation("invites")
 
   @@map("users")
