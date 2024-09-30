@@ -1,13 +1,14 @@
 import { Request, Response } from 'express';
-import { getUserById, updateUserPassword } from '../repositories/users';
+import { updateUserPassword } from '../repositories/users';
 import { User } from '@prisma/client';
-import { getProfileByUserId, updateProfile } from '../repositories/profile';
+import { updateProfile } from '../repositories/profile';
 import { ProfileUpdateSchema } from '../schemas/profile';
 import { PasswordUpdateSchema } from '../schemas/signup';
 import { apiErrorResponse, apiSuccessResponse } from '../utils/responses';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 import { moveObjectToAvatars } from '../utils/s3';
 import { usersController } from './users';
+import { settingsController } from './settings';
 
 export const profileController = {
   async me(req: Request, res: Response) {
@@ -69,4 +70,14 @@ export const profileController = {
 
     res.status(400).json(apiErrorResponse('Invalid requiest'));
   },
+
+  async settings(req: Request, res: Response) {
+    const currentUser = req.user as User;
+    if (!currentUser) throw("Does'n have user after auth middleware!!!");
+
+    req.params.id = currentUser.id;
+    
+    return settingsController.get(req, res);
+  },
+
 }
