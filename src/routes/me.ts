@@ -133,7 +133,7 @@ meRouter.get(
       "apiKeyAuth": []
     }]
   */
-  '/:id/settings',
+  '/settings',
   passport.authenticate('bearer', { session: false }),
   profileController.settings
 );
