@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response } from 'express';
 import { apiErrorResponse, apiSuccessResponse } from '../utils/responses';
 import { tmpMulter } from '../utils/s3';
+import { ErrorMessages } from '../constants';
 
 
 export function uploadAvatarController(req: Request, res: Response, next: NextFunction) {
@@ -10,7 +11,7 @@ export function uploadAvatarController(req: Request, res: Response, next: NextFu
   upload(req, res, async (err) => {
     if (err) {
       console.log("Upload ERROR", req.file, err);
-      return res.status(409).json(apiErrorResponse("upload error"));
+      return res.status(409).json(apiErrorResponse(ErrorMessages.storageUploadError));
     } else {
       console.log("Upload SUCCESS", req.file, typeof req.file);
       const file: Express.MulterS3.File = req.file as Express.MulterS3.File;
@@ -31,7 +32,7 @@ export function uploadStreamCoverController(req: Request, res: Response, next: N
   upload(req, res, async (err) => {
     if (err) {
       console.log("Upload ERROR", req.file, err);
-      return res.status(409).json(apiErrorResponse("upload error"));
+      return res.status(409).json(apiErrorResponse(ErrorMessages.storageUploadError));
     } else {
       console.log("Upload SUCCESS", req.file, typeof req.file);
       const file: Express.MulterS3.File = req.file as Express.MulterS3.File;

@@ -4,6 +4,7 @@ import { apiErrorResponse, apiSuccessResponse } from '../utils/responses';
 import { getProfileByUserId } from '../repositories/profile';
 import { UserDTO } from '../dtos/user';
 import { ProfileDTO } from '../dtos/profile';
+import { ErrorMessages } from '../constants';
 
 
 export const usersController = {
@@ -22,7 +23,7 @@ export const usersController = {
     const user = await getUserById(userId);
 
     if (!user) {
-      return res.status(404).json(apiErrorResponse("User not fount"));
+      return res.status(404).json(apiErrorResponse(ErrorMessages.userNotFound));
     }
 
     const profile = await getProfileByUserId(user.id);
