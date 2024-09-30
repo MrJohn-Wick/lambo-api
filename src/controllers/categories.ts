@@ -1,6 +1,5 @@
 import { Request, Response } from 'express'
 import { getCategories } from '../repositories/categories';
-import { User } from '@prisma/client';
 import { apiSuccessResponse } from '../utils/responses';
 
 export const categoriesController = {

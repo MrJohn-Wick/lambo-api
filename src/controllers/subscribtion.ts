@@ -3,6 +3,7 @@ import { createSubscribe, getSubscribtionsByUser, getSubscriptionByUserAndAuthor
 import { User } from '@prisma/client';
 import { apiErrorResponse, apiSuccessResponse } from '../utils/responses';
 import { getUserById } from '../repositories/users';
+import { ErrorMessages } from '../constants';
 
 export const subscriptionController = {
 
@@ -13,17 +14,17 @@ export const subscriptionController = {
     if (!currentUser) throw("Does'n have user after auth middleware!!!");
 
     if (currentUser.id == authorId) {
-      return res.status(409).json(apiErrorResponse(`Can't subscribe to themself`));
+      return res.status(409).json(apiErrorResponse(ErrorMessages.subscribeThemself));
     }
 
     const authorUser = await getUserById(authorId);
     if (!authorUser) {
-      return res.status(404).json(apiErrorResponse('User not found'));
+      return res.status(404).json(apiErrorResponse(ErrorMessages.userNotFound));
     }
     
     const subscription = await getSubscriptionByUserAndAuthor(currentUser.id, authorUser.id);
     if (subscription) {
-      return res.status(423).json(apiErrorResponse('Subscription already exist.'));
+      return res.status(423).json(apiErrorResponse(ErrorMessages.subscriptionsExist));
     }
 
     const subscribe = await createSubscribe(authorUser.id, currentUser.id);

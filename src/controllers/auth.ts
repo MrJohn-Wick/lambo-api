@@ -9,6 +9,7 @@ import { compare } from 'bcryptjs';
 import { deleteRefreshToken, getRefreshToken } from '../repositories/tokens';
 import { isValidToken } from '../utils/auth';
 import { apiErrorResponse, apiSuccessResponse } from '../utils/responses';
+import { ErrorMessages } from '../constants';
 
 export const authController = {
   async signUp(req: Request, res: Response) {
@@ -23,12 +24,12 @@ export const authController = {
     
     let user = await getUserByEmail(email);
     if (user) {
-      return res.status(406).json(apiErrorResponse('Email is alredy used'));
+      return res.status(406).json(apiErrorResponse(ErrorMessages.emailExist));
     }
 
     user = await getUserByPhone(phone);
     if (user) {
-      return res.status(406).json(apiErrorResponse('Phone is alredy used'));
+      return res.status(406).json(apiErrorResponse(ErrorMessages.phoneExist));
     }
 
     if (!user) {
@@ -50,7 +51,7 @@ export const authController = {
       }));
     }
 
-    return res.status(400).json(apiErrorResponse('Something went wrong.'));
+    return res.status(400).json(apiErrorResponse(ErrorMessages.unknown));
   },
 
   async signUpCode(req: Request, res: Response) {
@@ -58,7 +59,7 @@ export const authController = {
     
     if (!validatedValues.success) {
       const messages = validatedValues.error.errors.map((e) => e.message);
-      return res.status(400).json(apiErrorResponse(messages.join('. ')));
+      return res.status(400).json(apiErrorResponse(`${ErrorMessages.invalidRequest} ${messages.join('. ')}`));
     }
 
     const { token, code } = validatedValues.data;
@@ -70,7 +71,7 @@ export const authController = {
       verificationCode.code !== code ||
       verificationCode.expired_at < new Date()
     ) {
-      return res.status(406).json(apiErrorResponse('Wrong code'));
+      return res.status(406).json(apiErrorResponse(ErrorMessages.wrongCode));
     }
 
     verifyPhone(verificationCode.user_id);
@@ -79,7 +80,7 @@ export const authController = {
     const user = await getUserById(verificationCode.user_id);
 
     if (!user) {
-      return res.status(406).json(apiErrorResponse('User not found'));
+      return res.status(406).json(apiErrorResponse(ErrorMessages.userNotFound));
     }
 
     const { accessToken, refreshToken, expiresAt } = await getTokens(user);
@@ -98,7 +99,7 @@ export const authController = {
 
     if (!validatedValues.success) {
       const messages = validatedValues.error.errors.map((e) => e.message);
-      return res.status(400).json(apiErrorResponse(messages.join('. ')));
+      return res.status(400).json(apiErrorResponse(`${ErrorMessages.wrongCode} ${messages.join('. ')}`));
     }
 
     const { phone } = validatedValues.data;
@@ -115,7 +116,7 @@ export const authController = {
       }));
     }
 
-    return res.status(404).json(apiErrorResponse('User not found'));
+    return res.status(404).json(apiErrorResponse(ErrorMessages.userNotFound));
   },
 
   async singIn(req: Request, res: Response, next: NextFunction) {
@@ -123,7 +124,7 @@ export const authController = {
 
     if (!validatedValues.success) {
       const messages = validatedValues.error.errors.map((e) => e.message);
-      return res.status(400).json(apiErrorResponse(messages.join('. ')));
+      return res.status(400).json(apiErrorResponse(`${ErrorMessages.wrongCode} ${messages.join('. ')}`));
     }
 
     const { username, password } = validatedValues.data;
@@ -140,7 +141,7 @@ export const authController = {
       }));
     }
 
-    return res.status(403).json(apiErrorResponse('Wrong credentials'));
+    return res.status(403).json(apiErrorResponse(ErrorMessages.wrongCredentials));
   },
 
   async refresh(req: Request, res: Response, next: NextFunction) {
@@ -148,7 +149,7 @@ export const authController = {
 
     if (!validatedValues.success) {
       const messages = validatedValues.error.errors.map((e) => e.message);
-      return res.status(400).json(apiErrorResponse(messages.join('. ')));
+      return res.status(400).json(apiErrorResponse(`${ErrorMessages.wrongCode} ${messages.join('. ')}`));
     }
 
     const { refresh_token } = validatedValues.data;
@@ -167,6 +168,6 @@ export const authController = {
       }));
     }
   
-    return res.status(406).json(apiErrorResponse('Invalid token'));
+    return res.status(406).json(apiErrorResponse(ErrorMessages.invalidToken));
   },
 };

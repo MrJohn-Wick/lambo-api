@@ -6,6 +6,7 @@ import { apiErrorResponse, apiSuccessResponse } from '../utils/responses';
 import { OnetimeCodeType } from '../types';
 import { SignUpCodeSchema } from '../schemas/signup';
 import validator from 'validator';
+import { ErrorMessages } from '../constants';
 
   export const resetController = {
 
@@ -15,7 +16,7 @@ import validator from 'validator';
       const validatedValues = ResetIdentitySchema.safeParse(req.body);
 
       if (!validatedValues.success) {
-        return res.status(400).json(apiErrorResponse("Invalid identity"));
+        return res.status(400).json(apiErrorResponse(ErrorMessages.invalidIdentity));
       }
 
       const { identity } = validatedValues.data;
@@ -27,7 +28,7 @@ import validator from 'validator';
       }
 
       if (!user) {
-        return res.status(404).json(apiErrorResponse("User not found"));
+        return res.status(404).json(apiErrorResponse(ErrorMessages.userNotFound));
       }
 
       const code = await createUserCode(user.id, OnetimeCodeType.RESET);
@@ -45,7 +46,7 @@ import validator from 'validator';
     
       if (!validatedValues.success) {
         const messages = validatedValues.error.errors.map((e) => e.message);
-        return res.status(400).json(apiErrorResponse(messages.join('. ')));
+        return res.status(400).json(apiErrorResponse(`${ErrorMessages.invalidRequest} ${messages.join('. ')}`));
       }
   
       const { token, code } = validatedValues.data;
@@ -57,7 +58,7 @@ import validator from 'validator';
         verificationCode.code !== code ||
         verificationCode.expired_at < new Date()
       ) {
-        return res.status(406).json(apiErrorResponse('Wrong code'));
+        return res.status(406).json(apiErrorResponse(ErrorMessages.wrongCode));
       }
       
       deleteUserCodes(verificationCode.user_id, OnetimeCodeType.RESET);
@@ -75,14 +76,14 @@ import validator from 'validator';
 
       if (!validatedValues.success) {
         const messages = validatedValues.error.errors.map((e) => e.message);
-        return res.status(400).json(apiErrorResponse(messages.join('. ')));
+        return res.status(400).json(apiErrorResponse(`${ErrorMessages.invalidRequest} ${messages.join('. ')}`));
       }
 
       const { token, password } = validatedValues.data;
       const verificationCode = await getCode(token);
 
       if (!verificationCode || verificationCode.type !== OnetimeCodeType.PASSWORD) {
-        return res.status(406).json(apiErrorResponse('Wrong code'));
+        return res.status(406).json(apiErrorResponse(ErrorMessages.wrongCode));
       }
 
       updateUserPassword(verificationCode.user_id, password);
@@ -92,5 +93,4 @@ import validator from 'validator';
         message: "Password changed"
       })
     },
-
   }

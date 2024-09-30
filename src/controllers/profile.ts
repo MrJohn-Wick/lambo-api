@@ -8,6 +8,7 @@ import { apiErrorResponse, apiSuccessResponse } from '../utils/responses';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 import { moveObjectToAvatars } from '../utils/s3';
 import { usersController } from './users';
+import { ErrorMessages } from '../constants';
 
 export const profileController = {
   async me(req: Request, res: Response) {
@@ -25,7 +26,7 @@ export const profileController = {
 
     if (!validatedValues.success) {
       const messages = validatedValues.error.errors.map((e) => e.path+":"+e.message);
-      return res.status(400).json(apiErrorResponse('Invalid requiest. '+messages.join('. ')));
+      return res.status(400).json(apiErrorResponse(`${ErrorMessages.invalidRequest} ${messages.join('. ')}`));
     }
     if (validatedValues.data.avatar) {
       const fileObject = await moveObjectToAvatars(validatedValues.data.avatar);
@@ -41,13 +42,13 @@ export const profileController = {
         return res.json(apiSuccessResponse());
       } catch (error) {
         if (error instanceof PrismaClientKnownRequestError && error.code === 'P2002') {
-          return res.status(406).json(apiErrorResponse('This username is already exists'));
+          return res.status(406).json(apiErrorResponse(ErrorMessages.usernameExist));
         }
-        return res.status(422).json(apiErrorResponse(error instanceof Error ? error.message : 'Unknown error'));
+        return res.status(422).json(apiErrorResponse(error instanceof Error ? error.message : ErrorMessages.unknown));
       }
     }
 
-    res.status(400).json(apiErrorResponse('Invalid requiest'));
+    res.status(400).json(apiErrorResponse(ErrorMessages.invalidRequest));
   },
 
   async password(req: Request, res: Response) {
@@ -55,7 +56,8 @@ export const profileController = {
     const validatedValues = PasswordUpdateSchema.safeParse(req.body);
 
     if (!validatedValues.success) {
-      return res.status(400).json(apiErrorResponse('Invalid requiest'));
+      const messages = validatedValues.error.errors.map((e) => e.path+":"+e.message);
+      return res.status(400).json(apiErrorResponse(`${ErrorMessages.invalidRequest} ${messages.join('. ')}`));
     }
 
     if (user) {
@@ -67,6 +69,6 @@ export const profileController = {
       }
     }
 
-    res.status(400).json(apiErrorResponse('Invalid requiest'));
+    res.status(400).json(apiErrorResponse(ErrorMessages.invalidRequest));
   },
 }
