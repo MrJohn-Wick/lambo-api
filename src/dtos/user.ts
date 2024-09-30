@@ -1,5 +1,19 @@
 import { ProfileDTO } from './profile';
 
+export class UserSettingsDTO {
+  notifications: boolean;
+  dark: boolean;
+  tfa: boolean;
+  incognito: boolean;
+
+  constructor(data: any) {
+    this.notifications = data?.notifications || false;
+    this.dark = data?.dark || false;
+    this.tfa = data?.tfs || false;
+    this.incognito = data?.incognito || false;
+  }
+}
+
 export class UserMetricsDTO {
   subscriptions: string[];
   subscribed: string[];
@@ -19,6 +33,7 @@ export class UserDTO {
   password: boolean;
   profile?: ProfileDTO | null;
   metrics: UserMetricsDTO | null;
+  settings: UserSettingsDTO | null;
 
   constructor (data: any = null) {
     this.id = data?.id;
@@ -28,6 +43,7 @@ export class UserDTO {
     this.phoneVerified = data?.phoneVerified;
     this.password = data?.password;
     this.profile = data?.profile ? new ProfileDTO(data.profile) : null;
-    this.metrics = data?.metrics ? new UserMetricsDTO(data.metrics): null
+    this.metrics = data?.metrics ? new UserMetricsDTO(data.metrics): null;
+    this.settings = data?.settings ? new UserSettingsDTO(data.settings): null;
   }
 }
