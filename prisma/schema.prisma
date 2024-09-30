@@ -27,8 +27,20 @@ model User {
   subscriptions Subscription[] @relation("follower")
   subscribed    Subscription[] @relation("author")
   invites       Stream[]       @relation("invites")
+  settings      UserSettings[]
 
   @@map("users")
+}
+
+model UserSettings {
+  id          String    @id @default(uuid())
+  key         String
+  value       String
+  user_id     String
+  user        User      @relation(fields: [user_id], references: [id])
+
+  @@unique([key, user_id])
+  @@map("users_settings")
 }
 
 model AccessToken {

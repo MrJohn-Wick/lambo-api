@@ -123,3 +123,17 @@ meRouter.post(
   passport.authenticate('bearer', { session: false }),
   uploadAvatarController
 )
+
+meRouter.get(
+  /* 
+    #swagger.tags = ['User']
+    #swagger.summary = 'Get user settings'
+    #swagger.description = ''
+    #swagger.security = [{
+      "apiKeyAuth": []
+    }]
+  */
+  '/settings',
+  passport.authenticate('bearer', { session: false }),
+  profileController.settings
+);
