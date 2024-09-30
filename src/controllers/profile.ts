@@ -13,7 +13,9 @@ import { ErrorMessages } from '../constants';
 export const profileController = {
   async me(req: Request, res: Response) {
     const currentUser = req.user as User;
-    if (!currentUser) throw("Does'n have user after auth middleware!!!");
+    if (!currentUser) {
+      return res.status(401).json(apiErrorResponse(ErrorMessages.unauthorized));
+    }
 
     req.params.id = currentUser.id;
     
@@ -22,19 +24,22 @@ export const profileController = {
 
   async update(req: Request, res: Response) {
     const user = req.user;
-    const validatedValues = await ProfileUpdateSchema.safeParseAsync(req.body);
+    if (!user) {
+      return res.status(401).json(apiErrorResponse(ErrorMessages.unauthorized));
+    }
 
+    const validatedValues = await ProfileUpdateSchema.safeParseAsync(req.body);
     if (!validatedValues.success) {
       const messages = validatedValues.error.errors.map((e) => e.path+":"+e.message);
       return res.status(400).json(apiErrorResponse(`${ErrorMessages.invalidRequest} ${messages.join('. ')}`));
     }
+
     if (validatedValues.data.avatar) {
       const fileObject = await moveObjectToAvatars(validatedValues.data.avatar);
       if (fileObject) {
           validatedValues.data.avatar = fileObject.uri;
       }
     }
-
 
     if (user && validatedValues.data) {
       try {
@@ -53,8 +58,11 @@ export const profileController = {
 
   async password(req: Request, res: Response) {
     const user = req.user;
-    const validatedValues = PasswordUpdateSchema.safeParse(req.body);
+    if (!user) {
+      return res.status(401).json(apiErrorResponse(ErrorMessages.unauthorized));
+    }
 
+    const validatedValues = PasswordUpdateSchema.safeParse(req.body);
     if (!validatedValues.success) {
       const messages = validatedValues.error.errors.map((e) => e.path+":"+e.message);
       return res.status(400).json(apiErrorResponse(`${ErrorMessages.invalidRequest} ${messages.join('. ')}`));

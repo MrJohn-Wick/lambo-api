@@ -1,6 +1,7 @@
 import { Request, Response } from 'express'
 import { getCategories } from '../repositories/categories';
-import { apiSuccessResponse } from '../utils/responses';
+import { apiErrorResponse, apiSuccessResponse } from '../utils/responses';
+import { ErrorMessages } from '../constants';
 
 export const categoriesController = {
   async list(req: Request, res: Response) {
@@ -15,7 +16,9 @@ export const categoriesController = {
 
   async userCategories(req: Request, res: Response) {
     const user = req.user;
-    if (!user) throw("Does'n have user after auth middleware!!!");
+    if (!user) {
+      return res.status(401).json(apiErrorResponse(ErrorMessages.unauthorized));
+    }
 
     const categories = await getCategories({
       userId: user.id,

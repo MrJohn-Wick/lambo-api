@@ -22,6 +22,7 @@ export const ErrorMessages = {
   storageUploadError: 'Storage upload error.',
   uploadError: 'Upload error.',
 
+  unauthorized: 'Unauthorized.',
   invalidRequest: 'Invalid request.',
   unknown: 'Something went wrong.',
 }

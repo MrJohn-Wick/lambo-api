@@ -9,7 +9,9 @@ export const GalleriesController = {
   async get(req: Request, res: Response, next: NextFunction) {
     const galleryId = req.params.id;
     const user = req.user;
-    if (!user) throw("Does'n have user after auth middleware!!!");
+    if (!user) {
+      return res.status(401).json(apiErrorResponse(ErrorMessages.unauthorized));
+    }
 
     const gallery = await getGallery(galleryId);
     if (!gallery) {
@@ -22,7 +24,9 @@ export const GalleriesController = {
   async upload(req: Request, res: Response, next: NextFunction) {
     const galleryId = req.params.id;
     const user = req.user;
-    if (!user) throw("Does'n have user after auth middleware!!!");
+    if (!user) {
+      return res.status(401).json(apiErrorResponse(ErrorMessages.unauthorized));
+    }
   
     const gallery = await getGallery(galleryId);
     if (!gallery) {
@@ -53,7 +57,9 @@ export const GalleriesController = {
   async deleteImage(req: Request, res: Response, next: NextFunction) {
     const imageId = req.params.id;
     const user = req.user;
-    if (!user) throw("Does'n have user after auth middleware!!!");
+    if (!user) {
+      return res.status(401).json(apiErrorResponse(ErrorMessages.unauthorized));
+    }
 
     const image = await getImage(imageId);
     if (!image) {

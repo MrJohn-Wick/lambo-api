@@ -16,7 +16,9 @@ export const streamsController = {
 
   async create(req: Request, res: Response) {
     const user = req.user;
-    if (!user) throw("Premission denied");
+    if (!user) {
+      return res.status(401).json(apiErrorResponse(ErrorMessages.unauthorized));
+    }
 
     // TODO: User roles
 
@@ -57,7 +59,9 @@ export const streamsController = {
   async edit(req: Request, res: Response) {
     const user = req.user;
     const streamId = req.params.id;
-    if (!user) throw("Does'n have user after auth middleware!!!");
+    if (!user) {
+      return res.status(401).json(apiErrorResponse(ErrorMessages.unauthorized));
+    }
 
     const validatedData = StreamEditSchema.safeParse(req.body);
     if (!validatedData.success) {
@@ -73,7 +77,9 @@ export const streamsController = {
 
   async recomended(req: Request, res: Response) {
     const user = req.user;
-    if (!user) throw("Does'n have user after auth middleware!!!");
+    if (!user) {
+      return res.status(401).json(apiErrorResponse(ErrorMessages.unauthorized));
+    }
 
     const streams = await getStreams(5); // TODO: there is no criteria.
 
@@ -83,7 +89,9 @@ export const streamsController = {
   async token(req: Request, res: Response) {
     const user = req.user;
     const streamId = req.params.id;
-    if (!user) throw("Does'n have user after auth middleware!!!");
+    if (!user) {
+      return res.status(401).json(apiErrorResponse(ErrorMessages.unauthorized));
+    }
 
     let stream = await getStream(streamId);
     if (!stream) {

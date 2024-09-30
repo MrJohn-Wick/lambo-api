@@ -11,7 +11,9 @@ export const subscriptionController = {
     const currentUser = req.user;
     const authorId = req.params.id;
 
-    if (!currentUser) throw("Does'n have user after auth middleware!!!");
+    if (!currentUser) {
+      return res.status(401).json(apiErrorResponse(ErrorMessages.unauthorized));
+    }
 
     if (currentUser.id == authorId) {
       return res.status(409).json(apiErrorResponse(ErrorMessages.subscribeThemself));
@@ -42,8 +44,11 @@ export const subscriptionController = {
 
   async getForCurrentUser(req: Request, res: Response) {
     const user = req.user as User;
+    if (!user) {
+      return res.status(401).json(apiErrorResponse(ErrorMessages.unauthorized));
+    }
     
-    const subscriptions = await getSubscribtionsByUser(user?.id);
+    const subscriptions = await getSubscribtionsByUser(user.id);
 
     return res.json(apiSuccessResponse(subscriptions));
   }
