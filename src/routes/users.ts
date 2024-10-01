@@ -46,6 +46,24 @@ usersRouter.get(
 usersRouter.get(
   /* 
     #swagger.tags = ['Users']
+    #swagger.summary = 'Get user by username'
+    #swagger.security = [{
+      "apiKeyAuth": []
+    }]
+    #swagger.parameters['mode'] = {
+      in: 'query',
+      description: 'default or metrics',
+      type: 'string'
+    } 
+  */
+  '/username/:username',
+  passport.authenticate('bearer', { session: false }),
+  usersController.getByUsername
+);
+
+usersRouter.get(
+  /* 
+    #swagger.tags = ['Users']
     #swagger.security = [{
       "apiKeyAuth": []
     }]

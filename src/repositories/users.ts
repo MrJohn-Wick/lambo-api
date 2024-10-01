@@ -55,6 +55,23 @@ export async function getUserById(id: string): Promise<User | null> {
   return user;
 }
 
+export async function getUserByUsername(username: string): Promise<User | null> {
+  const user = await prisma.user.findFirst({
+    where: { 
+      profile: {
+        username
+      }
+    },
+    include: {
+      profile: true,
+    }
+  });
+
+  // const userDto = new UserDTO(user);
+  return user;
+}
+
+
 export async function verifyPhone(userId: string) {
   await prisma.user.update({
     where: { id: userId },
