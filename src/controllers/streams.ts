@@ -5,6 +5,7 @@ import { apiErrorResponse, apiSuccessResponse } from '../utils/responses';
 import { moveObjectToStreamsCoves } from '../utils/s3';
 import { getProfileByUserId } from '../repositories/profile';
 import { ErrorMessages } from '../constants';
+import { getCategories, getCategoriesByIds } from '../repositories/categories';
 
 export const streamsController = {
   async list(req: Request, res: Response) {
@@ -27,19 +28,26 @@ export const streamsController = {
       const messages = validatedData.error.errors.map((e) => e.path+":"+e.message);
       return res.status(400).json(apiErrorResponse(`${ErrorMessages.invalidRequest} ${messages.join('. ')}`));
     }
+
     if (validatedData.data.cover) {
       const fileObject = await moveObjectToStreamsCoves(validatedData.data.cover);
       if (fileObject) {
           validatedData.data.cover = fileObject.uri;
       }
     }
+    
     const streamData = { uid: user.id, ...validatedData.data};
     try {
-      const stream = await createStream(streamData);
+      const categories = await getCategoriesByIds(streamData.categories);
+      if (categories.length !== streamData.categories.length) {
+        return res.status(400).json(apiErrorResponse(ErrorMessages.wrongCategories));
+      }
 
-      res.json(apiSuccessResponse(stream));
+      const stream = await createStream(streamData);
+      return res.json(apiSuccessResponse(stream));
     } catch (e) {
-      res.status(500).send();
+      console.log(e);
+      return res.status(500).send(apiErrorResponse(ErrorMessages.unknown));
     }
   },
 
