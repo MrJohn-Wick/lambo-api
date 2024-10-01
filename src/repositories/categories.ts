@@ -27,6 +27,18 @@ export async function getCategories(options: ListOptions): Promise<Category[]> {
   return categories;
 }
 
+export async function getCategoriesByIds(ids: string[]): Promise<Category[]> {
+  const categories = await prisma.category.findMany({
+    where: {
+      id: {
+        in: ids
+      }
+    }
+  });
+
+  return categories;
+}
+
 export async function getCategory(id: string): Promise<Category | null> {
   const category = await prisma.category.findFirst({
     where: { id }
