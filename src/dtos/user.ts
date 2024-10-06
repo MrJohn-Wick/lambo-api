@@ -41,7 +41,7 @@ export class UserDTO {
     this.emailVerified = data?.emailVerified;
     this.phone = data?.phone;
     this.phoneVerified = data?.phoneVerified;
-    this.password = data?.password;
+    this.password = !!data?.passwordHash;
     this.profile = data?.profile ? new ProfileDTO(data.profile) : null;
     this.metrics = data?.metrics ? new UserMetricsDTO(data.metrics): null;
     this.settings = data?.settings ? new UserSettingsDTO(data.settings): null;

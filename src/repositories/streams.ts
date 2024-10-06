@@ -5,6 +5,7 @@ import { VideoGrant } from 'livekit-server-sdk';
 import { StreamEditSchema } from '../schemas/streams';
 import { createLivekitToken, roomService } from '../utils/livekit';
 import shortUUID from 'short-uuid';
+import { profile } from 'console';
 
 const translator = shortUUID();
 
@@ -47,6 +48,11 @@ export async function getStreams(limit: number): Promise<Stream[]> {
     },
     include: {
       categories: true,
+      user: {
+        include: {
+          profile: true,
+        }
+      },
     }
   });
 
@@ -106,6 +112,11 @@ export async function getStream(id: string) {
     where: { id },
     include: {
       categories: true,
+      user: {
+        include: {
+          profile: true
+        }
+      }
     }
   });
 
