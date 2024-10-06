@@ -119,6 +119,21 @@ streamsRouter.get(
   streamsController.get
 );
 
+streamsRouter.get(
+  /* 
+    #swagger.tags = ['Streams']
+    #swagger.summary = 'Get stream info'
+    #swagger.description = 'Returt stream info'
+    #swagger.security = [{
+      "apiKeyAuth": []
+    }]
+  */
+  '/short/:slug',
+  passport.authenticate('bearer', { session:false }),
+  streamsController.getBySlug
+);
+
+
 // streamsRouter.patch(
 //   /* 
 //     #swagger.tags = ['Streams']

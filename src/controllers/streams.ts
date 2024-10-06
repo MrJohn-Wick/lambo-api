@@ -1,11 +1,11 @@
 import { Request, Response } from 'express';
-import { createStream, createStreamRoom, editStream, getStream, getStreams, getStreamToken } from '../repositories/streams';
+import { createStream, createStreamRoom, editStream, getStream, getStreamBySlug, getStreams, getStreamToken } from '../repositories/streams';
 import { StreamCreateSchema, StreamEditSchema } from '../schemas/streams';
 import { apiErrorResponse, apiSuccessResponse } from '../utils/responses';
 import { moveObjectToStreamsCoves } from '../utils/s3';
 import { getProfileByUserId } from '../repositories/profile';
 import { ErrorMessages } from '../constants';
-import { getCategories, getCategoriesByIds } from '../repositories/categories';
+import { getCategoriesByIds } from '../repositories/categories';
 
 export const streamsController = {
   async list(req: Request, res: Response) {
@@ -56,6 +56,19 @@ export const streamsController = {
 
     if (streamId) {
       const stream = await getStream(streamId);
+      if (stream) {
+        return res.json(apiSuccessResponse(stream));
+      }
+    }
+
+    return res.status(404).json(apiErrorResponse(ErrorMessages.streamNotFound));
+  },
+
+  async getBySlug(req: Request, res: Response) {
+    const slug = req.params.slug;
+
+    if (slug) {
+      const stream = await getStreamBySlug(slug);
       if (stream) {
         return res.json(apiSuccessResponse(stream));
       }
