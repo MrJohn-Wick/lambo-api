@@ -10,6 +10,7 @@ const doc = {
     description: 'Description'
   },
   host: process.env.SWAGGER_HOST || 'localhost:3000',
+  schemes: ['http', 'https'],
   basePath: process.env.SWAGGER_BASEPATH || '/',
   securityDefinitions: {
     apiKeyAuth: {
