@@ -4,8 +4,22 @@ import { getProfileByUserId } from './profile';
 import { VideoGrant } from 'livekit-server-sdk';
 import { StreamEditSchema } from '../schemas/streams';
 import { createLivekitToken, roomService } from '../utils/livekit';
+import shortUUID from 'short-uuid';
 
-const prisma = new PrismaClient();
+const translator = shortUUID();
+
+const prisma = new PrismaClient().$extends({
+  result: {
+    stream: {
+      slug: {
+        needs: { id: true },
+        compute(stream) {
+          return translator.fromUUID(stream.id);
+        }
+      }
+    }
+  }
+});
 
 interface StreamCreateParams {
   uid:string,
@@ -96,6 +110,12 @@ export async function getStream(id: string) {
   });
 
   return stream;
+}
+
+export async function getStreamBySlug(slug: string) {
+    const id = translator.toUUID(slug);
+
+    return getStream(id);
 }
 
 export async function editStream(streamId: string, values: z.infer<typeof StreamEditSchema>) {
