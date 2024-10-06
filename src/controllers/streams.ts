@@ -6,13 +6,14 @@ import { moveObjectToStreamsCoves } from '../utils/s3';
 import { getProfileByUserId } from '../repositories/profile';
 import { ErrorMessages } from '../constants';
 import { getCategoriesByIds } from '../repositories/categories';
+import { StreamDTO } from '../dtos/stream';
 
 export const streamsController = {
   async list(req: Request, res: Response) {
     const limit = req.query.limit ? Number(req.query.limit) : 0;
     const streams = await getStreams(limit);
 
-    res.json(apiSuccessResponse(streams));
+    res.json(apiSuccessResponse(streams.map(s => new StreamDTO(s))));
   },
 
   async create(req: Request, res: Response) {
@@ -44,7 +45,8 @@ export const streamsController = {
       }
 
       const stream = await createStream(streamData);
-      return res.json(apiSuccessResponse(stream));
+      const streamDto = new StreamDTO(stream);
+      return res.json(apiSuccessResponse(streamDto));
     } catch (e) {
       console.log(e);
       return res.status(500).send(apiErrorResponse(ErrorMessages.unknown));
@@ -57,7 +59,8 @@ export const streamsController = {
     if (streamId) {
       const stream = await getStream(streamId);
       if (stream) {
-        return res.json(apiSuccessResponse(stream));
+        const streamDto = new StreamDTO(stream)
+        return res.json(apiSuccessResponse(streamDto));
       }
     }
 
@@ -70,7 +73,8 @@ export const streamsController = {
     if (slug) {
       const stream = await getStreamBySlug(slug);
       if (stream) {
-        return res.json(apiSuccessResponse(stream));
+        const streamDto = new StreamDTO(stream);
+        return res.json(apiSuccessResponse(streamDto));
       }
     }
 
