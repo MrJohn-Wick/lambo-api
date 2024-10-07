@@ -135,7 +135,10 @@ export const streamsController = {
   
     const token = await getStreamToken(streamId, user.id);
     if (token) {
-      return res.json(apiSuccessResponse(token));
+      return res.json(apiSuccessResponse({
+        token,
+        kind: stream.user_id == user.id ? 'owner' : 'user',
+      }));
     }
 
     res.status(406).json(apiErrorResponse(ErrorMessages.streamInactive));
