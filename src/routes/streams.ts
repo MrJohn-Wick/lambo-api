@@ -13,6 +13,11 @@ streamsRouter.get(
     #swagger.security = [{
       "apiKeyAuth": []
     }]
+    #swagger.parameters['search'] = {
+      in: 'query',
+      description: 'Search by title, username, firstname or lastname',
+      type: 'string'
+    } 
     #swagger.parameters['limit'] = {
       in: 'query',
       description: 'Query limit (optional)',

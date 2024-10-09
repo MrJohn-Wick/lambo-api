@@ -17,6 +17,11 @@ profilesRouter.get(
       description: 'Query limit',
       type: 'number'
     } 
+    #swagger.parameters['search'] = {
+      in: 'query',
+      description: 'Search by title',
+      type: 'string'
+    } 
   */
     '/',
     passport.authenticate('bearer', { session: false }),

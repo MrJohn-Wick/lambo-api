@@ -10,8 +10,13 @@ import { StreamDTO } from '../dtos/stream';
 
 export const streamsController = {
   async list(req: Request, res: Response) {
-    const limit = req.query.limit ? Number(req.query.limit) : 0;
-    const streams = await getStreams(limit);
+    const limit = req.query.limit ? Number(req.query.limit) : undefined;
+    const search = req.query.search;
+
+    const streams = await getStreams({
+      limit,
+      search,
+    });
 
     res.json(apiSuccessResponse(streams.map(s => new StreamDTO(s))));
   },

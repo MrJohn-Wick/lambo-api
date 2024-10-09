@@ -15,7 +15,7 @@ export const profilesController = {
       gallery: true
     });
 
-    res.json(apiSuccessResponse(profiles.map(p => new ProfileExploreDTO())));
+    res.json(apiSuccessResponse(profiles.map(p => new ProfileExploreDTO(p))));
   }
 
 }

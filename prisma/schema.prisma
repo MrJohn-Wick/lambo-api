@@ -131,6 +131,7 @@ model Stream {
 
   user              User        @relation("streams", fields: [user_id], references: [id])
 
+  @@fulltext([title])
   @@map("streams")
 }
 
