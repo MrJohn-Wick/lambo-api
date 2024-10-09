@@ -13,6 +13,7 @@ import { settingsController } from './settings';
 
 
 export const profileController = {
+
   async me(req: Request, res: Response) {
     const currentUser = req.user as User;
     if (!currentUser) {

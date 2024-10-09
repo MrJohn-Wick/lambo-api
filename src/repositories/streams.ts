@@ -1,5 +1,5 @@
 import * as z from 'zod';
-import { PrismaClient, Stream } from "@prisma/client";
+import { Prisma, PrismaClient, Stream } from "@prisma/client";
 import { getProfileByUserId } from './profile';
 import { VideoGrant } from 'livekit-server-sdk';
 import { StreamEditSchema } from '../schemas/streams';
@@ -40,12 +40,43 @@ interface StreamCreateParams {
   comments_off?: boolean,
 }
 
-export async function getStreams(limit: number): Promise<Stream[]> {
+export async function getStreams(options: any): Promise<Stream[]> {
+  const limit = options.limit;
+
+  let where: Prisma.StreamWhereInput = {};
+  if (options.search) {
+    where = {
+      OR: [
+        {
+          user: {
+            profile: {
+              username: {
+                search: `${options.search}*`
+              },
+              firstname: {
+                search: `${options.search}*`
+              },
+              lastname: {
+                search: `${options.search}*`
+              },
+            }
+          },
+        },
+        {
+          title: {
+            search: `${options.search}*`
+          }
+        }
+      ]
+    }
+  }
+
   const streams = await prisma.stream.findMany({
-    take: limit ? limit : undefined,
+    take: limit,
     orderBy: {
       created_at: 'desc'
     },
+    where,
     include: {
       categories: true,
       user: {
