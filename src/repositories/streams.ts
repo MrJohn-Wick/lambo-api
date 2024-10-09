@@ -163,7 +163,7 @@ export async function getStreamToken(streamId: string, userId: string) {
   } : {
     room: room,
     roomJoin: true,
-    canPublish: false,
+    canPublish: true,
   }
   const token = await createLivekitToken(participant, grands);
 
