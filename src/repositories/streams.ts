@@ -158,12 +158,14 @@ export async function getStreamToken(streamId: string, userId: string) {
   const grands: VideoGrant = (stream.user_id == userId) ? {
     room: room,
     roomJoin: true,
-    roomAdmin: true,
-    ingressAdmin: true,
+    canPublish: true,
+    canSubscribe: true,
   } : {
     room: room,
     roomJoin: true,
-    canPublish: true,
+    canPublish: false,
+    canSubscribe: true,
+    canPublishData: true,
   }
   const token = await createLivekitToken(participant, grands);
 
