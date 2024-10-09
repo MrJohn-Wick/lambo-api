@@ -1,8 +1,36 @@
-import { PrismaClient, Profile } from '@prisma/client';
+import { Prisma, PrismaClient, Profile } from '@prisma/client';
 import z from 'zod';
 import { ProfileUpdateSchema } from '../schemas/profile';
 
 const prisma = new PrismaClient();
+
+export async function getProfiles(options: any) {
+  let where: Prisma.ProfileWhereInput = {};
+  if (options.search) {
+    where.username = {
+      search: `${options.search}*`
+    }
+    where.firstname = {
+      search: `${options.search}*`
+    }
+    where.lastname = {
+      search: `${options.search}*`
+    }
+  }
+
+  let include: Prisma.ProfileInclude = {};
+  if (options.gallery) {
+    include.gallery = true;
+  }
+
+  const profiles = await prisma.profile.findMany({
+    where,
+    take: options.limit,
+    include: include,
+  });
+
+  return profiles;
+}
 
 export async function getProfileByUserId(id: string): Promise<Profile | null> {
   const profile = await prisma.profile.findFirst({

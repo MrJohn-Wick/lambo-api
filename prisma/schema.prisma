@@ -3,6 +3,7 @@
 
 generator client {
   provider = "prisma-client-js"
+  previewFeatures = ["fullTextSearch", "fullTextIndex"]
 }
 
 datasource db {
@@ -76,6 +77,10 @@ model Profile {
   avatar            String?     @db.Text
   gallery           Gallery?    @relation("gallery")
 
+  @@fulltext([username])
+  @@fulltext([firstname])
+  @@fulltext([lastname])
+  @@fulltext([username, firstname, lastname])
   @@map("profiles")
 }
 

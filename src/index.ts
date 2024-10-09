@@ -14,6 +14,7 @@ import { languagesRouter } from './routes/langs';
 import { logger } from './utils/logger';
 import { galleriesRouter } from './routes/galleries';
 import { globalSettingsRouter } from './routes/settings';
+import { profilesRouter } from './routes/profiles';
 
 
 dotenv.config();
@@ -33,6 +34,7 @@ app.use('/sub', subcriptionsRouter);
 app.use('/langs', languagesRouter);
 app.use('/galleries', galleriesRouter);
 app.use('/settings', globalSettingsRouter);
+app.use('/profiles', profilesRouter);
 
 const file = readFileSync('./swagger-doc.json', 'utf8')
 const swaggerDocument = JSON.parse(file);
