@@ -160,6 +160,7 @@ export async function getStreamToken(streamId: string, userId: string) {
     roomJoin: true,
     canPublish: true,
     canSubscribe: true,
+    canPublishData: true,
   } : {
     room: room,
     roomJoin: true,
