@@ -1,5 +1,5 @@
 export class ProfileDTO {
-  user_id?: string;
+  id?: string;
   username?: string;
   firstname?: string;
   lastname?: string;
@@ -9,7 +9,7 @@ export class ProfileDTO {
   gallery_id: string | null;
 
   constructor(data: any = null) {
-    this.user_id = data?.user_id;
+    this.id = data?.userId;
     this.username = data?.username;
     this.firstname = data?.firstname;
     this.lastname = data?.lastname;
@@ -21,7 +21,7 @@ export class ProfileDTO {
 }
 
 export class ProfileExploreDTO {
-  user_id?: string;
+  id?: string;
   username?: string;
   firstname?: string;
   lastname?: string;
@@ -30,7 +30,7 @@ export class ProfileExploreDTO {
   avatar?: string;
 
   constructor(data: any = null) {
-    this.user_id = data?.user_id;
+    this.id = data?.userId;
     this.username = data?.username;
     this.firstname = data?.firstname;
     this.lastname = data?.lastname;
