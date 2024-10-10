@@ -12,7 +12,7 @@ export const profilesController = {
     const profiles = await getProfiles({
       limit,
       search,
-      gallery: true
+      gallery: true,
     });
 
     res.json(apiSuccessResponse(profiles.map(p => new ProfileExploreDTO(p))));

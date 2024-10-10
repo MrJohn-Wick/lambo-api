@@ -22,6 +22,9 @@ export async function getProfiles(options: any) {
   if (options.gallery) {
     include.gallery = true;
   }
+  if (options.user) {
+    include.user = true;
+  }
 
   const profiles = await prisma.profile.findMany({
     where,
