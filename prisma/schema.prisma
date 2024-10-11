@@ -89,6 +89,8 @@ model Profile {
 model Category {
   id            String    @id @default(uuid())
   title         String
+  icon          String
+  color         String
   profiles      Profile[]
   streams       Stream[]
 
