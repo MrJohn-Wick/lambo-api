@@ -7,6 +7,7 @@ export class ProfileDTO {
   location?: string;  
   avatar?: string;
   gallery_id: string | null;
+  created_at: string;
 
   constructor(data: any = null) {
     this.id = data?.userId;
@@ -17,6 +18,7 @@ export class ProfileDTO {
     this.location = data?.location;
     this.avatar = data?.avatar;
     this.gallery_id = data.gallery ? data.gallery.id : null;
+    this.created_at = data.created_at;
   }
 }
 
@@ -28,6 +30,7 @@ export class ProfileExploreDTO {
   birthday?: string;
   location?: string;  
   avatar?: string;
+  created_at: string;
 
   constructor(data: any = null) {
     this.id = data?.userId;
@@ -37,5 +40,6 @@ export class ProfileExploreDTO {
     this.birthday = data?.birthday;
     this.location = data?.location;
     this.avatar = data?.avatar;
+    this.created_at = data.created_at;
   }
 }

@@ -26,10 +26,19 @@ export async function getProfiles(options: any) {
     include.user = true;
   }
 
+  let orderBy: Prisma.ProfileOrderByWithRelationInput = {};
+  if (options.sort) {
+    const parts = (options.sort as string).split(':');
+    const field = parts[0];
+    const direction = parts[1] ? (parts[1] == 'desc' ? 'desc': 'asc') : 'asc';
+    orderBy = {[field]: direction};
+  }
+
   const profiles = await prisma.profile.findMany({
     where,
     take: options.limit,
     include: include,
+    orderBy,
   });
 
   return profiles;

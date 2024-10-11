@@ -22,6 +22,11 @@ profilesRouter.get(
       description: 'Search by title',
       type: 'string'
     } 
+    #swagger.parameters['sort'] = {
+      in: 'query',
+      description: 'Sort (field:asc|desc)',
+      type: 'string'
+    } 
   */
     '/',
     passport.authenticate('bearer', { session: false }),

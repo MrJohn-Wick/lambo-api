@@ -76,6 +76,8 @@ model Profile {
   categories        Category[]
   avatar            String?     @db.Text
   gallery           Gallery?    @relation("gallery")
+  created_at        DateTime    @default(now())
+
 
   @@fulltext([username])
   @@fulltext([firstname])
@@ -152,6 +154,7 @@ model Gallery {
   profile_id     String    @unique
   profile        Profile   @relation("gallery", fields: [profile_id], references: [id])
   items          GalleryItem[]
+  created_at     DateTime  @default(now())
 
   @@map("galleries")
 }
