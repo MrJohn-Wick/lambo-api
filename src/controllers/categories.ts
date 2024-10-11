@@ -2,6 +2,7 @@ import { Request, Response } from 'express'
 import { getCategories } from '../repositories/categories';
 import { apiErrorResponse, apiSuccessResponse } from '../utils/responses';
 import { ErrorMessages } from '../constants';
+import { CategoryDTO } from '../dtos/category';
 
 export const categoriesController = {
   async list(req: Request, res: Response) {
@@ -11,7 +12,8 @@ export const categoriesController = {
       limit: Number(limit),
     });
 
-    res.json(apiSuccessResponse(categories));
+    console.log("categories", categories);
+    res.json(apiSuccessResponse(categories.map(c => new CategoryDTO(c))));
   },
 
   async userCategories(req: Request, res: Response) {
@@ -24,6 +26,6 @@ export const categoriesController = {
       userId: user.id,
     });
 
-    res.json(apiSuccessResponse(categories));
+    res.json(apiSuccessResponse(categories.map(c => new CategoryDTO(c))));
   }
 }
