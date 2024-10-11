@@ -1,13 +1,14 @@
 import validator from 'validator';
 import * as z from 'zod';
+import { ErrorMessages } from '../constants';
 
 export const SignInMobileSchema = z.object({
-  phone: z.string().refine(validator.isMobilePhone, 'Invalid phone number'),
+  phone: z.string().refine(validator.isMobilePhone, ErrorMessages.invalidPhone),
 });
 
 export const SignInEmailSchema = z.object({
-  username: z.string().email(),
-  password: z.string().min(1),
+  username: z.string().email(ErrorMessages.invalidEmail),
+  password: z.string().min(1, ErrorMessages.invalidPassword),
 });
 
 export const RefreshTokenSchema = z.object({
@@ -20,5 +21,5 @@ export const ResetIdentitySchema = z.object({
 
 export const ResetPasswordSchema = z.object({
   token: z.string().min(1),
-  password: z.string().min(8),
+  password: z.string().min(8, ErrorMessages.invalidPassword),
 });

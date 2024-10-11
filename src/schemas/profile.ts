@@ -2,6 +2,7 @@
 import { GetObjectCommand } from '@aws-sdk/client-s3';
 import z from 'zod';
 import { s3client } from '../utils/s3';
+import { ErrorMessages } from '../constants';
 
 export const ProfileUpdateSchema = z.object({
   username: z.string().min(1).optional(),
@@ -21,7 +22,7 @@ export const ProfileUpdateSchema = z.object({
     categories !== undefined ||
     avatar !== undefined
   ,
-  { message: "One of the fields must be defined" }
+  { message: ErrorMessages.noOneField }
 ).superRefine(async (
   { avatar },
   context
@@ -33,7 +34,7 @@ export const ProfileUpdateSchema = z.object({
     } catch (e) {
       context.addIssue({
         code: z.ZodIssueCode.custom,
-        message: 'Wrong file key',
+        message: ErrorMessages.s3WrongKey,
         path: ['cover']
       });
     }
