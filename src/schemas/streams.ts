@@ -2,6 +2,7 @@ import langs from 'langs';
 import * as z from 'zod';
 import { GetObjectCommand } from '@aws-sdk/client-s3';
 import { s3client } from '../utils/s3';
+import { ErrorMessages } from '../constants';
 
 const PriceTypeSchema = z.union([
   z.literal('ticket'),
@@ -30,14 +31,14 @@ export const StreamCreateSchema = z.object({
   if (!start_now && !start_time) {
     refinementContext.addIssue({
       code: z.ZodIssueCode.custom,
-      message: "Field must exist if start_now is false.",
+      message: ErrorMessages.startTimeNotExist,
       path: ['start_time']
     });
   }
   if (start_time && new Date(start_time) < new Date()) {
     refinementContext.addIssue({
       code: z.ZodIssueCode.custom,
-      message: "Start time must be in furute.",
+      message: ErrorMessages.startTimeWrong,
       path: ['start_time']
     });
   }
@@ -49,7 +50,7 @@ export const StreamCreateSchema = z.object({
   if (language && !langsCodes.includes(language)) {
     refinementContext.addIssue({
       code: z.ZodIssueCode.custom,
-      message: "Language code in wrong",
+      message: ErrorMessages.invalidLanguageCode,
       path: ['language']
     });
   }
@@ -64,7 +65,7 @@ export const StreamCreateSchema = z.object({
     } catch (e) {
       context.addIssue({
         code: z.ZodIssueCode.custom,
-        message: 'Wrong file key',
+        message: ErrorMessages.s3WrongKey,
         path: ['cover']
       });
     }
@@ -93,7 +94,7 @@ export const StreamEditSchema = z.object({
   if (!start_now && !start_time) {
     refinementContext.addIssue({
       code: z.ZodIssueCode.custom,
-      message: "field must be if start_now is true",
+      message: ErrorMessages.startTimeNotExist,
       path: ['start_time']
     });
   }
