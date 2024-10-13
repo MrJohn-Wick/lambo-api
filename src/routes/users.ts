@@ -126,3 +126,17 @@ usersRouter.put(
   passport.authenticate('bearer', { session: false }),
   settingsController.set
 );
+
+usersRouter.get(
+  /* 
+    #swagger.tags = ['Users']
+    #swagger.summary = 'Get user streams'
+    #swagger.description = ''
+    #swagger.security = [{
+      "apiKeyAuth": []
+    }]
+  */
+  '/:id/streams',
+  passport.authenticate('bearer', { session: false }),
+  usersController.getUserStreams
+);

@@ -12,10 +12,12 @@ export const streamsController = {
   async list(req: Request, res: Response) {
     const limit = req.query.limit ? Number(req.query.limit) : undefined;
     const search = req.query.search;
+    const filters = req.query.filter as any;
 
     const streams = await getStreams({
       limit,
       search,
+      user_id: filters?.user_id ?? undefined,
     });
 
     res.json(apiSuccessResponse(streams.map(s => new StreamDTO(s))));
