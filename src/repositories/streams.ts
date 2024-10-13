@@ -5,7 +5,6 @@ import { VideoGrant } from 'livekit-server-sdk';
 import { StreamEditSchema } from '../schemas/streams';
 import { createLivekitToken, roomService } from '../utils/livekit';
 import shortUUID from 'short-uuid';
-import { profile } from 'console';
 
 const translator = shortUUID();
 
@@ -69,6 +68,10 @@ export async function getStreams(options: any): Promise<Stream[]> {
         }
       ]
     }
+  }
+
+  if (options.user_id) {
+    where.user_id = options.user_id;
   }
 
   const streams = await prisma.stream.findMany({

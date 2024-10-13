@@ -5,6 +5,8 @@ import { getProfileByUserId } from '../repositories/profile';
 import { UserDTO } from '../dtos/user';
 import { ProfileDTO } from '../dtos/profile';
 import { ErrorMessages } from '../constants';
+import { getStreams } from '../repositories/streams';
+import { StreamDTO } from '../dtos/stream';
 
 
 export const usersController = {
@@ -83,5 +85,20 @@ export const usersController = {
     }
 
     return res.json(apiSuccessResponse(userDto));
+  },
+
+  async getUserStreams(req: Request, res: Response) {
+    const id = req.params.id;
+    const user = await getUserById(id);
+
+    if (!user) {
+      return res.status(404).json(apiErrorResponse(ErrorMessages.userNotFound));
+    }
+
+    const streams = await getStreams({
+      user_id: id
+    });
+
+    return res.json(apiSuccessResponse(streams.map(s => new StreamDTO(s))));
   }
 }
