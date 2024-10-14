@@ -2,7 +2,7 @@ import { Gallery, GalleryItem, PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient();
 
-export async function getGallery(id: string): Promise<Gallery | null> {
+export async function getGallery(id: string) {
   const gallery = await prisma.gallery.findUnique({
     where: {
       id
@@ -14,6 +14,23 @@ export async function getGallery(id: string): Promise<Gallery | null> {
 
   return gallery;
 }
+
+export async function getGalleryByUserId(id: string): Promise<Gallery | null> {
+  const gallery = await prisma.gallery.findFirst({
+    where: {
+      profile: {
+        userId: id
+      }
+    },
+    include: {
+      items: true,
+      profile: true,
+    }
+  });
+
+  return gallery;
+}
+
 
 export async function galleryAppendImages(id: string, keys: string[]): Promise<GalleryItem[] | null> {
   try {

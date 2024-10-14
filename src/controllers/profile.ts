@@ -37,13 +37,6 @@ export const profileController = {
       return res.status(400).json(apiErrorResponse(`${ErrorMessages.invalidRequest} ${messages.join('. ')}`));
     }
 
-    if (validatedValues.data.avatar) {
-      const fileObject = await moveObjectToAvatars(validatedValues.data.avatar);
-      if (fileObject) {
-          validatedValues.data.avatar = fileObject.uri;
-      }
-    }
-
     if (user && validatedValues.data) {
       try {
         await updateProfile(user.id, validatedValues.data);

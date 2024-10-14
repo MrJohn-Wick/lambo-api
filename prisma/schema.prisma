@@ -74,7 +74,6 @@ model Profile {
   user              User        @relation(fields: [userId], references: [id])
   userId            String      @unique
   categories        Category[]
-  avatar            String?     @db.Text
   gallery           Gallery?    @relation("gallery")
   created_at        DateTime    @default(now())
 
