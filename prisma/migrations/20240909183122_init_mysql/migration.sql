@@ -163,3 +163,26 @@ ALTER TABLE `_invites` ADD CONSTRAINT `_invites_A_fkey` FOREIGN KEY (`A`) REFERE
 
 -- AddForeignKey
 ALTER TABLE `_invites` ADD CONSTRAINT `_invites_B_fkey` FOREIGN KEY (`B`) REFERENCES `users`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+INSERT INTO `categories` VALUES
+  (uuid(), 'Humor'),
+  (uuid(), 'Food'),
+  (uuid(), 'Entertainment'),
+  (uuid(), 'Animals'),
+  (uuid(), 'Music'),
+  (uuid(), 'Travel'),
+  (uuid(), 'Creativity'),
+  (uuid(), 'Movies'),
+  (uuid(), 'Health'),
+  (uuid(), 'Family'),
+  (uuid(), 'Videogames'),
+  (uuid(), 'Beauty'),
+  (uuid(), 'Fashion'),
+  (uuid(), 'Sports'),
+  (uuid(), 'Technology'),
+  (uuid(), 'Dance'),
+  (uuid(), 'Cars'),
+  (uuid(), 'Science'),
+  (uuid(), 'Education'),
+  (uuid(), 'Culture'),
+  (uuid(), 'Business');
