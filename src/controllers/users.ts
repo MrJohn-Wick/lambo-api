@@ -34,7 +34,7 @@ export const usersController = {
     let avatar = null;
     if (profile && profile.gallery) {
       const gallery = await getGallery(profile.gallery.id);
-      const key = gallery?.items[0].key;
+      const key = gallery?.items.length ? gallery?.items[0].key : null;
       if (key) {
         avatar = getS3PublicKey(key);
       }
