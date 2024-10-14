@@ -7,6 +7,8 @@ import { ProfileDTO } from '../dtos/profile';
 import { ErrorMessages } from '../constants';
 import { getStreams } from '../repositories/streams';
 import { StreamDTO } from '../dtos/stream';
+import { getGallery } from '../repositories/galleries';
+import { getS3PublicKey } from '../utils/s3';
 
 
 export const usersController = {
@@ -29,6 +31,14 @@ export const usersController = {
     }
 
     const profile = await getProfileByUserId(user.id);
+    let avatar = null;
+    if (profile && profile.gallery) {
+      const gallery = await getGallery(profile.gallery.id);
+      const key = gallery?.items[0].key;
+      if (key) {
+        avatar = getS3PublicKey(key);
+      }
+    }
 
     let userDto: UserDTO = {
       id: user.id,
@@ -37,7 +47,7 @@ export const usersController = {
       phone: user.phone,
       phoneVerified: user.phoneVerified,
       password: !!user.passwordHash,
-      profile: new ProfileDTO(profile),
+      profile: profile ? new ProfileDTO({avatar, ...profile}): null,
       metrics: null,
       settings: null,
     };

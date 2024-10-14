@@ -44,7 +44,7 @@ export async function getProfiles(options: any) {
   return profiles;
 }
 
-export async function getProfileByUserId(id: string): Promise<Profile | null> {
+export async function getProfileByUserId(id: string) {
   const profile = await prisma.profile.findFirst({
     where: { userId : id },
     include: {
@@ -101,20 +101,5 @@ export async function updateProfile(userId: string, data: z.infer<typeof Profile
       },
       ...upsertData
     },
-  });
-}
-
-export async function updateAvatar(userId: string, value: string) {
-  await prisma.profile.upsert({
-    where: {
-      userId: userId
-    },
-    create: {
-      userId,
-      avatar: value
-    },
-    update: {
-      avatar: value
-    }
   });
 }

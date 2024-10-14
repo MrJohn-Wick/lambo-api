@@ -1,7 +1,6 @@
 import { hash } from "bcryptjs";
 import { Prisma, PrismaClient, User } from "@prisma/client";
-import { getOnetimeCode } from '../utils/auth';
-import { UserDTO, UserMetricsDTO } from '../dtos/user';
+import { UserMetricsDTO } from '../dtos/user';
 
 const prisma = new PrismaClient();
 
@@ -32,7 +31,7 @@ export async function createUser(
   const user = await prisma.user.create({
     data: {
       email,
-      phone
+      phone,
     }
   });
 
