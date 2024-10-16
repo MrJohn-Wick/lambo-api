@@ -1,9 +1,9 @@
 import { NextFunction, Request, Response } from 'express';
 import { userGalleryMulter } from '../utils/s3';
 import { apiErrorResponse, apiSuccessResponse } from '../utils/responses';
-import { deleteImage, galleryAppendImages, getGallery, getImage } from '../repositories/galleries';
+import { deleteImage, galleryAppendImages, getGallery, getGalleryByUserId, getImage } from '../repositories/galleries';
 import { ErrorMessages } from '../constants';
-import { getUserById } from '../repositories/users';
+import { getUserById, getUserByUsername } from '../repositories/users';
 
 export const GalleriesController = {
 
@@ -15,6 +15,26 @@ export const GalleriesController = {
     }
 
     const gallery = await getGallery(galleryId);
+    if (!gallery) {
+      return res.status(404).json(apiErrorResponse(ErrorMessages.galleryNotFound));
+    }
+
+    return res.json(apiSuccessResponse(gallery));
+  },
+
+  async getByUserName(req: Request, res: Response, next: NextFunction) {
+    const username = req.params.username;
+    const user = req.user;
+    if (!user) {
+      return res.status(401).json(apiErrorResponse(ErrorMessages.unauthorized));
+    }
+
+    const userModel = await getUserByUsername(username);
+    if (!userModel) {
+      return res.status(404).json(apiErrorResponse(ErrorMessages.userNotFound));
+    }
+
+    const gallery = await getGalleryByUserId(userModel.id);
     if (!gallery) {
       return res.status(404).json(apiErrorResponse(ErrorMessages.galleryNotFound));
     }
