@@ -1,4 +1,5 @@
 import { Gallery, GalleryItem, PrismaClient } from '@prisma/client';
+import { profile } from 'console';
 
 const prisma = new PrismaClient();
 
@@ -8,7 +9,8 @@ export async function getGallery(id: string) {
       id
     },
     include: {
-      items: true
+      items: true,
+      profile: true,
     }
   });
 

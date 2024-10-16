@@ -33,6 +33,7 @@ export const ErrorMessages = {
   unauthorized: 'Unauthorized.',
   invalidRequest: 'Invalid request.',
   unknown: 'Something went wrong.',
+  permissionDenied: 'Permission denied.',
 
   noOneField: 'One of the fields must be defined.',
 

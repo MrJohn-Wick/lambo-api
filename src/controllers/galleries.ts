@@ -3,6 +3,7 @@ import { userGalleryMulter } from '../utils/s3';
 import { apiErrorResponse, apiSuccessResponse } from '../utils/responses';
 import { deleteImage, galleryAppendImages, getGallery, getImage } from '../repositories/galleries';
 import { ErrorMessages } from '../constants';
+import { getUserById } from '../repositories/users';
 
 export const GalleriesController = {
 
@@ -27,10 +28,19 @@ export const GalleriesController = {
     if (!user) {
       return res.status(401).json(apiErrorResponse(ErrorMessages.unauthorized));
     }
-  
+
+    const userModel = await getUserById(user?.id);
+    if (!userModel) {
+      return res.status(401).json(apiErrorResponse(ErrorMessages.unauthorized));
+    }
+
     const gallery = await getGallery(galleryId);
     if (!gallery) {
       return res.status(404).json(apiErrorResponse(ErrorMessages.galleryNotFound));
+    }
+
+    if (gallery.profile.id !== userModel.profile?.id) {
+      return res.status(403).json(apiErrorResponse(ErrorMessages.permissionDenied));
     }
 
     const upload =  userGalleryMulter(galleryId).array('images');
