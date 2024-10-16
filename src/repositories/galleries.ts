@@ -9,7 +9,11 @@ export async function getGallery(id: string) {
       id
     },
     include: {
-      items: true,
+      items: {
+        orderBy: {
+          created_at: 'desc',
+        }
+      },
       profile: true,
     }
   });
@@ -25,7 +29,11 @@ export async function getGalleryByUserId(id: string): Promise<Gallery | null> {
       }
     },
     include: {
-      items: true,
+      items: {
+        orderBy: {
+          created_at: 'desc',
+        }
+      },
       profile: true,
     }
   });

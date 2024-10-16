@@ -165,6 +165,7 @@ model GalleryItem {
   key         String    @db.Text
   gallery_id  String
   gallery     Gallery   @relation(fields: [gallery_id], references: [id])
+  created_at  DateTime  @default(now())
 
   @@map("gallery_items")
 }
