@@ -19,6 +19,21 @@ galleriesRouter.get(
   GalleriesController.get
 )
 
+galleriesRouter.get(
+  /* 
+  #swagger.tags = ['Galleries']
+  #swagger.summary = 'Get gallery by username'
+  #swagger.description = ''
+  #swagger.security = [{
+    "apiKeyAuth": []
+  }]
+  */
+  '/username/:username',
+  passport.authenticate('bearer', { session: false }),
+  GalleriesController.getByUserName
+)
+
+
 galleriesRouter.post(
   /* 
   #swagger.tags = ['Galleries']

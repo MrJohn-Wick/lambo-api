@@ -45,16 +45,19 @@ export async function getUsers(limit: number) {
   return users;
 }
 
-export async function getUserById(id: string): Promise<User | null> {
+export async function getUserById(id: string) {
   const user = await prisma.user.findFirst({
     where: { id },
+    include: {
+      profile: true,
+    }
   });
 
   // const userDto = new UserDTO(user);
   return user;
 }
 
-export async function getUserByUsername(username: string): Promise<User | null> {
+export async function getUserByUsername(username: string) {
   const user = await prisma.user.findFirst({
     where: { 
       profile: {
