@@ -71,6 +71,7 @@ model Profile {
   lastname          String?
   birthday          DateTime?
   location          String?  
+  description       String?
   user              User        @relation(fields: [userId], references: [id])
   userId            String      @unique
   categories        Category[]
