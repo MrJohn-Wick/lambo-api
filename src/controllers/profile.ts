@@ -26,14 +26,19 @@ export const profileController = {
   },
 
   async update(req: Request, res: Response) {
+    
     const user = req.user;
+    
     if (!user) {
       return res.status(401).json(apiErrorResponse(ErrorMessages.unauthorized));
     }
 
     const validatedValues = await ProfileUpdateSchema.safeParseAsync(req.body);
+    
     if (!validatedValues.success) {
+      
       const messages = validatedValues.error.errors.map((e) => e.path+":"+e.message);
+      
       return res.status(400).json(apiErrorResponse(`${ErrorMessages.invalidRequest} ${messages.join('. ')}`));
     }
 

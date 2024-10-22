@@ -31,6 +31,7 @@ export class ProfileExploreDTO {
   location?: string;  
   avatar?: string;
   created_at: string;
+  description?: string;
 
   constructor(data: any = null) {
     this.id = data?.userId;
@@ -41,5 +42,6 @@ export class ProfileExploreDTO {
     this.location = data?.location;
     this.avatar = data?.avatar;
     this.created_at = data?.created_at;
+    this.description = data?.description;
   }
 }

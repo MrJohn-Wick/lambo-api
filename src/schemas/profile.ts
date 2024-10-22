@@ -8,14 +8,16 @@ export const ProfileUpdateSchema = z.object({
   birthday: z.string().datetime().optional(),
   location: z.string().min(1).optional(),
   categories: z.array(z.string()).optional(),
+  description: z.string().min(1).optional(),
 }).refine(
-  ({ username, firstname, lastname, birthday, location, categories }) => 
+  ({ username, firstname, lastname, birthday, location, categories, description }) => 
     username !== undefined || 
     firstname !== undefined || 
     lastname !== undefined ||
     birthday != undefined ||
     location != undefined ||
-    categories !== undefined
+    categories !== undefined ||
+    description !== undefined
   ,
   { message: ErrorMessages.noOneField }
 );
