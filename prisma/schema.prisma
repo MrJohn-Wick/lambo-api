@@ -91,6 +91,7 @@ model Category {
   title         String
   icon          String
   color         String
+  textColor     String
   profiles      Profile[]
   streams       Stream[]
 
