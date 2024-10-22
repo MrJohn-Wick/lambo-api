@@ -32,9 +32,12 @@ export const usersController = {
 
     const profile = await getProfileByUserId(user.id);
     let avatar = null;
+    
     if (profile && profile.gallery) {
+      
       const gallery = await getGallery(profile.gallery.id);
       const key = gallery?.items.length ? gallery?.items.at(-1)?.key : null;
+      
       if (key) {
         avatar = getS3PublicKey(key);
       }

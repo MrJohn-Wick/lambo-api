@@ -8,6 +8,7 @@ export class ProfileDTO {
   avatar?: string;
   gallery_id?: string | null;
   created_at: string;
+  description: string;
 
   constructor(data: any = null) {
     this.id = data?.userId;
@@ -19,6 +20,7 @@ export class ProfileDTO {
     this.avatar = data?.avatar;
     this.gallery_id = data?.gallery ? data.gallery.id : null;
     this.created_at = data?.created_at;
+    this.description = data?.description;
   }
 }
 
