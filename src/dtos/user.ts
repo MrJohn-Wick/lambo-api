@@ -5,12 +5,14 @@ export class UserSettingsDTO {
   dark: boolean;
   tfa: boolean;
   incognito: boolean;
+  isMinimized: boolean;
 
   constructor(data: any) {
     this.notifications = data?.notifications || false;
     this.dark = data?.dark || false;
     this.tfa = data?.tfs || false;
     this.incognito = data?.incognito || false;
+    this.isMinimized = data?.isMinimized || false;
   }
 }
 
